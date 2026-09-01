@@ -1,13 +1,12 @@
-# AiGent-Orange-BF6
+# BF6 Portal SDK Starter
 
 ## Description
 
-AiGent-Orange-BF6 is a template repository to generate new Battlefield 6 Mod repositories that are bootstrapped for LLM-assisted development as well as equipped with some useful documentation to refer to derived from official mod examples and the SDK itself.
-
+This is a template repository to generate new Battlefield 6 Mod repositories that are bootstrapped for LLM-assisted development as well as equipped with some useful documentation to refer to derived from official mod examples and the SDK itself.
 
 ## Support
 
-***Current version of the BF6 Portal SDK is `1.0.1.0`***
+***Current version of the BF6 Portal SDK is `1.4.2.0`***
 
 ### Download SDK
 
@@ -42,20 +41,6 @@ The basic workflow is fairly simple:
 4. Start development following guidelines in `.llm/dev_guidelines.md` (or your custom built instructions file you generate for your IDE using the script described below). You can instruct your LLM to get started with a generic prompt in `.llm/prompts.md`
 5. Track of your progress in `.llm/todo.md` and `.llm/memory.md` or if you are using a memory MCP server you can use that instead. I've provided prompts to use either in the `.llm/prompts.md` file.
 
-### VSCode CoPilot
-
-### Claude Code
-
-### ChatGPT Codex
-
-### Cline
-
-### RooCode
-
-### Others
-
-As outlined in the general section above, I haven't used all of the different ways to code with LLMs in depth, but the concept here is generally the same.
-
 ## Files Included
 
 ### LLM
@@ -67,7 +52,7 @@ As outlined in the general section above, I haven't used all of the different wa
 
 ### Useful Scripts
 
-***These are python scripts using the python bundled with the sdk, at this time 3.11.11***
+***These are python scripts using the python bundled with the sdk, at this time Python v3.11.11***
 
 - `version_bump.py` - This script will bump the version of your mod in the manner you choose with the commandline options. You can choose to bump major, minor, or patch and you can choose whether or not to create a tag.
 - `generate_llm_instructions.py` - This script will create an instruction file for the LLM of your choosing. Right now I don't support much because I find its easier to just use some common generic prompts that include the files I want in the context per task so that I can leave out instructions when I choose. If you'd like to generate files for copilot or for claude, they will be generated from the dev_guidelines.md. I recommend this so that if the upstream ever updates the dev guidelines due to an SDK version update or whatever, you can pull down and generate and manually merge with your local llm instructions without losing anything or dealing with messy merging/rebasing.

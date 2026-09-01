@@ -1,7 +1,7 @@
 # Battlefield 6 Portal - Development Guidelines for LLMs
 
 ## Overview
-This document provides best practices and guidelines for both traditional human brain based or LLM-assisted development of Battlefield 6 Portal game modes. These guidelines are derived from official mods (Vertigo, BombSquad, AcePursuit, Exfil) and SDK patterns.
+This document provides best practices and guidelines for both traditional human brain-based or LLM-assisted development of Battlefield 6 Portal game modes. These guidelines are derived from official mods (Vertigo, BombSquad, AcePursuit, Exfil) and SDK patterns.
 
 ---
 

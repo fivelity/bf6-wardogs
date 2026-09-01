@@ -46,7 +46,7 @@ export function FilteredArray(array: mod.Array, cond: (currentElement: any) => b
     let n = arr.length;
     for (let i = 0; i < n; i++) {
         let currentElement = arr[i];
-        if (cond(currentElement)) mod.AppendToArray(v, currentElement);
+        if (cond(currentElement)) v = mod.AppendToArray(v, currentElement);
     }
     return v;
 }
@@ -99,13 +99,14 @@ export function Equals(a: any, b: any) {
     return mod.Equals(a, b);
 }
 
+// Waits for a provided number of seconds or if the provided condition evaluates to true during that interval.
 export async function WaitUntil(delay: number, cond: () => boolean) {
-    // complete rush hack. this will likely wait way too long and other problems.
-    let deltaCount = 10;
-    let deltaWait = delay / deltaCount;
-    for (let t = 0; t < deltaCount; t++) {
-        if (!cond()) break;
-        await mod.Wait(deltaWait);
+    // rush hack. this will likely wait too long and other problems.
+    const interval = 0.2; // seconds
+    const checks = Math.ceil(delay / interval);
+    for (let t = 0; t < checks; t++) {
+        if (cond()) break;
+        await mod.Wait(interval);
     }
 }
 
@@ -130,6 +131,13 @@ export class ConditionState {
     }
 }
 
+export class SimpleConditionState {
+    update(newState: boolean): boolean {
+        // no edge detection
+        return newState;
+    }
+}
+
 class Conditions {
     constructor() {
         this.conditionStates = [];
@@ -150,7 +158,12 @@ let teamConditions: Conditions[] = [];
 let capturePointConditions: Conditions[] = [];
 let mcomConditions: Conditions[] = [];
 let vehicleConditions: Conditions[] = [];
+let hqConditions: Conditions[] = [];
+let sectorConditions: Conditions[] = [];
+let vehicleSpawnerConditions: Conditions[] = [];
+
 let globalConditions: Conditions = new Conditions();
+let simpleCondition: SimpleConditionState = new SimpleConditionState();
 
 function getObjectCondition(id: number, objectConditions: Conditions[], n: number) {
     while (id >= objectConditions.length) {
@@ -193,18 +206,38 @@ export function getVehicleCondition(obj: mod.Vehicle, n: number) {
     return getObjectCondition(id, vehicleConditions, n);
 }
 
+export function getHQCondition(obj: mod.HQ, n: number) {
+    let id = mod.GetObjId(obj);
+    return getObjectCondition(id, hqConditions, n);
+}
+
+export function getSectorCondition(obj: mod.Sector, n: number) {
+    let id = mod.GetObjId(obj);
+    return getObjectCondition(id, sectorConditions, n);
+}
+
+export function getVehicleSpawnerCondition(obj: mod.VehicleSpawner, n: number) {
+    let id = mod.GetObjId(obj);
+    return getObjectCondition(id, vehicleSpawnerConditions, n);
+}
+
 export function getGlobalCondition(n: number) {
     return globalConditions.getConditionState(n);
 }
 
-export function getPlayersInTeam(team: mod.Team) {
+export function getSimpleCondition() {
+    return simpleCondition;
+}
+
+export function getPlayersInTeam(teamObj: mod.Team) {
+    const team = mod.GetObjId(teamObj);
     const allPlayers = mod.AllPlayers();
     const n = mod.CountOf(allPlayers);
     let teamMembers = [];
 
     for (let i = 0; i < n; i++) {
         let player = mod.ValueInArray(allPlayers, i) as mod.Player;
-        if (mod.GetTeam(player) == team) {
+        if (mod.GetObjId(mod.GetTeam(player)) == team) {
             teamMembers.push(player);
         }
     }

@@ -7,6 +7,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 ## Phase 1: Planning & Design
 
 ### Game Mode Concept
+
 - [ ] Define core gameplay mechanics
 - [ ] Identify win/loss conditions
 - [ ] Determine player count (min/max)
@@ -16,6 +17,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Create initial game mode brief (use `brief.md` template)
 
 ### Technical Requirements
+
 - [ ] List required game objects (HQs, capture points, interact points, area triggers)
 - [ ] Identify needed maps/levels
 - [ ] Plan UI elements (HUD, menus, notifications)
@@ -28,6 +30,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 ## Phase 2: Project Setup
 
 ### File Structure
+
 - [ ] Create mod folder: `mods/YourModName/`
 - [ ] Copy template: `template.ts` → `YourModName.ts`
 - [ ] Create brief file: `mods/YourModName/brief.md`
@@ -35,6 +38,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Enable debug flags for development
 
 ### Initial Configuration
+
 - [ ] Set minimum player count
 - [ ] Configure combat start delay
 - [ ] Set spawn mode (AutoSpawn, ManualSpawn, etc.)
@@ -46,6 +50,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 ## Phase 3: Core Implementation
 
 ### Game State Management
+
 - [ ] Define GameState enum values
 - [ ] Implement state transition logic
 - [ ] Add victory condition checks
@@ -53,20 +58,23 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Implement countdown/lobby phase
 
 ### Player Management
+
 - [ ] Extend JsPlayer class with custom properties
-- [ ] Implement player initialization in OnPlayerJoinGame
+- [ ] Implement player initialization in `OnPlayerJoinGame`
 - [ ] Handle player cleanup in OnPlayerLeaveGame
 - [ ] Track player statistics (score, kills, deaths, etc.)
 - [ ] Implement team assignment logic
 
 ### Core Game Loop
-- [ ] Implement TickUpdate() for fast updates (60fps)
-- [ ] Implement ThrottledUpdate() for slow updates (1s)
+
+- [ ] Implement `TickUpdate()` for fast updates (60fps)
+- [ ] Implement `ThrottledUpdate()` for slow updates (1s)
 - [ ] Add victory condition checking
 - [ ] Handle round/match progression
 - [ ] Implement respawn logic
 
 ### Event Handlers
+
 - [ ] OnGameModeStarted - initialization logic
 - [ ] OnPlayerJoinGame - player join handling
 - [ ] OnPlayerLeaveGame - player leave/cleanup
@@ -84,6 +92,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 ## Phase 4: Game Objects
 
 ### HQ/Spawn Setup
+
 - [ ] Identify HQ object IDs in Godot
 - [ ] Enable/disable HQs appropriately
 - [ ] Configure spawn points
@@ -91,6 +100,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Test spawn locations
 
 ### Capture Points (if applicable)
+
 - [ ] Add capture point objects in Godot
 - [ ] Record object IDs
 - [ ] Implement capture logic
@@ -98,6 +108,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Handle team ownership changes
 
 ### Interact Points (if applicable)
+
 - [ ] Add interact point objects in Godot
 - [ ] Record object IDs
 - [ ] Implement interaction logic
@@ -105,6 +116,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Handle cooldowns/restrictions
 
 ### Area Triggers (if applicable)
+
 - [ ] Add area trigger objects in Godot
 - [ ] Record object IDs
 - [ ] Implement enter/exit logic
@@ -116,6 +128,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 ## Phase 5: UI Implementation
 
 ### Lobby/Waiting UI
+
 - [ ] Design lobby screen layout
 - [ ] Display player count
 - [ ] Show countdown timer
@@ -123,6 +136,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Test with ParseUI or manual creation
 
 ### In-Game HUD
+
 - [ ] Display scores/objectives
 - [ ] Show player stats
 - [ ] Add timer displays
@@ -130,6 +144,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Add team indicators
 
 ### Messages & Notifications
+
 - [ ] Implement MessageUI class
 - [ ] Add kill feed messages
 - [ ] Add objective notifications
@@ -137,6 +152,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Configure message durations
 
 ### End Game UI
+
 - [ ] Display final scores
 - [ ] Show winner/loser
 - [ ] Add match statistics
@@ -147,6 +163,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 ## Phase 6: Combat & Equipment
 
 ### Loadouts
+
 - [ ] Define allowed weapons
 - [ ] Configure default loadout
 - [ ] Implement custom equipment (if needed)
@@ -154,6 +171,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Test weapon balance
 
 ### Damage & Health
+
 - [ ] Configure damage modifiers (if needed)
 - [ ] Implement custom health systems (if needed)
 - [ ] Handle player death logic
@@ -161,6 +179,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Test damage feedback
 
 ### Inventory Management (if applicable)
+
 - [ ] Implement item pickup
 - [ ] Add inventory tracking
 - [ ] Handle item drops on death
@@ -172,6 +191,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 ## Phase 7: Teams & Scoring
 
 ### Team Configuration
+
 - [ ] Set up team structure
 - [ ] Assign team colors/names
 - [ ] Implement team balancing
@@ -179,6 +199,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Test team assignments
 
 ### Scoring System
+
 - [ ] Define point values (kills, objectives, etc.)
 - [ ] Implement score tracking
 - [ ] Update scores in real-time
@@ -186,6 +207,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Test score accuracy
 
 ### Victory Conditions
+
 - [ ] Implement score-based victory
 - [ ] Add time-based victory
 - [ ] Handle objective-based victory
@@ -197,6 +219,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 ## Phase 8: Polish & Features
 
 ### Visual Effects
+
 - [ ] Add VFX for key events (captures, kills, etc.)
 - [ ] Implement screen effects (if needed)
 - [ ] Add world icons/markers
@@ -204,6 +227,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Test VFX performance
 
 ### Sound Effects
+
 - [ ] Add SFX for key events
 - [ ] Implement ambient sounds
 - [ ] Add UI sounds
@@ -211,6 +235,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Test audio mixing
 
 ### Quality of Life
+
 - [ ] Add helpful messages
 - [ ] Implement auto-balance
 - [ ] Add spectator mode (if needed)
@@ -222,6 +247,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 ## Phase 9: Testing & Debugging
 
 ### Functionality Testing
+
 - [ ] Test with minimum players
 - [ ] Test with maximum players
 - [ ] Test all game states
@@ -230,6 +256,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Test edge cases (player leave mid-game, etc.)
 
 ### Performance Testing
+
 - [ ] Check for frame drops
 - [ ] Monitor console for errors
 - [ ] Test with long play sessions
@@ -237,6 +264,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Test on different maps
 
 ### Balance Testing
+
 - [ ] Test gameplay pacing
 - [ ] Verify spawn locations
 - [ ] Check weapon/equipment balance
@@ -244,6 +272,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Gather player feedback
 
 ### Bug Fixes
+
 - [ ] Fix critical bugs
 - [ ] Address gameplay issues
 - [ ] Resolve UI glitches
@@ -255,6 +284,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 ## Phase 10: Finalization
 
 ### Code Cleanup
+
 - [ ] Remove debug code
 - [ ] Disable debug flags
 - [ ] Add comprehensive comments
@@ -262,6 +292,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Remove unused functions
 
 ### Documentation
+
 - [ ] Update brief.md with final details
 - [ ] Document known issues
 - [ ] Add setup instructions
@@ -269,6 +300,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Write player guide (optional)
 
 ### Final Testing
+
 - [ ] Full playthrough with real players
 - [ ] Verify all features work
 - [ ] Check for last-minute bugs
@@ -276,6 +308,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 - [ ] Get final approval
 
 ### Release Preparation
+
 - [ ] Update VERSION number
 - [ ] Package mod files
 - [ ] Create thumbnail/preview
@@ -287,12 +320,14 @@ This high-level checklist covers the essential phases and tasks for developing a
 ## Phase 11: Post-Release
 
 ### Monitoring
+
 - [ ] Gather player feedback
 - [ ] Monitor for bugs
 - [ ] Track performance issues
 - [ ] Note balance concerns
 
 ### Updates
+
 - [ ] Address critical bugs
 - [ ] Implement balance changes
 - [ ] Add requested features
@@ -304,6 +339,7 @@ This high-level checklist covers the essential phases and tasks for developing a
 ## Quick Reference: Common Pitfalls
 
 ⚠️ **Remember to:**
+
 - Use `GetObjId()` for all team comparisons
 - Check `IsPlayerValid()` before accessing players
 - Clean up UI elements on player leave

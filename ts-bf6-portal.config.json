@@ -1,0 +1,42 @@
+{
+  "name": "ExampleExperience",
+  "description": "Some description of my ExampleExperience",
+  "bundle": {
+    "entry": "src/index.ts",
+    "outFile": "dist/bundle.ts",
+    "tsconfig": "tsconfig.json"
+  },
+  "maps": [
+    {
+      "map": "MP_Battery",
+      "rounds": 1,
+      "spectators": 4,
+      "teams": [
+        16,
+        16
+      ],
+      "balancing": "none",
+      "spatial": {
+        "file": "levels/MP_Battery.spatial.json"
+      }
+    }
+  ],
+  "rotation": "loop",
+  "globalRules": [
+    {
+      "name": "MaxPlayerCount_PerTeam",
+      "perTeamValues": [
+        16,
+        16
+      ],
+      "defaultValue": 16,
+      "category": "WA_ST_Teams"
+    }
+  ],
+  "restrictions": [
+    {
+      "tagId": "ReconClass",
+      "allowAll": false
+    }
+  ]
+}
