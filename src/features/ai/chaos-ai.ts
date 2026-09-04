@@ -1,186 +1,153 @@
-// ============================================
-// AI Module: Rogue AI Threat Faction (Team 4)
-// ============================================
+// src/features/ai/chaos-ai.ts
+import { Timers } from "bf6-portal-utils";
 
-import mod from "mod";
-import * as config from "../core/config";
-import * as vec from "../shared/utils";
-
-// ============================================================
-// AI State Tracking
-// ============================================================
-
-interface AIPlayer {
-    id: number;
-    player: mod.Player;
-    squadId: number;
-    role: "Leader" | "Member";
-    state: "Idle" | "Moving" | "Attacking" | "Retreating";
-    target: mod.Player | null;
-    deployed: boolean;
-    lastDeployed: number;
-}
-
-const aiPlayers: Map<number, AIPlayer> = new Map();
-let aiBotCounter: number = 0;
-
-// ============================================================
-// AI Spawning
-// ============================================================
-
-/**
- * Spawn AI bots from the AI Spawner nodes in Godot.
- * Called from OnGameModeStarted.
- */
-export function SpawnAIBoots() {
-    // Clear existing AI players
-    cleanupAllAI();
-
-    // Spawn AI squads (4 squads of 3)
-    for (let squadId = 0; squadId < config.AI_SQUADS_COUNT; squadId++) {
-        spawnAISquad(squadId);
-    }
+export interface AISquadMember {
+    bot: mod.Player;
+    isLeader: boolean;
 }
 
 /**
- * Spawn a single AI squad at the AI Spawner node.
+ * Squad container for Rogue AI agents.
+ * Organizes bots into fireteams and manages tactical cohesion.
  */
-export function spawnAISquad(squadId: number) {
-    // Get AI Spawner position from Godot
-    const spawner = mod.GetSpawner(config.AI_SPAWNER_ID);
-    const spawnPosition = mod.GetObjectPosition(spawner);
-    const spawnRotation = mod.Pi(); // Default angle
+export class ChaosAISquad {
+    public id: string;
+    public members: AISquadMember[] = [];
+    public leader: mod.Player | null = null;
 
-    for (let i = 0; i < config.AI_BOTS_PER_SQUAD; i++) {
-        const role = i === 0 ? "Leader" : "Member";
-        spawnAIPlayer(squadId, role, spawnPosition, spawnRotation);
-    }
-}
-
-/**
- * Spawn an individual AI player.
- */
-export function spawnAIPlayer(
-    squadId: number,
-    role: "Leader" | "Member",
-    position: mod.Vector,
-    rotation: number
-) {
-    aiBotCounter++;
-    const aiId = aiBotCounter;
-
-    // Spawn AI soldier from AI spawner
-    const aiPlayer = mod.SpawnAIFromAISpawner(
-        mod.GetSpawner(config.AI_SPAWNER_ID),
-        mod.SoldierClass.Assault,
-        mod.GetTeam(config.TEAM_AI_ID)
-    );
-
-    if (!aiPlayer) {
-        console.log("Failed to spawn AI player");
-        return;
+    constructor(id: string) {
+        this.id = id;
     }
 
-    // Set AI health modifier
-    mod.SetAIToHumanDamageModifier(config.AI_SPAWN_HEALTH_MULTIPLIER);
-
-    // Store AI state
-    aiPlayers.set(aiId, {
-        id: aiId,
-        player: aiPlayer,
-        squadId,
-        role,
-        state: "Idle",
-        target: null,
-        deployed: true,
-        lastDeployed: Date.now(),
-    });
-
-    // Set AI position
-    mod.Teleport(aiPlayer, position, rotation);
-}
-
-/**
- * Update all AI players each tick.
- */
-export function TickAIPlayers() {
-    for (const [id, ai] of aiPlayers) {
-        if (!mod.IsPlayerValid(ai.player)) {
-            continue;
-        }
-
-        if (!mod.GetSoldierState(ai.player, mod.SoldierStateBool.IsAlive)) {
-            // AI died, respawn after delay
-            respawnAIPlayer(ai);
-            continue;
-        }
-
-        // AI combat logic
-        updateAICombat(ai);
-    }
-}
-
-/**
- * Update AI combat behavior.
- */
-export function updateAICombat(ai: AIPlayer) {
-    // Simple AI behavior: move toward players and engage
-    const aiPlayer = ai.player;
-    const position = mod.GetSoldierState(aiPlayer, mod.SoldierStateVector.GetPosition);
-
-    // Find nearest human player
-    let nearestTarget: mod.Player | null = null;
-    let minDistance = 100;
-
-    for (const [_, humanAI] of aiPlayers) {
-        // Find human players near AI
-    }
-
-    if (nearestTarget && minDistance < 50) {
-        // Engage target
-        ai.state = "Attacking";
-        // AI would attack here
-    } else {
-        // Move toward center of map
-        ai.state = "Moving";
-        // AI navigation logic
-    }
-}
-
-/**
- * Respawn an AI player.
- */
-export function respawnAIPlayer(ai: AIPlayer) {
-    // Find next available spawner position
-    const spawner = mod.GetSpawner(config.AI_SPAWNER_ID);
-    const spawnPosition = mod.GetObjectPosition(spawner);
-    const spawnRotation = mod.Pi();
-
-    // Respawn AI with boosted health
-    const aiPlayer = mod.SpawnAIFromAISpawner(
-        spawner,
-        mod.SoldierClass.Assault,
-        mod.GetTeam(config.TEAM_AI_ID)
-    );
-
-    if (aiPlayer) {
-        mod.Teleport(aiPlayer, spawnPosition, spawnRotation);
-        // Update AI state
-        ai.player = aiPlayer;
-        ai.state = "Idle";
-    }
-}
-
-/**
- * Clean up all AI players (called on game end).
- */
-export function cleanupAllAI() {
-    for (const [id] of aiPlayers) {
-        try {
-            mod.DestroyPlayer(id);
-        } catch (e) {
-            // Player may already be dead
+    public addMember(bot: mod.Player, isLeader: boolean): void {
+        this.members.push({ bot, isLeader });
+        if (isLeader) {
+            this.leader = bot;
         }
     }
-    aiPlayers.clear();
+
+    /**
+     * Enforces tight combat grouping. If squad members stray further than 30m 
+     * from their leader, they are ordered to regroup instantly.
+     */
+    public EnforceCohesion(): void {
+        if (!this.leader || !mod.IsPlayerValid(this.leader)) return;
+        if (!mod.GetSoldierState(this.leader, mod.SoldierStateBool.IsAlive)) return;
+
+        const leaderPos = mod.GetPlayerState(this.leader, mod.PlayerStateVector.Position);
+
+        for (const member of this.members) {
+            if (member.isLeader || !mod.IsPlayerValid(member.bot)) continue;
+            if (!mod.GetSoldierState(member.bot, mod.SoldierStateBool.IsAlive)) continue;
+
+            const memberPos = mod.GetPlayerState(member.bot, mod.PlayerStateVector.Position);
+            const distance = mod.DistanceBetween(memberPos, leaderPos);
+
+            // Re-route bot straight to squad leader position if they wander > 30m away
+            if (distance > 30.0) {
+                mod.SetAISoldierMoveTo(member.bot, leaderPos);
+            }
+        }
+    }
+
+    /**
+     * Sends the entire squad to march toward a target coordinate.
+     */
+    public MoveTo(targetPos: mod.Vector): void {
+        for (const member of this.members) {
+            if (!mod.IsPlayerValid(member.bot)) continue;
+            if (!mod.GetSoldierState(member.bot, mod.SoldierStateBool.IsAlive)) continue;
+
+            // Direct AI movement natively
+            mod.SetAISoldierMoveTo(member.bot, targetPos);
+        }
+    }
+}
+
+/**
+ * Rogue AI Faction Manager (v2).
+ * Operates a permanent, fully staffed unlisted 4th Faction of 12 bots (4 squads of 3)
+ * assigned exclusively to harass players inside the Control Zone and HotZone.
+ */
+export class RogueAIManager {
+    private squads: ChaosAISquad[] = [];
+    private controlZoneCenter = mod.CreateVector(903.11, 228.33, 203.79); // mp_granite ControlZone center
+    private activeZonePosition = mod.CreateVector(903.11, 228.33, 203.79);
+    private updateTimerId: any = null;
+    private cohesionTimerId: any = null;
+
+    constructor() {
+        this.initializeSchedules();
+    }
+
+    /**
+     * Performs initial spawning and squad partitioning of 12 bots into 4 squads of 3.
+     */
+    public SpawnChaosFactions(): void {
+        const nativeSpawner = mod.GetSpawner(401); // Pre-placed Godot spawner node
+        
+        console.log("[WARDOGS AI] Spawning permanent 4th Faction: Rogue AI (12 Bots total)");
+
+        for (let i = 1; i <= 4; i++) {
+            const squad = new ChaosAISquad(`chaos_squad_${i}`);
+
+            for (let memberIdx = 0; memberIdx < 3; memberIdx++) {
+                const isLeader = (memberIdx === 0);
+                
+                // Spawn AI natively on unjoinable Team 4
+                const bot = mod.SpawnAIFromAISpawner(nativeSpawner, mod.GetTeam(4));
+                squad.addMember(bot, isLeader);
+
+                // Apply massive 2.5x health boost to make them formidable disruptors
+                mod.SetMaxHealth(bot, 250);
+                mod.SetHealth(bot, 250);
+
+                // Position squad members in a tight cluster near the spawner
+                const spawnOffset = mod.CreateVector(
+                    this.controlZoneCenter.x + (Math.random() * 10 - 5),
+                    this.controlZoneCenter.y + 1.5,
+                    this.controlZoneCenter.z + (Math.random() * 10 - 5)
+                );
+                mod.Teleport(bot, spawnOffset, mod.CreateVector(0, 0, 0));
+            }
+
+            this.squads.push(squad);
+        }
+    }
+
+    /**
+     * Dynamically updates the AI threat target (e.g. tracking the drifting HotZone).
+     * @param currentHotZonePos The latest calculated center vector of the drifting HotZone.
+     */
+    public updateTargetCoordinates(currentHotZonePos: mod.Vector): void {
+        this.activeZonePosition = currentHotZonePos;
+    }
+
+    /**
+     * Periodically updates bot pathfinding targets and squad cohesion checks.
+     */
+    private initializeSchedules(): void {
+        // 1. Cohesion sweep: keep squads grouped together [every 1.5s]
+        this.cohesionTimerId = Timers.setInterval(() => {
+            for (const squad of this.squads) {
+                squad.EnforceCohesion();
+            }
+        }, 1500);
+
+        // 2. Tactical sweep: update bot pathfinding to target the active HotZone [every 4s]
+        this.updateTimerId = Timers.setInterval(() => {
+            console.log(`[WARDOGS AI] Routing 12 Rogue bots to active HotZone: ${mod.XComponentOf(this.activeZonePosition)}, ${mod.ZComponentOf(this.activeZonePosition)}`);
+            for (const squad of this.squads) {
+                squad.MoveTo(this.activeZonePosition);
+            }
+        }, 4000);
+    }
+
+    /**
+     * Releases timers and resources.
+     */
+    public shutdown(): void {
+        if (this.updateTimerId) Timers.clearInterval(this.updateTimerId);
+        if (this.cohesionTimerId) Timers.clearInterval(this.cohesionTimerId);
+    }
 }

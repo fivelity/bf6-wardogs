@@ -2,24 +2,24 @@
   "name": "portal-starter",
   "version": "1.0.0",
   "description": "Starter project to simplify Battlefield 6 Portal Mod creation",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
-    "bundle": "ts-portal-bundle src/index.ts dist/output.ts",
+    "bundle": "ts-portal-bundle --entry src/index.ts --out dist/portal-bundle.ts",
     "strings": "ts-bf6-strings --source ./src --output ./dist/strings.json",
     "validate": "ts-bf6-validate-config",
     "list-mutators": "ts-bf6-list-mutators",
     "list-assets": "ts-bf6-list-asset-categories",
-    "deploy": "ts-portal-bundle src/index.ts dist/output.ts && ts-bf6-strings --source ./src --output ./dist/strings.json && ts-bf6-validate-config && ts-bf6-deploy --config ts-bf6-portal.config.json",
+    "deploy": "ts-bf6-deploy --config ts-bf6-portal.config.json",
+    "deploy-all": "ts-bf6-deploy --config ts-bf6-portal.config.json --strings dist/strings.json",
     "deploy-only": "ts-bf6-deploy --config ts-bf6-portal.config.json"
   },
   "author": "The Sir. Community",
   "license": "MIT",
   "devDependencies": {
     "bf6-portal-utils": "^9.4.0",
-    "typescript": "^5.9.3"
+    "bf6-portal-mod-types": "^4.2.0",
+    "typescript": "^5.9.3",
+    "ts-bf6-portal": "^1.1.1"
   },
-  "type": "module",
-  "dependencies": {
-    "ts-bf6-portal": "github:The-Sir-Community/ts-bf6-portal"
-  }
+  "type": "module"
 }
