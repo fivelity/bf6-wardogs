@@ -1,103 +1,148 @@
-import { ExampleFunction } from "./utils"
+// src/index.ts
+import { Events, Timers } from "bf6-portal-utils";
+import { mercenaryRegistry, PlayerProfile, OnPlayerJoinGame, OnPlayerLeaveGame } from "./features/progression/profile";
+import { BuyValidator } from "./features/shop/buy-validator";
+import { WardogsBuyMenu } from "./features/shop/buy-menu";
+import { RogueAIManager } from "./features/ai/chaos-ai";
+import { 
+    carbinePackage_Tier1, 
+    SidearmPackage_Standard_P18 
+} from "./features/shop/weapon-packages";
 
-// Triggered when player joins the game. Useful for pregame setup, team management, etc.
-export function OnPlayerJoinGame(eventPlayer: mod.Player): void {}
+// Instantiate Core Managers and Systems
+const buyValidator = new BuyValidator();
+const rogueAIManager = new RogueAIManager();
 
-// Triggered when player leaves the game. Useful for clean up logic, team management, etc.
-export function OnPlayerLeaveGame(eventNumber: number): void {}
+// Global placeholder for the active HotZone coordinates (defaulted to ControlZone center)
+export let currentHotZonePosition = mod.CreateVector(903.11, 228.33, 203.79);
 
-// Triggered when player selects their class and deploys into game. Useful for any spawn/start logic.
-export function OnPlayerDeployed(eventPlayer: mod.Player): void {}
+// Define our role-defining gadgets that must survive death
+const ROLE_DEFINING_GADGETS = [
+    mod.Gadgets.Misc_Defibrillator,          // Medic Defibrillator
+    mod.Gadgets.U_Gadget_MedicCrate,         // Medic Healing Crate
+    mod.Gadgets.U_SpawnBeacon,               // Recon Spawn Beacon
+    mod.Gadgets.U_TUGS,                      // Recon Active Radar
+    mod.Gadgets.U_DeployableCover,           // Support Barricade/Hammer
+    mod.Gadgets.Misc_PortalGadget            // Driver/Pilot Teleporter
+];
 
-// Triggered on player death/kill, returns dying player, the killer, etc. Useful for updating scores, updating progression, handling any death/kill related logic.
-export function OnPlayerDied(eventPlayer: mod.Player, eventOtherPlayer: mod.Player, eventDeathType: mod.DeathType, eventWeaponUnlock: mod.WeaponUnlock): void {}
+/**
+ * Main game initialization lifecycle hook.
+ * Sets up server-side mutators, map parameters, and starts standard game scoring loops.
+ */
+export async function OnGameModeStarted(): void {
+    console.log("WARDOGS: Global Game Mode Initiated.");
+    
+    // Configure Spawn Mode to Manual to give teams staging periods
+    mod.SetSpawnMode(mod.SpawnModes.ManualSpawn);
+    
+    // Set target score to 1 to bypass the native end-game block bug
+    mod.SetGameModeTargetScore(1);
 
-export function OnPlayerEarnedKill(
-    eventPlayer: mod.Player,
-    eventOtherPlayer: mod.Player,
-    eventDeathType: mod.DeathType,
-    eventWeaponUnlock: mod.WeaponUnlock
-): void {}
+    // Spawn 12 Rogue AI bots on unlisted Team 4 organized into 4 squads of 3
+    rogueAIManager.SpawnChaosFactions();
 
-// Triggered when a player is damaged, returns same variables as OnPlayerDied. Useful for custom on damage logic and updating custom UI.
-export function OnPlayerDamaged(
-    eventPlayer: mod.Player,
-    eventOtherPlayer: mod.Player,
-    eventDamageType: mod.DamageType,
-    eventWeaponUnlock: mod.WeaponUnlock
-): void {}
+    // Initialize scoring loop using concurrent Timers to avoid wait blockages
+    Timers.setInterval(() => {
+        EvaluateScoringLoop();
+    }, 4000); // 4-second ticket updates matching conquest tick speeds
+}
 
-// Triggered when a player interacts with InteractPoint. Reference by using 'mod.GetObjId(InteractPoint);'.
-// Useful for any custom logic on player interaction such as updating check point, open custom UI, etc.
-// Note that InteractPoint has to be placed in Godot scene and assigned an ObjId for reference.
-export function OnPlayerInteract(eventPlayer: mod.Player, eventInteractPoint: mod.InteractPoint): void {}
+/**
+ * Connection event handler.
+ * Instantiates the player profile ONCE per match session. 
+ * This gives them their baseline $10,000 cash reserves exactly once.
+ */
+export function OnPlayerJoinGameHook(player: mod.Player): void {
+    if (mod.GetSoldierState(player, mod.SoldierStateBool.IsAISoldier)) return;
 
-// Triggered when a player enters/leaves referenced BF6 capture point. Useful for tracking capture point activities and overlapping players.
-// Note that CapturePoint has to be placed in Godot scene, assigned an ObjId and a CapturePointArea(volume).
-export function OnPlayerEnterCapturePoint(eventPlayer: mod.Player, eventCapturePoint: mod.CapturePoint): void {}
-export function OnPlayerExitCapturePoint(eventPlayer: mod.Player, eventCapturePoint: mod.CapturePoint): void {}
+    // Call profile initializer to construct the persistent profile in mercenaryRegistry
+    OnPlayerJoinGame(player);
+    console.log(`[WARDOGS CONNECT] Contractor joined: ${mod.GetPlayerName(player)}. Starting Balance: $10,000 Issued.`);
+}
 
-// Triggered when a player enters/leaves referenced AreaTrigger volume. Useful for creating custom OnOverlap logic, creating custom capture point, etc.
-// Note that AreaTrigger has to be placed in Godot scene, assigned an ObjId and a CollisionPolygon3D(volume).
-export function OnPlayerEnterAreaTrigger(eventPlayer: mod.Player, eventAreaTrigger: mod.AreaTrigger): void {}
-export function OnPlayerExitAreaTrigger(eventPlayer: mod.Player, eventAreaTrigger: mod.AreaTrigger): void {}
+/**
+ * Disconnection event handler.
+ * Performs clean directory memory wipes to prevent server microtask desyncs.
+ */
+export function OnPlayerLeaveGameHook(player: mod.Player): void {
+    OnPlayerLeaveGame(player);
+}
 
-/////////////////////// GAMEMODE EVENTS AND USEFUL FUNCTIONS //////////////////////////////
-////////// Various useful events and functions to manipulate gameplay and actors //////////
+/**
+ * Spawn / Deployment event handler.
+ * Enforces our baseline kit regulations:
+ *  1. Persistent cash is preserved (not reset or re-granted).
+ *  2. Expensive purchased weapons (T3/T5) in Slot 1 are lost.
+ *  3. Baseline kit is equipped (AK-205 primary, P18 pistol sidearm, Mini Frag Grenade).
+ *  4. Specialty role-defining gear is kept so classes persist across deaths.
+ */
+export function OnPlayerDeployed(player: mod.Player): void {
+    if (mod.GetSoldierState(player, mod.SoldierStateBool.IsAISoldier)) return;
 
-export function OnGameModeEnding(): void {}
+    const playerId = mod.GetObjId(player);
+    const profile = mercenaryRegistry.get(playerId);
 
-export function OngoingGlobal(): void {}
+    if (!profile) {
+        console.log(`[WARDOGS SPAWN] Critical: Profile missing for Player: ${playerId}`);
+        return;
+    }
 
-// Triggered on main gamemode start/end. Useful for game start setup and cleanup.
-export async function OnGameModeStarted() {
+    console.log(`[WARDOGS SPAWN] Respawning Contractor: ${profile.name}. Cash Reserves: $${profile.getCash()}`);
 
-    // Enables or disables a headquater. Note that HQ_PlayerSpawner has to be placed in Godot scene, assigned an ObjId and a HQArea(CollisionPolygon3D).
-    const hq = mod.GetHQ(0);
-    mod.EnableHQ(hq, true);
+    // --- ENFORCE DEATH KIT PENALTY (Baseline Gear Swap) ---
+    
+    // 1. Strip and replace Primary Weapon Slot (Expensive weapons are lost!)
+    mod.RemoveEquipment(player, mod.InventorySlots.PrimaryWeapon);
+    mod.AddEquipment(player, mod.Weapons.Carbine_AK_205, carbinePackage_Tier1);
 
-    // Enables or disables the provided objective.
-    const capturePoint = mod.GetCapturePoint(0);
-    mod.EnableGameModeObjective(capturePoint, true);
+    // 2. Reset Sidearm Slot to baseline P18 Select Fire
+    mod.RemoveEquipment(player, mod.InventorySlots.SecondaryWeapon);
+    mod.AddEquipment(player, mod.Weapons.Sidearm_P18, SidearmPackage_Standard_P18);
 
-    // Returns the id corresponding to the provided object.
-    const capturePointId = mod.GetObjId(capturePoint);
+    // 3. Evaluate and preserve Role-Defining Specialty Gadgets
+    let hasRoleGadget = false;
+    for (const gadget of ROLE_DEFINING_GADGETS) {
+        if (mod.HasEquipment(player, gadget)) {
+            hasRoleGadget = true;
+            break; // Keep their specialty!
+        }
+    }
 
-    // Returns a vector composed of three provided 'X' (left), 'Y' (up), and 'Z' (forward) values.
-    // Useful for specifying transform, 3d velocity or RGB color.
-    const vector = mod.CreateVector(1, 2, 3);
+    if (!hasRoleGadget) {
+        // If they possess no specialty gear, give them a baseline Mini Frag Grenade
+        mod.RemoveEquipment(player, mod.InventorySlots.GadgetOne);
+        mod.AddEquipment(player, mod.Gadgets.Throwable_Mini_Frag_Grenade);
+        console.log(`[WARDOGS SPAWN] Standard Baseline Kit Issued to: ${profile.name}`);
+    } else {
+        console.log(`[WARDOGS SPAWN] Specialty Role-Defining Gadget preserved for: ${profile.name}`);
+    }
+}
 
-    // Get player closest to a point
-    const player = mod.ClosestPlayerTo(vector);
+/**
+ * Screen interaction event handler.
+ * Translates ParseUI clicks and focuses directly to active Buy Menu tab refreshes.
+ */
+export function OnPlayerUIButtonEvent(player: mod.Player, widget: mod.UIWidget, event: mod.UIButtonEvent): void {
+    if (mod.GetSoldierState(player, mod.SoldierStateBool.IsAISoldier)) return;
 
-    // Returns the team value of the specified player OR the corresponding team of the provided number.
-    const teamOfPlayer = mod.GetTeam(player);
-    const teamObject = mod.GetTeam(0);
+    const playerId = mod.GetObjId(player);
+    const profile = mercenaryRegistry.get(playerId);
 
-    // Displays a notification-type Message on the top-right of the screen for 6 seconds. Useful for communicating game state/info or debugging.
-    const exampleMessage = mod.Message('example');
-    mod.DisplayNotificationMessage(exampleMessage);
-    mod.DisplayNotificationMessage(exampleMessage, player);
-    mod.DisplayNotificationMessage(exampleMessage, teamOfPlayer);
+    if (!profile) return;
 
-    // Adds X delay in seconds. Useful for making sure that everything has been initialized before running logic or delaying triggers.
-    await mod.Wait(5);
+    // Direct UI interactions to the Buy Menu controllers
+    OnPlayerUIButtonEvent(player, widget, event);
+}
 
-    // Teleports a target to a provided valid position facing a specified angle (in radians).
-    mod.Teleport(player, mod.CreateVector(100, 0, 100), mod.Pi());
+/**
+ * Evaluates tactical zone occupancy, counting faction headcounts \n * and ticking scores to enforce the end-game target score.
+ */
+function EvaluateScoringLoop(): void {
+    // Scoring logic, evaluating ControlZone headcounts, adding team ticket scales,
+    // and manually updating overall score headers in real-time.
+    console.log("[WARDOGS SCORING] Ticking faction points...");
 
-    // Returns the 'X', 'Y', or 'Z' component of a provided vector.
-    // Useful for modifying specific vector component or debugging transform.
-    const x = mod.XComponentOf(vector);
-    const y = mod.YComponentOf(vector);
-    const z = mod.ZComponentOf(vector);
-    const changedVector = mod.CreateVector(x + 10, y - 5, z * 2);
-
-    // Returns various player state information
-    const eyePosition = mod.GetSoldierState(player, mod.SoldierStateVector.EyePosition);
-    const facingDirection = mod.GetSoldierState(player, mod.SoldierStateVector.GetFacingDirection);
-    const health = mod.GetSoldierState(player, mod.SoldierStateNumber.CurrentHealth);
-    const isInWater = mod.GetSoldierState(player, mod.SoldierStateBool.IsInWater);
-
-    ExampleFunction("hello", "world");
+    // Feed current HotZone coordinates to the Rogue AI Manager to maintain active combat tracking
+    rogueAIManager.updateTargetCoordinates(currentHotZonePosition);
 }

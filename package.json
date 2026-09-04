@@ -1,7 +1,7 @@
 {
-  "name": "portal-starter",
+  "name": "wardogs-portal-mod",
   "version": "1.0.0",
-  "description": "Starter project to simplify Battlefield 6 Portal Mod creation",
+  "description": "",
   "main": "src/index.ts",
   "scripts": {
     "bundle": "ts-portal-bundle --entry src/index.ts --out dist/portal-bundle.ts",
@@ -19,7 +19,7 @@
     "bf6-portal-utils": "^9.4.0",
     "bf6-portal-mod-types": "^4.2.0",
     "typescript": "^5.9.3",
-    "ts-bf6-portal": "^1.1.1"
+    "ts-bf6-portal": "github:The-Sir-Community/ts-bf6-portal"
   },
   "type": "module"
 }
