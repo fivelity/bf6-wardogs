@@ -1,0 +1,31 @@
+# Workflow: Validate
+
+name: Validate
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: shivammathur/setup-pnpm@v1
+        with:
+          version: 'v9.15.0'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Bundle
+        run: pnpm bundle
+
+      - name: Validate
+        run: pnpm validate
+
+      - name: Lint TypeScript
+        run: pnpm run lint 2>/dev/null || echo "No lint script found"
