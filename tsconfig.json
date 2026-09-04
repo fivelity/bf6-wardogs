@@ -14,5 +14,5 @@
     "ignoreDeprecations": "6.0",
     "types": ["bf6-portal-mod-types"]
   },
-  "include": ["src", "mock-server.ts"]
+  "include": ["src", "src/mock-server.ts"]
 }
