@@ -1,3 +1,4 @@
+// types/mod/index.d.ts
 // export * from './store';
 
 export function Concat(s1: string, s2: string) {
