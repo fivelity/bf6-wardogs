@@ -1,5 +1,6 @@
 // src/features/construction/pda-scanner.ts
-import { Events, Timers } from "bf6-portal-utils";
+import { Events } from "bf6-portal-utils/events";
+import { Timers } from 'bf6-portal-utils/timers';
 import { mercenaryRegistry } from "../progression/profile";
 import { excavationManager } from "./excavation";
 

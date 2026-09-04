@@ -1,5 +1,5 @@
 // src/features/construction/fob-stockpile.ts
-import { Events } from "bf6-portal-utils";
+import { Events } from "bf6-portal-utils/events";
 import { mercenaryRegistry } from "../progression/profile";
 
 /**

@@ -1,5 +1,6 @@
 // src/features/progression/profile.ts
-import { Events, Timers } from "bf6-portal-utils";
+import { Events } from "bf6-portal-utils/events";
+import { Timers } from 'bf6-portal-utils/timers';
 
 /**
  * Valid progression tracks matching WARDOGS dynamic sandbox roles.

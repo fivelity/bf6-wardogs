@@ -1,5 +1,6 @@
 // src/features/scavenger/scavenger-drop.ts
-import { Events, Timers } from "bf6-portal-utils";
+import { Events } from "bf6-portal-utils/events";
+import { Timers } from 'bf6-portal-utils/timers';
 import { mercenaryRegistry, PlayerProfile } from "../progression/profile";
 
 /**

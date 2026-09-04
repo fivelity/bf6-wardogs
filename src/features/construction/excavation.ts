@@ -1,5 +1,5 @@
 // src/features/construction/excavation.ts
-import { Events, Timers } from "bf6-portal-utils";
+import { Timers } from 'bf6-portal-utils/timers';
 import { mercenaryRegistry } from "../progression/profile";
 
 export type FortificationClass = "sandbags" | "hesco_wall" | "watchtower" | "emplacement";

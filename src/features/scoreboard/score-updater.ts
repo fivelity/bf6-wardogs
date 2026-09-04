@@ -1,5 +1,6 @@
 // src/features/scoreboard/score-updater.ts
-import { SolidUI, Events } from "bf6-portal-utils";
+import { SolidUI } from "bf6-portal-utils/solid-ui";
+import { Events } from "bf6-portal-utils/events";
 import { mercenaryRegistry } from "../progression/profile";
 
 /**

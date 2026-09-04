@@ -1,5 +1,6 @@
 // src/features/shop/buy-validator.ts
-import { Events, Timers } from "bf6-portal-utils";
+import { Events } from "bf6-portal-utils/events";
+import { Timers } from 'bf6-portal-utils/timers';
 import { mercenaryRegistry, ProgressionTrackKey } from "../progression/profile";
 import { ShopItem } from "./buy-menu";
 

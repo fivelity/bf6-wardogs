@@ -1,4 +1,4 @@
-import { Vectors } from "bf6-portal-utils";
+import { Vectors } from "bf6-portal-utils/vectors";
 
 /**
  * Representing a 2D horizontal plane coordinate (East-West as X, North-South as Z).

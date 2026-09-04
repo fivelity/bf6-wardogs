@@ -1,5 +1,6 @@
 // src/index.ts
-import { Events, Timers } from "bf6-portal-utils";
+import { Events } from "bf6-portal-utils/events";
+import { Timers } from 'bf6-portal-utils/timers';
 import { mercenaryRegistry, PlayerProfile, OnPlayerJoinGame, OnPlayerLeaveGame } from "./features/progression/profile";
 import { BuyValidator } from "./features/shop/buy-validator";
 import { WardogsBuyMenu } from "./features/shop/buy-menu";

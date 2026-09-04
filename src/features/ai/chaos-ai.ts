@@ -1,5 +1,5 @@
 // src/features/ai/chaos-ai.ts
-import { Timers } from "bf6-portal-utils";
+import { Timers } from "bf6-portal-utils/timers";
 
 export interface AISquadMember {
     bot: mod.Player;
