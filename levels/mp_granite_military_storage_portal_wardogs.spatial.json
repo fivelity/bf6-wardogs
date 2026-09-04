@@ -1,0 +1,2316 @@
+{
+    "Portal_Dynamic": [
+        {
+            "name": "TEAM_1_HQ",
+            "AltTeam": "TeamNeutral",
+            "ObjId": 100,
+            "InfantrySpawns": [
+                "TEAM_1_HQ/SpawnPoint_1_1",
+                "TEAM_1_HQ/SpawnPoint_1_2",
+                "TEAM_1_HQ/SpawnPoint_1_3",
+                "TEAM_1_HQ/SpawnPoint_1_4"
+            ],
+            "HQArea": "TEAM_1_HQ/HQ_Team1",
+            "type": "HQ_PlayerSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 414.67422,
+                "y": 151.46237,
+                "z": 81.49062
+            },
+            "id": "TEAM_1_HQ",
+            "linked": [
+                "HQArea",
+                "InfantrySpawns"
+            ]
+        },
+        {
+            "name": "HQ_Team1",
+            "type": "PolygonVolume",
+            "id": "TEAM_1_HQ/HQ_Team1",
+            "height": 0,
+            "points": [
+                {
+                    "x": 419.67422,
+                    "y": 156.46237,
+                    "z": 86.49062
+                },
+                {
+                    "x": 419.67422,
+                    "y": 156.46237,
+                    "z": 76.49062
+                },
+                {
+                    "x": 409.67422,
+                    "y": 156.46237,
+                    "z": 76.49062
+                },
+                {
+                    "x": 409.67422,
+                    "y": 156.46237,
+                    "z": 86.49062
+                }
+            ]
+        },
+        {
+            "name": "SpawnPoint_1_1",
+            "type": "SpawnPoint",
+            "right": {
+                "x": 0.999884,
+                "y": 0,
+                "z": 0.0152535
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -0.0152535,
+                "y": 0,
+                "z": 0.999884
+            },
+            "position": {
+                "x": 414.67422,
+                "y": 151.46237,
+                "z": 78.49062
+            },
+            "id": "TEAM_1_HQ/SpawnPoint_1_1"
+        },
+        {
+            "name": "SpawnPoint_1_2",
+            "type": "SpawnPoint",
+            "right": {
+                "x": -0.9995,
+                "y": 0,
+                "z": 0.0316198
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -0.0316198,
+                "y": 0,
+                "z": -0.9995
+            },
+            "position": {
+                "x": 417.67422,
+                "y": 151.46237,
+                "z": 81.49062
+            },
+            "id": "TEAM_1_HQ/SpawnPoint_1_2"
+        },
+        {
+            "name": "SpawnPoint_1_3",
+            "type": "SpawnPoint",
+            "right": {
+                "x": -0.0428871,
+                "y": 0,
+                "z": -0.99908
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0.99908,
+                "y": 0,
+                "z": -0.0428871
+            },
+            "position": {
+                "x": 411.67422,
+                "y": 151.46237,
+                "z": 81.49062
+            },
+            "id": "TEAM_1_HQ/SpawnPoint_1_3"
+        },
+        {
+            "name": "SpawnPoint_1_4",
+            "type": "SpawnPoint",
+            "right": {
+                "x": 0.0841819,
+                "y": 0,
+                "z": 0.99645
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -0.99645,
+                "y": 0,
+                "z": 0.0841819
+            },
+            "position": {
+                "x": 414.67422,
+                "y": 151.46237,
+                "z": 84.49062
+            },
+            "id": "TEAM_1_HQ/SpawnPoint_1_4"
+        },
+        {
+            "name": "VehicleSpawner_1_1",
+            "MatchingTeam": "Team1",
+            "ObjId": 110,
+            "VehicleType": "AH64",
+            "P_TimeUntilAbandon": 100,
+            "P_KeepAliveAbandonRadius": 100,
+            "P_KeepAliveSpawnerRadius": 100,
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 379.65826,
+                "y": 151.9462262,
+                "z": 84.0022548
+            },
+            "id": "TEAM_1_HQ/VehicleSpawner_1_1"
+        },
+        {
+            "name": "BuyStation_1_1",
+            "Enabled": false,
+            "ObjId": 111,
+            "TacticalAdviceAirVehicleFriendly": true,
+            "StartingOwnerTeamID": "Team1",
+            "type": "MCOM",
+            "right": {
+                "x": -4.371139e-08,
+                "y": 0,
+                "z": -1
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 1,
+                "y": 0,
+                "z": -4.371139e-08
+            },
+            "position": {
+                "x": 387.455134,
+                "y": 151.00726136,
+                "z": 93.709744
+            },
+            "id": "TEAM_1_HQ/BuyStation_1_1"
+        },
+        {
+            "name": "InteractPoint_Vehicle_Menu_1_1",
+            "ObjId": 112,
+            "type": "InteractPoint",
+            "right": {
+                "x": 1.000000000000002,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1.000000000000002
+            },
+            "position": {
+                "x": 387.61919650007803,
+                "y": 152.31191836,
+                "z": 93.7115292711286
+            },
+            "id": "TEAM_1_HQ/BuyStation_1_1/InteractPoint_Vehicle_Menu_1_1"
+        },
+        {
+            "name": "TEAM_2_HQ",
+            "Team": "Team2",
+            "AltTeam": "TeamNeutral",
+            "ObjId": 2,
+            "InfantrySpawns": [
+                "TEAM_2_HQ/SpawnPoint_2_1",
+                "TEAM_2_HQ/SpawnPoint_2_2",
+                "TEAM_2_HQ/SpawnPoint_2_3",
+                "TEAM_2_HQ/SpawnPoint_2_4"
+            ],
+            "HQArea": "TEAM_2_HQ/HQ_Team2",
+            "type": "HQ_PlayerSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 822.8294,
+                "y": 143.76828,
+                "z": 714.7032
+            },
+            "id": "TEAM_2_HQ",
+            "linked": [
+                "HQArea",
+                "InfantrySpawns"
+            ]
+        },
+        {
+            "name": "HQ_Team2",
+            "type": "PolygonVolume",
+            "id": "TEAM_2_HQ/HQ_Team2",
+            "height": 0,
+            "points": [
+                {
+                    "x": 827.8294,
+                    "y": 148.76828,
+                    "z": 719.7032
+                },
+                {
+                    "x": 827.8294,
+                    "y": 148.76828,
+                    "z": 709.7032
+                },
+                {
+                    "x": 817.8294,
+                    "y": 148.76828,
+                    "z": 709.7032
+                },
+                {
+                    "x": 817.8294,
+                    "y": 148.76828,
+                    "z": 719.7032
+                }
+            ]
+        },
+        {
+            "name": "SpawnPoint_2_1",
+            "type": "SpawnPoint",
+            "right": {
+                "x": 0.87795,
+                "y": 0,
+                "z": 0.478754
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -0.478754,
+                "y": 0,
+                "z": 0.87795
+            },
+            "position": {
+                "x": 822.8294,
+                "y": 143.76828,
+                "z": 711.7032
+            },
+            "id": "TEAM_2_HQ/SpawnPoint_2_1"
+        },
+        {
+            "name": "SpawnPoint_2_2",
+            "type": "SpawnPoint",
+            "right": {
+                "x": -0.997604,
+                "y": 0,
+                "z": -0.0691822
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0.0691822,
+                "y": 0,
+                "z": -0.997604
+            },
+            "position": {
+                "x": 825.8294,
+                "y": 143.76828,
+                "z": 714.7032
+            },
+            "id": "TEAM_2_HQ/SpawnPoint_2_2"
+        },
+        {
+            "name": "SpawnPoint_2_3",
+            "type": "SpawnPoint",
+            "right": {
+                "x": 0.162758,
+                "y": 0,
+                "z": -0.986666
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0.986666,
+                "y": 0,
+                "z": 0.162758
+            },
+            "position": {
+                "x": 819.8294,
+                "y": 143.76828,
+                "z": 714.7032
+            },
+            "id": "TEAM_2_HQ/SpawnPoint_2_3"
+        },
+        {
+            "name": "SpawnPoint_2_4",
+            "type": "SpawnPoint",
+            "right": {
+                "x": -0.165771,
+                "y": 0,
+                "z": 0.986164
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -0.986164,
+                "y": 0,
+                "z": -0.165771
+            },
+            "position": {
+                "x": 822.8294,
+                "y": 143.76828,
+                "z": 717.7032
+            },
+            "id": "TEAM_2_HQ/SpawnPoint_2_4"
+        },
+        {
+            "name": "VehicleSpawner_2_1",
+            "MatchingTeam": "Team2",
+            "ObjId": 220,
+            "VehicleType": "AH64",
+            "P_TimeUntilAbandon": 100,
+            "P_KeepAliveAbandonRadius": 100,
+            "P_KeepAliveSpawnerRadius": 100,
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 856.68084,
+                "y": 144.21238706,
+                "z": 689.841567
+            },
+            "id": "TEAM_2_HQ/VehicleSpawner_2_1"
+        },
+        {
+            "name": "BuyStation_2_1",
+            "ObjId": 221,
+            "TacticalAdviceAirVehicleFriendly": true,
+            "type": "MCOM",
+            "right": {
+                "x": -4.371139e-08,
+                "y": 0,
+                "z": 1
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -1,
+                "y": 0,
+                "z": -4.371139e-08
+            },
+            "position": {
+                "x": 849.012872,
+                "y": 143.67817685,
+                "z": 693.415236
+            },
+            "id": "TEAM_2_HQ/BuyStation_2_1"
+        },
+        {
+            "name": "InteractPoint_Vehicle_Menu_2_1",
+            "ObjId": 222,
+            "type": "InteractPoint",
+            "right": {
+                "x": 1.000000000000002,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1.000000000000002
+            },
+            "position": {
+                "x": 848.7581112600107,
+                "y": 144.66705319,
+                "z": 693.4149918482341
+            },
+            "id": "TEAM_2_HQ/BuyStation_2_1/InteractPoint_Vehicle_Menu_2_1"
+        },
+        {
+            "name": "TEAM_3_HQ",
+            "Team": "Team3",
+            "AltTeam": "TeamNeutral",
+            "ObjId": 3,
+            "InfantrySpawns": [
+                "TEAM_3_HQ/SpawnPoint_3_1",
+                "TEAM_3_HQ/SpawnPoint_3_2",
+                "TEAM_3_HQ/SpawnPoint_3_3",
+                "TEAM_3_HQ/SpawnPoint_3_4"
+            ],
+            "HQArea": "TEAM_3_HQ/HQ_Team3",
+            "type": "HQ_PlayerSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 285.91898,
+                "y": 128.14444,
+                "z": 513.3144
+            },
+            "id": "TEAM_3_HQ",
+            "linked": [
+                "HQArea",
+                "InfantrySpawns"
+            ]
+        },
+        {
+            "name": "HQ_Team3",
+            "type": "PolygonVolume",
+            "id": "TEAM_3_HQ/HQ_Team3",
+            "height": 0,
+            "points": [
+                {
+                    "x": 290.91898,
+                    "y": 133.14444,
+                    "z": 518.3144
+                },
+                {
+                    "x": 290.91898,
+                    "y": 133.14444,
+                    "z": 508.3144
+                },
+                {
+                    "x": 280.91898,
+                    "y": 133.14444,
+                    "z": 508.3144
+                },
+                {
+                    "x": 280.91898,
+                    "y": 133.14444,
+                    "z": 518.3144
+                }
+            ]
+        },
+        {
+            "name": "SpawnPoint_3_1",
+            "type": "SpawnPoint",
+            "right": {
+                "x": 0.87795,
+                "y": 0,
+                "z": 0.478754
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -0.478754,
+                "y": 0,
+                "z": 0.87795
+            },
+            "position": {
+                "x": 285.91898,
+                "y": 128.14444,
+                "z": 510.3144
+            },
+            "id": "TEAM_3_HQ/SpawnPoint_3_1"
+        },
+        {
+            "name": "SpawnPoint_3_2",
+            "type": "SpawnPoint",
+            "right": {
+                "x": -0.997604,
+                "y": 0,
+                "z": -0.0691822
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0.0691822,
+                "y": 0,
+                "z": -0.997604
+            },
+            "position": {
+                "x": 288.91898,
+                "y": 128.14444,
+                "z": 513.3144
+            },
+            "id": "TEAM_3_HQ/SpawnPoint_3_2"
+        },
+        {
+            "name": "SpawnPoint_3_3",
+            "type": "SpawnPoint",
+            "right": {
+                "x": 0.162758,
+                "y": 0,
+                "z": -0.986666
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0.986666,
+                "y": 0,
+                "z": 0.162758
+            },
+            "position": {
+                "x": 282.91898,
+                "y": 128.14444,
+                "z": 513.3144
+            },
+            "id": "TEAM_3_HQ/SpawnPoint_3_3"
+        },
+        {
+            "name": "SpawnPoint_3_4",
+            "type": "SpawnPoint",
+            "right": {
+                "x": -0.165771,
+                "y": 0,
+                "z": 0.986164
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -0.986164,
+                "y": 0,
+                "z": -0.165771
+            },
+            "position": {
+                "x": 285.91898,
+                "y": 128.14444,
+                "z": 516.3144
+            },
+            "id": "TEAM_3_HQ/SpawnPoint_3_4"
+        },
+        {
+            "name": "VehicleSpawner_3_1",
+            "MatchingTeam": "Team3",
+            "ObjId": 330,
+            "VehicleType": "AH64",
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 257.454106,
+                "y": 128.78829986,
+                "z": 522.4347
+            },
+            "id": "TEAM_3_HQ/VehicleSpawner_3_1"
+        },
+        {
+            "name": "BuyStation_3_1",
+            "Enabled": false,
+            "ObjId": 331,
+            "TacticalAdviceAirVehicleFriendly": true,
+            "StartingOwnerTeamID": "Team3",
+            "type": "MCOM",
+            "right": {
+                "x": 0.6280309,
+                "y": 0,
+                "z": -0.77818835
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0.77818835,
+                "y": 0,
+                "z": 0.6280309
+            },
+            "position": {
+                "x": 267.47971,
+                "y": 128.192749326,
+                "z": 523.161385
+            },
+            "id": "TEAM_3_HQ/BuyStation_3_1"
+        },
+        {
+            "name": "InteractPoint_Vehicle_Menu_3_1",
+            "ObjId": 333,
+            "metadata/InteractText": null,
+            "type": "InteractPoint",
+            "right": {
+                "x": 0.7690761625322036,
+                "y": 0,
+                "z": 0.6391572604048432
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -0.6391572604048432,
+                "y": 0,
+                "z": 0.7690761625322036
+            },
+            "position": {
+                "x": 267.64194456176256,
+                "y": 129.187881776,
+                "z": 523.2979818887603
+            },
+            "id": "TEAM_3_HQ/BuyStation_3_1/InteractPoint_Vehicle_Menu_3_1"
+        },
+        {
+            "name": "CombatArea",
+            "CombatVolume": "CombatArea/CombatVolume",
+            "type": "CombatArea",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 589.428,
+                "y": 136.643,
+                "z": 529.153
+            },
+            "id": "CombatArea",
+            "linked": [
+                "CombatVolume"
+            ]
+        },
+        {
+            "name": "CombatVolume",
+            "type": "PolygonVolume",
+            "id": "CombatArea/CombatVolume",
+            "height": 0,
+            "points": [
+                {
+                    "x": 298.1187,
+                    "y": 231.5065,
+                    "z": -90.448
+                },
+                {
+                    "x": 172.7817,
+                    "y": 231.5065,
+                    "z": -68.583
+                },
+                {
+                    "x": 79.0787,
+                    "y": 231.5065,
+                    "z": 269.7217
+                },
+                {
+                    "x": 72.9937,
+                    "y": 231.5065,
+                    "z": 700.512
+                },
+                {
+                    "x": 395.4787,
+                    "y": 231.5065,
+                    "z": 833.157
+                },
+                {
+                    "x": 933.3527,
+                    "y": 231.5065,
+                    "z": 841.715
+                },
+                {
+                    "x": 992.9877,
+                    "y": 231.5065,
+                    "z": 707.814
+                },
+                {
+                    "x": 1017.3257,
+                    "y": 231.5065,
+                    "z": 427.922
+                },
+                {
+                    "x": 1038.0137,
+                    "y": 231.5065,
+                    "z": 200.357
+                },
+                {
+                    "x": 1031.9297,
+                    "y": 231.5065,
+                    "z": -30.858
+                },
+                {
+                    "x": 928.4907,
+                    "y": 231.5065,
+                    "z": -85.62
+                },
+                {
+                    "x": 503.7787,
+                    "y": 231.5065,
+                    "z": -89.231
+                }
+            ]
+        },
+        {
+            "name": "DeployCam",
+            "type": "DeployCam",
+            "right": {
+                "x": -4.371139e-08,
+                "y": 0,
+                "z": 1
+            },
+            "up": {
+                "x": 1.0000002,
+                "y": -4.37114e-08,
+                "z": 4.37114e-08
+            },
+            "front": {
+                "x": 4.37114e-08,
+                "y": 1.0000002,
+                "z": 1.9106859e-15
+            },
+            "position": {
+                "x": 572.677,
+                "y": 462.141,
+                "z": 351.119
+            },
+            "id": "Camera3D/DeployCam",
+            "ObjId": 0
+        },
+        {
+            "name": "AreaTrigger_ControlZone_1_1",
+            "ObjId": 900,
+            "Area": "PolygonVolume_ControlZone_1_1",
+            "type": "AreaTrigger",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 903.1109,
+                "y": 228.33812,
+                "z": 203.79422
+            },
+            "id": "AreaTrigger_ControlZone_1_1",
+            "linked": [
+                "Area"
+            ]
+        },
+        {
+            "name": "CapturePoint_ControlZone_1_1",
+            "FlagPoleSize": "High",
+            "ObjId": 9000,
+            "OutlineHeightMultiplier": 5,
+            "OutlineAbove16Points": true,
+            "TacticalAdviceAirVehicleFriendly": true,
+            "CaptureArea": "PolygonVolume_ControlZone_1_1",
+            "type": "CapturePoint",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 922.669,
+                "y": 234.29414,
+                "z": 209.71988
+            },
+            "id": "CapturePoint_ControlZone_1_1",
+            "linked": [
+                "CaptureArea"
+            ]
+        },
+        {
+            "name": "WorldIcon_ControlZone_1_1",
+            "ObjId": 903,
+            "IconStringKey": "ControlZone",
+            "iconTextVisible": true,
+            "iconImagePicker": "Flag",
+            "iconImageVisible": true,
+            "type": "WorldIcon",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 903.15106,
+                "y": 231.49461,
+                "z": 203.71312
+            },
+            "id": "WorldIcon_ControlZone_1_1"
+        },
+        {
+            "name": "PolygonVolume_ControlZone_1_1",
+            "type": "PolygonVolume",
+            "id": "PolygonVolume_ControlZone_1_1",
+            "height": 50,
+            "points": [
+                {
+                    "x": 826.498354,
+                    "y": 195,
+                    "z": 260.967043
+                },
+                {
+                    "x": 845.55182,
+                    "y": 195,
+                    "z": 261.098666
+                },
+                {
+                    "x": 913.979861,
+                    "y": 195,
+                    "z": 294.24616
+                },
+                {
+                    "x": 944.174578,
+                    "y": 195,
+                    "z": 298.164614
+                },
+                {
+                    "x": 973.544375,
+                    "y": 195,
+                    "z": 285.89535
+                },
+                {
+                    "x": 984.7312,
+                    "y": 195,
+                    "z": 265.881533
+                },
+                {
+                    "x": 984.93787,
+                    "y": 195,
+                    "z": 239.559146
+                },
+                {
+                    "x": 973.668154,
+                    "y": 195,
+                    "z": 208.443728
+                },
+                {
+                    "x": 976.7992,
+                    "y": 195,
+                    "z": 179.116046
+                },
+                {
+                    "x": 976.22083,
+                    "y": 195,
+                    "z": 151.11829
+                },
+                {
+                    "x": 944.987368,
+                    "y": 195,
+                    "z": 124.9848
+                },
+                {
+                    "x": 813.31049,
+                    "y": 195,
+                    "z": 121.77961
+                },
+                {
+                    "x": 800.35242,
+                    "y": 195,
+                    "z": 130.8506
+                },
+                {
+                    "x": 803.25086,
+                    "y": 195,
+                    "z": 153.79488
+                },
+                {
+                    "x": 814.40204,
+                    "y": 195,
+                    "z": 172.95412
+                },
+                {
+                    "x": 829.33814,
+                    "y": 195,
+                    "z": 186.818163
+                },
+                {
+                    "x": 825.6814,
+                    "y": 195,
+                    "z": 198.701754
+                }
+            ]
+        },
+        {
+            "name": "AreaTrigger_HotZone_1_1",
+            "ObjId": 901,
+            "Area": "PolygonVolume_HotZone_1_1",
+            "type": "AreaTrigger",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 926.4123,
+                "y": 224.99324,
+                "z": 236.66345
+            },
+            "id": "AreaTrigger_HotZone_1_1",
+            "linked": [
+                "Area"
+            ]
+        },
+        {
+            "name": "CapturePoint_HotZone_1_1",
+            "FlagPoleSize": "Interior",
+            "ObjId": 9001,
+            "OutlineHeightMultiplier": 5,
+            "CameraRotationDirection": 1,
+            "CameraFOV": 80,
+            "TacticalAdviceAirVehicleFriendly": true,
+            "OutlineShape": "Circle",
+            "CaptureArea": "PolygonVolume_HotZone_1_1",
+            "type": "CapturePoint",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 926.3205,
+                "y": 227.51173,
+                "z": 236.55618
+            },
+            "id": "CapturePoint_HotZone_1_1",
+            "linked": [
+                "CaptureArea"
+            ]
+        },
+        {
+            "name": "WorldIcon_HotZone_1_1",
+            "ObjId": 902,
+            "IconStringKey": "HotZone",
+            "iconTextVisible": true,
+            "iconImagePicker": "DangerPing",
+            "iconImageVisible": true,
+            "type": "WorldIcon",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 926.4122,
+                "y": 228.10168,
+                "z": 236.85188
+            },
+            "id": "WorldIcon_HotZone_1_1"
+        },
+        {
+            "name": "PolygonVolume_HotZone_1_1",
+            "type": "PolygonVolume",
+            "id": "PolygonVolume_HotZone_1_1",
+            "height": 50,
+            "points": [
+                {
+                    "x": 912.235654,
+                    "y": 195,
+                    "z": 251.305853
+                },
+                {
+                    "x": 937.372189,
+                    "y": 195,
+                    "z": 253.903416
+                },
+                {
+                    "x": 944.536192,
+                    "y": 195,
+                    "z": 233.0571801
+                },
+                {
+                    "x": 930.5756197,
+                    "y": 195,
+                    "z": 216.780812
+                },
+                {
+                    "x": 908.420347,
+                    "y": 195,
+                    "z": 225.722738
+                }
+            ]
+        },
+        {
+            "name": "TowerSector_1_1",
+            "ObjId": 3001,
+            "SectorArea": "PolygonVolume_Tower_1_1",
+            "type": "Sector",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 835.36444,
+                "y": 201.48186,
+                "z": 254.90555
+            },
+            "id": "TowerSector_1_1",
+            "linked": [
+                "SectorArea"
+            ]
+        },
+        {
+            "name": "SandBags_01_256x120",
+            "ObjId": 3,
+            "type": "SandBags_01_256x120",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 842.0803213,
+                "y": 201.59616359,
+                "z": 249.2817097
+            },
+            "id": "TowerSector_1_1/SandBags_01_256x120"
+        },
+        {
+            "name": "SandBags_01_256x180_DDPF",
+            "ObjId": 4,
+            "type": "SandBags_01_256x180_DDPF",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 831.0997916,
+                "y": 201.57889064,
+                "z": 260.7880573
+            },
+            "id": "TowerSector_1_1/SandBags_01_256x180_DDPF"
+        },
+        {
+            "name": "SandBags_01_C90_B",
+            "ObjId": 5,
+            "type": "SandBags_01_C90_B",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 841.7384634,
+                "y": 201.57771571,
+                "z": 260.844515
+            },
+            "id": "TowerSector_1_1/SandBags_01_C90_B"
+        },
+        {
+            "name": "SandBags_01_256x120_DDPF",
+            "ObjId": 6,
+            "type": "SandBags_01_256x120_DDPF",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 833.0938712,
+                "y": 201.59109767,
+                "z": 247.7494984
+            },
+            "id": "TowerSector_1_1/SandBags_01_256x120_DDPF"
+        },
+        {
+            "name": "SandBagsEnd_01_192x120",
+            "ObjId": 7,
+            "type": "SandBagsEnd_01_192x120",
+            "right": {
+                "x": -4.371139e-08,
+                "y": 0,
+                "z": -1
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 1,
+                "y": 0,
+                "z": -4.371139e-08
+            },
+            "position": {
+                "x": 844.384582,
+                "y": 201.60934718,
+                "z": 258.2055073
+            },
+            "id": "TowerSector_1_1/SandBagsEnd_01_192x120"
+        },
+        {
+            "name": "SandBagsEnd_01_192x121",
+            "ObjId": 8,
+            "type": "SandBagsEnd_01_192x120",
+            "right": {
+                "x": -1,
+                "y": 0,
+                "z": -8.742278e-08
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 8.742278e-08,
+                "y": 0,
+                "z": -1
+            },
+            "position": {
+                "x": 841.6537466,
+                "y": 201.6138943,
+                "z": 260.124117
+            },
+            "id": "TowerSector_1_1/SandBagsEnd_01_192x121"
+        },
+        {
+            "name": "SandBagsPileStraight_01_128",
+            "ObjId": 9,
+            "type": "SandBagsPileStraight_01_128",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 841.998534,
+                "y": 201.58838161,
+                "z": 254.478899
+            },
+            "id": "TowerSector_1_1/SandBagsPileStraight_01_128"
+        },
+        {
+            "name": "SandBagsPileStraight_01_256_A",
+            "ObjId": 1,
+            "type": "SandBagsPileStraight_01_256_A",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 834.0709219,
+                "y": 201.60418971,
+                "z": 255.03361702
+            },
+            "id": "TowerSector_1_1/SandBagsPileStraight_01_256_A"
+        },
+        {
+            "name": "SandBagsPlatform_01_320x60",
+            "ObjId": 2,
+            "type": "SandBagsPlatform_01_320x60",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 834.92748932,
+                "y": 201.57814296,
+                "z": 253.6688404
+            },
+            "id": "TowerSector_1_1/SandBagsPlatform_01_320x60"
+        },
+        {
+            "name": "PolygonVolume_Tower_1_1",
+            "type": "PolygonVolume",
+            "id": "PolygonVolume_Tower_1_1",
+            "height": 0,
+            "points": [
+                {
+                    "x": 826.074134,
+                    "y": 197.29128,
+                    "z": 247.425172
+                },
+                {
+                    "x": 825.465797,
+                    "y": 197.29128,
+                    "z": 260.181245
+                },
+                {
+                    "x": 844.520789,
+                    "y": 197.29128,
+                    "z": 260.9490672
+                },
+                {
+                    "x": 844.549659,
+                    "y": 197.29128,
+                    "z": 249.6456767
+                },
+                {
+                    "x": 841.9026863,
+                    "y": 197.29128,
+                    "z": 247.9975444
+                },
+                {
+                    "x": 842.1460335,
+                    "y": 197.29128,
+                    "z": 243.196351
+                },
+                {
+                    "x": 836.3981087,
+                    "y": 197.29128,
+                    "z": 243.113786
+                },
+                {
+                    "x": 836.2687142,
+                    "y": 197.29128,
+                    "z": 247.158891
+                }
+            ]
+        },
+        {
+            "name": "CapturePoint_A_1",
+            "ObjId": 1001,
+            "CaptureArea": "PolygonVolume_CapturePoint_A_1",
+            "type": "CapturePoint",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 648.9673,
+                "y": 151.6513,
+                "z": 297.27927
+            },
+            "id": "CapturePoint_A_1",
+            "linked": [
+                "CaptureArea"
+            ]
+        },
+        {
+            "name": "PolygonVolume_CapturePoint_A_1",
+            "type": "PolygonVolume",
+            "id": "PolygonVolume_CapturePoint_A_1",
+            "height": 0,
+            "points": [
+                {
+                    "x": 618.77759,
+                    "y": 146.85754,
+                    "z": 276.310634
+                },
+                {
+                    "x": 619.01575,
+                    "y": 146.85754,
+                    "z": 316.636867
+                },
+                {
+                    "x": 680.999088,
+                    "y": 146.85754,
+                    "z": 316.056331
+                },
+                {
+                    "x": 679.515507,
+                    "y": 146.85754,
+                    "z": 270.597255
+                },
+                {
+                    "x": 631.75623,
+                    "y": 146.85754,
+                    "z": 270.355586
+                },
+                {
+                    "x": 631.121586,
+                    "y": 146.85754,
+                    "z": 276.026698
+                }
+            ]
+        },
+        {
+            "name": "CapturePoint_B_1",
+            "ObjId": 2001,
+            "CaptureArea": "PolygonVolume_CapturePoint_B_1",
+            "type": "CapturePoint",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 543.98956,
+                "y": 152.00696,
+                "z": 482.61975
+            },
+            "id": "CapturePoint_B_1",
+            "linked": [
+                "CaptureArea"
+            ]
+        },
+        {
+            "name": "PolygonVolume_CapturePoint_B_1",
+            "type": "PolygonVolume",
+            "id": "PolygonVolume_CapturePoint_B_1",
+            "height": 0,
+            "points": [
+                {
+                    "x": 510.76463,
+                    "y": 143.8365,
+                    "z": 462.553045
+                },
+                {
+                    "x": 511.437758,
+                    "y": 143.8365,
+                    "z": 507.122686
+                },
+                {
+                    "x": 569.975996,
+                    "y": 143.8365,
+                    "z": 506.875127
+                },
+                {
+                    "x": 570.837447,
+                    "y": 143.8365,
+                    "z": 462.549291
+                }
+            ]
+        },
+        {
+            "name": "VehicleSpawner_AH64_101",
+            "ObjId": 101,
+            "VehicleType": "AH64",
+            "P_ApplyDamageToAbandonVehicle": false,
+            "P_TimeUntilAbandon": 100,
+            "P_KeepAliveAbandonRadius": 100,
+            "P_KeepAliveSpawnerRadius": 100,
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 677.2967,
+                "y": 154.78627,
+                "z": 233.51106
+            },
+            "id": "VehicleSpawner_AH64_101"
+        },
+        {
+            "name": "VehicleSpawner_UH60_102",
+            "ObjId": 102,
+            "VehicleType": "UH60",
+            "P_ApplyDamageToAbandonVehicle": false,
+            "P_TimeUntilAbandon": 100,
+            "P_KeepAliveAbandonRadius": 100,
+            "P_KeepAliveSpawnerRadius": 100,
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 662.33997,
+                "y": 154.93114,
+                "z": 215.86104
+            },
+            "id": "VehicleSpawner_UH60_102"
+        },
+        {
+            "name": "VehicleSpawner_ATV_103",
+            "ObjId": 103,
+            "VehicleType": "Quadbike",
+            "P_ApplyDamageToAbandonVehicle": false,
+            "P_TimeUntilAbandon": 100,
+            "P_KeepAliveAbandonRadius": 100,
+            "P_KeepAliveSpawnerRadius": 100,
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 670.00793,
+                "y": 154.73611,
+                "z": 224.81044
+            },
+            "id": "VehicleSpawner_ATV_103"
+        },
+        {
+            "name": "VehicleSpawner_Bike_104",
+            "ObjId": 104,
+            "VehicleType": "DirtBike",
+            "P_AutoSpawnEnabled": true,
+            "P_ApplyDamageToAbandonVehicle": false,
+            "P_TimeUntilAbandon": 100,
+            "P_KeepAliveAbandonRadius": 100,
+            "P_KeepAliveSpawnerRadius": 100,
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 514.59467,
+                "y": 171.93022,
+                "z": -15.392408
+            },
+            "id": "VehicleSpawner_Bike_104"
+        },
+        {
+            "name": "VehicleSpawner_Bike_0_2",
+            "ObjId": 104,
+            "VehicleType": "DirtBike",
+            "P_AutoSpawnEnabled": true,
+            "P_ApplyDamageToAbandonVehicle": false,
+            "P_TimeUntilAbandon": 100,
+            "P_KeepAliveAbandonRadius": 100,
+            "P_KeepAliveSpawnerRadius": 100,
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 443.17566,
+                "y": 156.72272,
+                "z": 83.58489
+            },
+            "id": "VehicleSpawner_Bike_0_2"
+        },
+        {
+            "name": "VehicleSpawner_Bike_0_3",
+            "ObjId": 104,
+            "VehicleType": "DirtBike",
+            "P_AutoSpawnEnabled": true,
+            "P_ApplyDamageToAbandonVehicle": false,
+            "P_TimeUntilAbandon": 100,
+            "P_KeepAliveAbandonRadius": 100,
+            "P_KeepAliveSpawnerRadius": 100,
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 433.86523,
+                "y": 152.04486,
+                "z": 125.57636
+            },
+            "id": "VehicleSpawner_Bike_0_3"
+        },
+        {
+            "name": "VehicleSpawner_Bike_0_4",
+            "ObjId": 104,
+            "VehicleType": "DirtBike",
+            "P_AutoSpawnEnabled": true,
+            "P_ApplyDamageToAbandonVehicle": false,
+            "P_TimeUntilAbandon": 100,
+            "P_KeepAliveAbandonRadius": 100,
+            "P_KeepAliveSpawnerRadius": 100,
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 559.914,
+                "y": 145.93492,
+                "z": 324.84735
+            },
+            "id": "VehicleSpawner_Bike_0_4"
+        },
+        {
+            "name": "VehicleSpawner_Bike_0_5",
+            "ObjId": 104,
+            "VehicleType": "DirtBike",
+            "P_AutoSpawnEnabled": true,
+            "P_ApplyDamageToAbandonVehicle": false,
+            "P_TimeUntilAbandon": 100,
+            "P_KeepAliveAbandonRadius": 100,
+            "P_KeepAliveSpawnerRadius": 100,
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 542.5015,
+                "y": 149.30667,
+                "z": 286.19778
+            },
+            "id": "VehicleSpawner_Bike_0_5"
+        },
+        {
+            "name": "VehicleSpawner_Bike_3_4",
+            "VehicleType": "DirtBike",
+            "P_AutoSpawnEnabled": true,
+            "P_ApplyDamageToAbandonVehicle": false,
+            "P_TimeUntilAbandon": 100,
+            "P_KeepAliveAbandonRadius": 100,
+            "P_KeepAliveSpawnerRadius": 100,
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 315.07285,
+                "y": 128.83698,
+                "z": 503.72873
+            },
+            "id": "VehicleSpawner_Bike_3_4"
+        },
+        {
+            "name": "VehicleSpawner_Bike_3_1",
+            "VehicleType": "DirtBike",
+            "P_AutoSpawnEnabled": true,
+            "P_ApplyDamageToAbandonVehicle": false,
+            "P_TimeUntilAbandon": 100,
+            "P_KeepAliveAbandonRadius": 100,
+            "P_KeepAliveSpawnerRadius": 100,
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 277.9281,
+                "y": 128.83698,
+                "z": 522.59375
+            },
+            "id": "VehicleSpawner_Bike_3_1"
+        },
+        {
+            "name": "VehicleSpawner_Bike_3_2",
+            "VehicleType": "DirtBike",
+            "P_AutoSpawnEnabled": true,
+            "P_ApplyDamageToAbandonVehicle": false,
+            "P_TimeUntilAbandon": 100,
+            "P_KeepAliveAbandonRadius": 100,
+            "P_KeepAliveSpawnerRadius": 100,
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 275.8166,
+                "y": 128.83698,
+                "z": 525.25244
+            },
+            "id": "VehicleSpawner_Bike_3_2"
+        },
+        {
+            "name": "VehicleSpawner_Bike_3_3",
+            "VehicleType": "DirtBike",
+            "P_AutoSpawnEnabled": true,
+            "P_ApplyDamageToAbandonVehicle": false,
+            "P_TimeUntilAbandon": 100,
+            "P_KeepAliveAbandonRadius": 100,
+            "P_KeepAliveSpawnerRadius": 100,
+            "type": "VehicleSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 273.47708,
+                "y": 128.83698,
+                "z": 527.94934
+            },
+            "id": "VehicleSpawner_Bike_3_3"
+        },
+        {
+            "name": "AI_Spawner",
+            "ObjId": 401,
+            "type": "AI_Spawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 878.861,
+                "y": 227.52235,
+                "z": 178.41484
+            },
+            "id": "AI_Spawner"
+        },
+        {
+            "name": "OfficeBuilding_02",
+            "ObjId": 51,
+            "type": "OfficeBuilding_02",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 1.0331603e-07
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -1.0331603e-07,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 835.2352,
+                "y": 195.15503,
+                "z": 254.19629
+            },
+            "id": "OfficeBuilding_02"
+        },
+        {
+            "name": "MilitaryBuildingSign_01",
+            "type": "MilitaryBuildingSign_01",
+            "right": {
+                "x": -4.371139e-08,
+                "y": 0,
+                "z": -1
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 1,
+                "y": 0,
+                "z": -4.371139e-08
+            },
+            "position": {
+                "x": 844.96173,
+                "y": 199.97491,
+                "z": 252.3371
+            },
+            "id": "MilitaryBuildingSign_01"
+        },
+        {
+            "name": "MilitaryBuildingSign_03",
+            "type": "MilitaryBuildingSign_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 829.10834,
+                "y": 200.97491,
+                "z": 261.4474
+            },
+            "id": "MilitaryBuildingSign_03"
+        },
+        {
+            "name": "MilitaryBuildingSign_02",
+            "type": "MilitaryBuildingSign_01",
+            "right": {
+                "x": -4.371139e-08,
+                "y": 0,
+                "z": -1
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 1,
+                "y": 0,
+                "z": -4.371139e-08
+            },
+            "position": {
+                "x": 825.9097,
+                "y": 200.97491,
+                "z": 249.75916
+            },
+            "id": "MilitaryBuildingSign_02"
+        },
+        {
+            "name": "CurbRamp_01_1024",
+            "type": "CurbRamp_01_1024",
+            "right": {
+                "x": 0.009040286,
+                "y": 0.00480326,
+                "z": -0.99994725
+            },
+            "up": {
+                "x": 0.5000411,
+                "y": -0.86600184,
+                "z": 0.00036090147
+            },
+            "front": {
+                "x": -0.86595476,
+                "y": -0.500018,
+                "z": -0.010230726
+            },
+            "position": {
+                "x": 466.64688,
+                "y": 151.29617,
+                "z": 148.32782
+            },
+            "id": "CurbRamp_01_1024"
+        },
+        {
+            "name": "CarRamp_01_NBRK",
+            "type": "CarRamp_01_NBRK",
+            "right": {
+                "x": 0.99969894,
+                "y": -1.1632968e-09,
+                "z": 0.024536874
+            },
+            "up": {
+                "x": -0.006350607,
+                "y": 0.9659258,
+                "z": 0.25874123
+            },
+            "front": {
+                "x": -0.02370079,
+                "y": -0.25881904,
+                "z": 0.9656353
+            },
+            "position": {
+                "x": 449.8196,
+                "y": 152.18295,
+                "z": 113.0101
+            },
+            "id": "CarRamp_01_NBRK"
+        },
+        {
+            "name": "CurbStraight_01_256_Ramp",
+            "type": "CurbStraight_01_256_Ramp",
+            "right": {
+                "x": -1.6548214,
+                "y": -1.1223472,
+                "z": -0.04362235
+            },
+            "up": {
+                "x": -1.1219575,
+                "y": 1.6553962,
+                "z": -0.02957553
+            },
+            "front": {
+                "x": 0.052703142,
+                "y": 9.811873e-08,
+                "z": -1.9993055
+            },
+            "position": {
+                "x": 431.2513,
+                "y": 152.8031,
+                "z": 105.08008
+            },
+            "id": "CurbStraight_01_256_Ramp"
+        },
+        {
+            "name": "BarrackStair_01",
+            "type": "BarrackStair_01",
+            "right": {
+                "x": -4.371139e-08,
+                "y": 0,
+                "z": -1
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 1,
+                "y": 0,
+                "z": -4.371139e-08
+            },
+            "position": {
+                "x": 844.6694,
+                "y": 196.92664,
+                "z": 259.04297
+            },
+            "id": "BarrackStair_01"
+        },
+        {
+            "name": "BarrackStair_02",
+            "type": "BarrackStair_01",
+            "right": {
+                "x": -4.2618606e-08,
+                "y": 0,
+                "z": 0.975
+            },
+            "up": {
+                "x": 0,
+                "y": 0.975,
+                "z": 0
+            },
+            "front": {
+                "x": -0.975,
+                "y": 0,
+                "z": -4.2618606e-08
+            },
+            "position": {
+                "x": 822.64185,
+                "y": 196.32324,
+                "z": 248.99707
+            },
+            "id": "BarrackStair_02"
+        }
+    ],
+    "Static": [
+        {
+            "name": "MP_Granite_MilitaryStorage_Portal_Terrain",
+            "type": "MP_Granite_MilitaryStorage_Portal_Terrain",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "id": "Static/MP_Granite_MilitaryStorage_Portal_Terrain"
+        },
+        {
+            "name": "MP_Granite_MilitaryStorage_Portal_Assets",
+            "type": "MP_Granite_MilitaryStorage_Portal_Assets",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "id": "Static/MP_Granite_MilitaryStorage_Portal_Assets"
+        }
+    ]
+}

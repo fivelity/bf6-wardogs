@@ -1,0 +1,56 @@
+{
+  "shop_header_title": "WARDOGS HQ ACQUISITIONS",
+  "shop_header_subtitle": "CLASS-FREE PROCUREMENT SUITE",
+  "shop_close_label": "CLOSE PROTOCOL [ESC]",
+  "shop_purchase_loadout": "PURCHASE LOADOUT",
+  "shop_purchase_gear": "PURCHASE GEAR",
+  "shop_unassigned": "UNASSIGNED CARD SLOT",
+  "shop_acquisition_details": "ACQUISITION DETAILS",
+  "shop_default_desc": "Select an item on the grid to inspect tactical specifications and checkout cost modifications.",
+  "shop_required_track": "Required Mastery Track",
+  "shop_standard_price": "STANDARD PRICE BASE",
+  
+  "shop_wallet_fmt": "PMC BALANCE: ${}",
+  "shop_penalty_fmt": "PENALTY: ${}",
+  "shop_base_price_fmt": "BASE PRICE: ${}",
+  "shop_surcharged_fmt": "SURCHARGED: ${}",
+  "shop_pool_action_fmt": "POOL ${} / ${}",
+  "shop_track_progress_fmt": "Required: {} (Tier {})\\nYour Level: Tier {}",
+  
+  "shop_coop_upgrade_desc": "COOPERATIVE UPGRADE:\\nTeammates can pool resources to build stationary defenses. Upgrades persist on capture sectors.",
+  "shop_tactical_equip_desc": "TACTICAL EQUIPMENT:\\nType: {}\\nUnlocks configuration loadout instantly.",
+  "shop_no_cash_contrib": "You have no cash to contribute!",
+  "shop_coop_contrib_success": "CO-OP UPGRADE: Contributed ${}! Total: ${}/${}",
+  "shop_insufficient_funds": "Insolvent! Insufficient funds to buy loadout.",
+  "shop_acquisition_success": "Acquisition Success: Loadout Issued! -${}",
+  "shop_pooled_completed": "COOPERATIVE UNLOCK: {} has been fully funded!",
+
+  "tabs": {
+    "ASSAULT": "Assault",
+    "MEDIC": "Medic",
+    "RECON": "Recon",
+    "SUPPORT": "Support",
+    "LOGISTICS": "Logistics",
+    "FOBUPGRADES": "F.O.B. Upgrades"
+  },
+
+  "items": {
+    "carbine_tier1_name": "AK-205 Combat Carbine",
+    "carbine_tier1_desc": "Tier 1 Assault Carbine chambered in 5.45x39mm. Standard iron sights with a lightweight stock, offering high handling speed in close combat.",
+    
+    "m4a1_tier3_name": "M4A1 Standard Tactical",
+    "m4a1_tier3_desc": "Tier 3 Assault Rifle customized with a 1p87 red-dot sight, custom muzzle brake, and vertical underbarrel grip-pod for superior recoil control.",
+    
+    "m4a1_tier5_name": "M4A1 Tungsten Special",
+    "m4a1_tier5_desc": "Tier 5 Elite Carbine featuring a high-magnification R4T optic, tactical suppressor, and armor-piercing Tungsten-core ammunition.",
+    
+    "medic_box_name": "Medical Supply Crate",
+    "medic_box_desc": "Deployable field clinic providing rapid radius-based health regeneration and emergency trauma kits for nearby friendly contractors.",
+    
+    "beacon_beacon_name": "Squad Insertion Beacon",
+    "beacon_beacon_desc": "Tactical transmitter allowing squad members to deploy dynamically from low-altitude air insertions directly over key objectives.",
+    
+    "fort_aa_spawner_name": "GDF009 Stationary AA",
+    "fort_aa_spawner_desc": "Cooperative tactical emplacement. High-rate twin 35mm cannons designed to establish total airspace denial over FOB Alpha."
+  }
+}
