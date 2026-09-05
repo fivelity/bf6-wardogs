@@ -1,4 +1,4 @@
-// src/features/scoreboard/score-updater.ts
+// src/features/interface/scoreboard.ts
 import { SolidUI } from "bf6-portal-utils/solid-ui";
 import { Events } from "bf6-portal-utils/events";
 import { mercenaryRegistry } from "../progression/profile";
@@ -47,30 +47,32 @@ export class WARDOGSScoreboardUI {
     constructor(player: mod.Player) {
         this.player = player;
         this.playerId = mod.GetObjId(player);
-        this.rootWidget = this.createWidget();
+        this.rootWidget = this.render();
     }
 
     /**
      * Declares the UI widget hierarchy using SolidUI's layout wrappers.
      */
-    private createWidget(): mod.UIWidget {
-        return {
-            type: "Container",
-            name: `WardogsSB_Root_${this.playerId}`,
-            position: [0, 0, 0],
-            size: [1100, 650, 0],
-            anchor: mod.UIAnchor.Center,
-            bgColor: [0.03, 0.03, 0.03],
-            bgAlpha: 0.90,
-            bgFill: mod.UIBgFill.Blur, // Applies native Frostbite background blur
-            visible: false, // Hidden by default, toggled via client key/button hold
-            children: [
-                // --- HEADER SECTION: Faction scores ---
-                this.createFactionHeader(),
-                // --- PLAYER LIST GRID ---
-                this.createPlayerListGrid()
-            ]
-        };
+    private render(): mod.UIWidget {
+        return SolidUI.render(() => {
+            return {
+                type: "Container",
+                name: `WardogsSB_Root_${this.playerId}`,
+                position: [0, 0, 0],
+                size: [1100, 650, 0],
+                anchor: mod.UIAnchor.Center,
+                bgColor: [0.03, 0.03, 0.03],
+                bgAlpha: 0.90,
+                bgFill: mod.UIBgFill.Blur, // Applies native Frostbite background blur
+                visible: false, // Hidden by default, toggled via client key/button hold
+                children: [
+                    // --- HEADER SECTION: Faction scores ---
+                    this.createFactionHeader(),
+                    // --- PLAYER LIST GRID ---
+                    this.createPlayerListGrid()
+                ]
+            };
+        }, this.player);
     }
 
     /**
@@ -158,11 +160,9 @@ export class WARDOGSScoreboardUI {
                     textAnchor: mod.UIAnchor.CenterLeft,
                     anchor: mod.UIAnchor.TopLeft
                 },
-                // Dynamic player rows - using manual mapping instead of SolidUI.For
-                ...Object.keys(scoreboardState.players).map((playerIdStr) => {
-                    const playerId = parseInt(playerIdStr);
-                    const entry = scoreboardState.players[playerId];
-                    return this.renderPlayerRow(entry);
+                // Reactive Loop structures rendered through dynamic JS mapping inside SolidUI
+                SolidUI.For(() => Object.values(scoreboardState.players), (playerEntry: PlayerScoreEntry) => {
+                    return this.renderPlayerRow(playerEntry);
                 })
             ]
         };
@@ -172,7 +172,7 @@ export class WARDOGSScoreboardUI {
      * Renders a single row representing an operative's live statistics.
      */
     private renderPlayerRow(entry: PlayerScoreEntry): any {
-        const factionNames: { [key: number]: string } = { 1: "LONESTAR", 2: "MANTICORE", 3: "VALKYRA" };
+        const factionNames = { 1: "LONESTAR", 2: "MANTICORE", 3: "VALKYRA" };
         const factionColor = this.colors[entry.factionId] || [1, 1, 1];
 
         return {
@@ -293,19 +293,14 @@ export class ScoreboardManager {
             const factionId = mod.GetObjId(playerTeam);
 
             // Register default scoring parameters inside our SolidUI store
-            setScoreboardState({
-                players: {
-                    ...scoreboardState.players,
-                    [playerId]: {
-                        playerId,
-                        name: "Unknown", // TODO: Implement player name retrieval
-                        factionId,
-                        cash: 10000, // Starts with standard PMC balance
-                        kills: 0,
-                        deaths: 0,
-                        fobAssetsBuilt: 0
-                    }
-                }
+            setScoreboardState("players", playerId, {
+                playerId,
+                name: mod.GetPlayerName(player),
+                factionId,
+                cash: 10000, // Starts with standard PMC balance
+                kills: 0,
+                deaths: 0,
+                fobAssetsBuilt: 0
             });
 
             // Construct overlay
@@ -316,11 +311,11 @@ export class ScoreboardManager {
         // Operative Leaves Game -> Cleanup state to protect server memory
         Events.OnPlayerLeaveGame.subscribe((player) => {
             const playerId = mod.GetObjId(player);
-
+            
             // Delete player rows dynamically from our store
             const currentPlayers = { ...scoreboardState.players };
             delete currentPlayers[playerId];
-            setScoreboardState({ players: currentPlayers });
+            setScoreboardState("players", currentPlayers);
 
             // Dereference widgets
             this.playerUIs.delete(playerId);
@@ -335,15 +330,7 @@ export class ScoreboardManager {
 
             if (victimEntry) {
                 // Wipe primary weapon and apply stats increment
-                setScoreboardState({
-                    players: {
-                        ...scoreboardState.players,
-                        [victimId]: {
-                            ...victimEntry,
-                            deaths: victimEntry.deaths + 1
-                        }
-                    }
-                });
+                setScoreboardState("players", victimId, "deaths", victimEntry.deaths + 1);
             }
 
             // Clean check for killers
@@ -355,15 +342,10 @@ export class ScoreboardManager {
                     const profile = mercenaryRegistry.get(killerId);
                     const currentCash = profile ? profile.getCash() : killerEntry.cash;
 
-                    setScoreboardState({
-                        players: {
-                            ...scoreboardState.players,
-                            [killerId]: {
-                                ...killerEntry,
-                                kills: killerEntry.kills + 1,
-                                cash: currentCash
-                            }
-                        }
+                    setScoreboardState("players", killerId, {
+                        ...killerEntry,
+                        kills: killerEntry.kills + 1,
+                        cash: currentCash
                     });
                 }
             }
@@ -375,12 +357,7 @@ export class ScoreboardManager {
      */
     public updateFactionScore(factionId: number, score: number): void {
         if (factionId >= 1 && factionId <= 3) {
-            setScoreboardState({
-                factionScores: {
-                    ...scoreboardState.factionScores,
-                    [factionId]: score
-                }
-            });
+            setScoreboardState("factionScores", factionId, score);
         }
     }
 
@@ -395,15 +372,10 @@ export class ScoreboardManager {
             const profile = mercenaryRegistry.get(playerId);
             const currentCash = profile ? profile.getCash() : entry.cash;
 
-            setScoreboardState({
-                players: {
-                    ...scoreboardState.players,
-                    [playerId]: {
-                        ...entry,
-                        fobAssetsBuilt: entry.fobAssetsBuilt + 1,
-                        cash: currentCash
-                    }
-                }
+            setScoreboardState("players", playerId, {
+                ...entry,
+                fobAssetsBuilt: entry.fobAssetsBuilt + 1,
+                cash: currentCash
             });
         }
     }
