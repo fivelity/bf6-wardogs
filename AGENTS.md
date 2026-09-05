@@ -5,6 +5,7 @@
 ## Quick Reference
 - **Game**: WARDOGS — 3-faction tactical King of the Hill
 - **SDK**: BF6 Portal SDK v1.4.2.0 (global `mod` namespace, async event handlers)
+- **SDK Types**: `bf6-portal-mod-types` package contains all available `mod` typings. 
 - **Build**: `pnpm bundle` → flat single-file `dist/portal-bundle.ts`
 - **Validate**: `pnpm validate` before every commit
 - **Deploy**: `pnpm deploy` (requires `.env` present)

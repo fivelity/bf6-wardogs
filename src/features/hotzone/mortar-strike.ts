@@ -81,6 +81,23 @@ export class HotZoneAntiCampingSystem {
         const siren = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_Alarm, centerVec, mod.CreateVector(0, 0, 0));
         mod.EnableSFX(siren, true);
         mod.PlaySound(siren, 1.0); // Global volume sweep [190]
+        
+        // Also play a more dramatic artillery warning sound
+        const warningSfx = mod.SpawnObject(
+            mod.RuntimeSpawn_Common.SFX_UI_Artillery,
+            centerVec,
+            mod.CreateVector(0, 0, 0)
+        );
+        mod.EnableSFX(warningSfx, true);
+        mod.PlaySound(warningSfx, 1.0);
+        
+        // Visual effect for warning
+        const warningVfx = mod.SpawnObject(
+            mod.RuntimeSpawn_Common.FX_UI_Artillery_Warning,
+            centerVec,
+            mod.CreateVector(0, 0, 0)
+        );
+        mod.EnableVFX(warningVfx, true);
     }
 
     private triggerBarrage(): void {
@@ -119,6 +136,15 @@ export class HotZoneAntiCampingSystem {
             mod.EnableSFX(sound, true);
             mod.PlaySound(sound, 1.0);
 
+            // Play a more dramatic artillery sound for the barrage
+            const barrageSfx = mod.SpawnObject(
+                mod.RuntimeSpawn_Common.SFX_UI_Artillery,
+                detonationVec,
+                mod.CreateVector(0, 0, 0)
+            );
+            mod.EnableSFX(barrageSfx, true);
+            mod.PlaySound(barrageSfx, 1.0);
+
             // Apply direct area splash damage to players standing near the impact vector [189]
             mod.AllPlayers().forEach((player) => {
                 if (!mod.GetSoldierState(player, mod.SoldierStateBool.IsAlive)) return;
@@ -145,6 +171,35 @@ export class HotZoneAntiCampingSystem {
         mod.DisplayNotificationMessage(
             mod.Message(messageText)
         );
+    }
+
+    public isZoneContested(): boolean {
+        // Check if the zone currently has multiple factions contesting it
+        const counts = this.getZonePlayers();
+        let activeFactionsCount = 0;
+        
+        for (let teamId = 1; teamId <= 3; teamId++) {
+            if (counts[teamId] > 0) {
+                activeFactionsCount++;
+            }
+        }
+        
+        return activeFactionsCount > 1;
+    }
+
+    public getUncontestedTeam(): number {
+        return this.uncontestedTeamId;
+    }
+
+    /**
+     * AI Integration: Check if the zone is suitable for mortar bombardment based on AI tactics
+     */
+    public shouldTriggerMortarBarrage(aiTeamId: number): boolean {
+        // Check if current zone is uncontested by the AI's team and has been held long enough
+        if (this.uncontestedTeamId === aiTeamId && this.holdTimerRecord[aiTeamId] >= this.CAMPING_THRESHOLD) {
+            return true;
+        }
+        return false;
     }
 
     public shutdown(): void {

@@ -13,6 +13,12 @@ import {
 // Instantiate Core Managers and Systems
 const buyValidator = new BuyValidator();
 const rogueAIManager = new RogueAIManager();
+import { TowerRedirectionSystem } from "./features/hotzone/redirection";
+import { PdaTowerInteractionSystem } from "./features/hotzone/pda-system";
+
+// Global tower redirection system instance
+export let towerRedirectionSystem: TowerRedirectionSystem | null = null;
+export let pdaInteractionSystem: PdaTowerInteractionSystem | null = null;
 
 // Global placeholder for the active HotZone coordinates (defaulted to ControlZone center)
 export let currentHotZonePosition = mod.CreateVector(903.11, 228.33, 203.79);
@@ -42,6 +48,12 @@ export async function OnGameModeStarted(): void {
 
     // Spawn 12 Rogue AI bots on unlisted Team 4 organized into 4 squads of 3
     rogueAIManager.SpawnChaosFactions();
+
+    // Initialize tower redirection system
+    towerRedirectionSystem = new TowerRedirectionSystem();
+    
+    // Initialize PDA interaction system
+    pdaInteractionSystem = new PdaTowerInteractionSystem(towerRedirectionSystem);
 
     // Initialize scoring loop using concurrent Timers to avoid wait blockages
     Timers.setInterval(() => {

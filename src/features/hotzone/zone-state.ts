@@ -118,12 +118,21 @@ export class HotZoneManager {
     private startLoops(): void {
         // 1. HotZone Drift walk loop: updates center position every second [1Hz]
         this.driftTimerId = Timers.setInterval(() => {
-            this.currentHotZonePos = ZoneMath.calculateNextDrift(
-                this.currentHotZonePos,
-                this.innerControlZone,
-                this.driftStepSize,
-                0.15
-            );
+            // Check if redirection is active
+            const redirectTarget = this.getRedirectTargetCoordinates();
+            
+            if (redirectTarget) {
+                // Use redirected target coordinates instead of normal drift
+                this.currentHotZonePos = redirectTarget;
+            } else {
+                // Normal drift behavior
+                this.currentHotZonePos = ZoneMath.calculateNextDrift(
+                    this.currentHotZonePos,
+                    this.innerControlZone,
+                    this.driftStepSize,
+                    0.15
+                );
+            }
 
             this.teleportHotZoneAssets();
         }, 1000);
@@ -132,6 +141,18 @@ export class HotZoneManager {
         this.scoringTimerId = Timers.setInterval(() => {
             this.evaluatePresenceAndAwardTickets();
         }, 4000);
+    }
+
+    /**
+     * Gets the redirection target coordinates if a tower is currently redirecting.
+     * This allows other systems to override normal drift behavior.
+     */
+    private getRedirectTargetCoordinates(): Point2D | null {
+        // Get the redirection target from the global towerRedirectionSystem
+        if (typeof towerRedirectionSystem !== 'undefined' && towerRedirectionSystem !== null) {
+            return towerRedirectionSystem.getRedirectTargetCoordinates();
+        }
+        return null;
     }
 
     /**

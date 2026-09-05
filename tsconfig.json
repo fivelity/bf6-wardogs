@@ -11,8 +11,7 @@
     "module": "ES2015",
     "lib": ["ES2015"],
     "skipLibCheck": true,
-    "ignoreDeprecations": "6.0",
     "types": ["bf6-portal-mod-types"]
   },
-  "include": ["src", "src/mock-server.ts"]
+  "include": ["src/**/*.ts", "src/mock-server.ts"]
 }

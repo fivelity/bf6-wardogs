@@ -7,6 +7,7 @@ export interface VehicleCarcassState {
     position: mod.Vector;
     scrapMaterialsRemaining: number;
     isFullySalvaged: boolean;
+    vehicleType: string; // Added for more comprehensive vehicle type detection
 }
 
 /**
@@ -33,9 +34,45 @@ export class VehicleWreckSalvageSystem {
     }
 
     private registerVehicleCarcassHooks(): void {
-        // Since the engine doesn't have an OnVehicleDestroyed event, we track vehicle deaths 
-        // by evaluating vehicle health or capturing active player vehicle damage callbacks.
-        // As a fail-safe, we can also scan for dead vehicle carcasses inside our 1Hz background sweeper.
+        // Listen for vehicle destruction events to properly track when vehicles are destroyed
+        mod.Events.OnVehicleDestroyed.subscribe((vehicle) => {
+            const vehicleId = mod.GetObjId(vehicle);
+            
+            // Get vehicle position
+            const pos = mod.GetObjectPosition(vehicle);
+            
+            // Determine vehicle type based on its object ID or other characteristics
+            const vehicleType = this.determineVehicleType(vehicleId);
+            
+            // Register the vehicle as a carcass
+            this.carcasses.set(vehicleId, {
+                vehicleObjId: vehicleId,
+                name: "Destroyed Vehicle Husk",
+                position: pos,
+                scrapMaterialsRemaining: this.MAX_SCRAP_PER_VEHICLE,
+                isFullySalvaged: false,
+                vehicleType: vehicleType
+            });
+            
+            console.log(`[WARDOGS SALVAGE] Destroyed vehicle husk registered at: ${mod.XComponentOf(pos)}, ${mod.ZComponentOf(pos)} (Type: ${vehicleType})`);
+        });
+    }
+
+    private determineVehicleType(vehicleId: number): string {
+        // Map vehicle IDs to their types for better identification
+        const vehicleTypes: Record<number, string> = {
+            101: "M1A2 Abrams",
+            102: "F-35 Lightning II",
+            103: "AH-64 Apache",
+            104: "UH-60 Black Hawk",
+            105: "M2A1 Bradley",
+            106: "M1128 Stryker",
+            110: "M109A7 Howitzer",
+            220: "F-15 Eagle",
+            330: "Mi-28 Havoc"
+        };
+        
+        return vehicleTypes[vehicleId] || "Unknown Vehicle";
     }
 
     private startCarcassSweep(): void {
@@ -116,6 +153,14 @@ export class VehicleWreckSalvageSystem {
         mod.EnableSFX(hitSFX, true);
         mod.PlaySound(hitSFX, 1.0);
 
+        // Spawn visual effect at the salvage location for feedback
+        const salvageEffect = mod.SpawnObject(
+            mod.RuntimeSpawn_Common.FX_Misc_Explosion_Smoke_GS,
+            carcass.position,
+            mod.CreateVector(0, 0, 0)
+        );
+        mod.EnableVFX(salvageEffect, true);
+
         // Resolve closest captured FOB sector to dump materials into
         const nearestSectorId = this.findNearestFobSector(carcass.position);
         
@@ -131,6 +176,14 @@ export class VehicleWreckSalvageSystem {
         if (carcass.scrapMaterialsRemaining <= 0) {
             carcass.isFullySalvaged = true;
             console.log(`[WARDOGS SALVAGE] Wreck carcass ${carcass.vehicleObjId} fully salvaged.`);
+            
+            // Show special visual effect for full salvage
+            const fullSalvageEffect = mod.SpawnObject(
+                mod.RuntimeSpawn_Common.FX_Misc_Explosion_Large_GS,
+                carcass.position,
+                mod.CreateVector(0, 0, 0)
+            );
+            mod.EnableVFX(fullSalvageEffect, true);
             
             mod.DisplayNotificationMessage(
                 mod.Message("WRECK DEPLETED: All structural scrap metal has been completely salvaged!"),

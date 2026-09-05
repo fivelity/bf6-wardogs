@@ -257,7 +257,7 @@ The `index.ts` file is the central nervous system of the mod. It binds the featu
 **Implementation Specification:** `**index.ts**`
 
 ```typescript
-import { Events } from "bf6-portal-utils";
+import { Events } from "bf6-portal-utils/events";
 import { mercenaryRegistry } from "./features/progression/profile";
 
 let teamScores = { 1: 0, 2: 0, 3: 0 };

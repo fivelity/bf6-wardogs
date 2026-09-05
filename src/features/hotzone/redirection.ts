@@ -12,6 +12,7 @@ export interface RadioTowerState {
     decryptionProgress: Record<number, number>; // TeamId -> Progress (0 to 100%)
     isRedirecting: boolean;
     redirectTimeRemaining: number; // Duration of HotZone lock in seconds
+    visualIndicator?: mod.WorldIcon; // Added for visual tower state indicators
 }
 
 /**
@@ -48,7 +49,8 @@ export class TowerRedirectionSystem {
                 controllingTeam: 0, // 0 = Neutral
                 decryptionProgress: { 1: 0, 2: 0, 3: 0 },
                 isRedirecting: false,
-                redirectTimeRemaining: 0
+                redirectTimeRemaining: 0,
+                visualIndicator: undefined
             });
         }
 
@@ -63,6 +65,9 @@ export class TowerRedirectionSystem {
 
                 console.log(`[WARDOGS TOWERS] ${tower.name} captured by Faction ${teamId}`);
                 
+                // Update visual indicator based on faction
+                this.updateTowerVisualIndicator(tower);
+                
                 // Alert the capturing team
                 mod.DisplayNotificationMessage(
                     mod.Message(`TOWER CONNECTED: ${tower.name} is now uploading decryption keys!`),
@@ -71,6 +76,49 @@ export class TowerRedirectionSystem {
                 );
             }
         });
+        
+        // Initialize visual indicators for towers
+        this.initializeTowerVisualIndicators();
+    }
+    
+    private initializeTowerVisualIndicators(): void {
+        // Create world icons to visualize tower states
+        this.towers.forEach((tower) => {
+            const iconPos = ZoneMath.toModVector(tower.position, 230.0); // Slightly above ground
+            
+            // Create a visual indicator for the tower
+            tower.visualIndicator = mod.SpawnWorldIcon(
+                mod.RuntimeSpawn_Common.WorldIcon_Tower, // Use appropriate icon type
+                iconPos,
+                mod.CreateVector(0, 0, 0)
+            );
+            
+            // Set initial visual state
+            this.updateTowerVisualIndicator(tower);
+        });
+    }
+    
+    private updateTowerVisualIndicator(tower: RadioTowerState): void {
+        if (!tower.visualIndicator) return;
+        
+        // Update icon based on tower's state
+        let iconType = mod.RuntimeSpawn_Common.WorldIcon_Tower; // Default neutral
+        
+        if (tower.controllingTeam === 1) {
+            iconType = mod.RuntimeSpawn_Common.WorldIcon_Tower_Lonestar;
+        } else if (tower.controllingTeam === 2) {
+            iconType = mod.RuntimeSpawn_Common.WorldIcon_Tower_Manticore;
+        } else if (tower.controllingTeam === 3) {
+            iconType = mod.RuntimeSpawn_Common.WorldIcon_Tower_Valkyra;
+        }
+        
+        // Update the world icon type
+        mod.SetWorldIconType(tower.visualIndicator, iconType);
+        
+        // If tower is redirecting, show a special indicator
+        if (tower.isRedirecting) {
+            mod.SetWorldIconType(tower.visualIndicator, mod.RuntimeSpawn_Common.WorldIcon_Tower_Redirect);
+        }
     }
 
     private startTowerLifecycle(): void {
@@ -88,6 +136,9 @@ export class TowerRedirectionSystem {
                         mod.DisplayNotificationMessage(
                             mod.Message("REDIRECTION LOCK LOST: HotZone vector has resumed standard randomized drift walk.")
                         );
+                        
+                        // Update visual indicator to show normal state
+                        this.updateTowerVisualIndicator(tower);
                     }
                 }
 
@@ -159,6 +210,9 @@ export class TowerRedirectionSystem {
 
         console.log(`[WARDOGS REDIRECT] Faction ${teamId} has forced satellite redirection to ${tower.name}!`);
         
+        // Update visual indicator to show redirection state
+        this.updateTowerVisualIndicator(tower);
+        
         // Dynamic world announcement
         mod.DisplayNotificationMessage(
             mod.Message(`SATELLITE REDIRECT: HotZone vector has locked onto ${tower.name} coordinates!`)
@@ -178,10 +232,9 @@ export class TowerRedirectionSystem {
      * Queried by the drift loop inside zone-state.ts.
      */
     public getRedirectTargetCoordinates(): Point2D | null {
-        if (this.activeRedirectionTower === null) return null;
-
-        const tower = this.towers.get(this.activeRedirectionTower);
-        return tower ? tower.position : null;
+        return this.activeRedirectionTower ? 
+            this.towers.get(this.activeRedirectionTower)?.position || null : 
+            null;
     }
 
     /**
@@ -191,9 +244,20 @@ export class TowerRedirectionSystem {
         return this.towers.get(towerObjId);
     }
 
+    public getAllTowers(): Map<number, RadioTowerState> {
+        return this.towers;
+    }
+
     public shutdown(): void {
         if (this.tickTimerId) {
             Timers.clearInterval(this.tickTimerId);
         }
+        
+        // Clean up visual indicators
+        this.towers.forEach((tower) => {
+            if (tower.visualIndicator) {
+                mod.DestroyWorldIcon(tower.visualIndicator);
+            }
+        });
     }
 }
