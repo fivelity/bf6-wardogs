@@ -85,7 +85,7 @@ export class VehicleWreckSalvageSystem {
             for (const objId of activeVehicleObjIds) {
                 try {
                     const vehicle = mod.GetVehicle(objId);
-                    if (vehicle && !mod.GetVehicleState(vehicle, mod.VehicleStateBool.IsAlive)) {
+                    if (vehicle && !mod.GetVehicleState(vehicle, mod.VehicleStateVector.IsAlive)) {
                         // If vehicle is dead/destroyed and not yet registered as a carcass
                         if (!this.carcasses.has(objId)) {
                             const pos = mod.GetObjectPosition(vehicle);
@@ -116,7 +116,7 @@ export class VehicleWreckSalvageSystem {
             if (!mod.GetSoldierState(player, mod.SoldierStateBool.IsAlive)) return;
 
             // Step A: Ensure player is holding their Sledgehammer and swinging/firing [188]
-            const isHoldingMelee = mod.HasEquipment(player, mod.Weapons.Melee_Sledgehammer) &&
+            const isHoldingMelee = mod.HasEquipment(player, mod.Gadgets.Melee_Sledgehammer) &&
                                    mod.GetSoldierState(player, mod.SoldierStateBool.IsFiring);
 
             if (!isHoldingMelee) return;
@@ -146,16 +146,16 @@ export class VehicleWreckSalvageSystem {
         
         // Play metallic thucking impact sound effect natively [166]
         const hitSFX = mod.SpawnObject(
-            mod.RuntimeSpawn_Common.SFX_Search_Core_Kit, // Standard heavy foley click [166]
+            mod.RuntimeSpawn_Common.SFX_UI_Gauntlet_Rodeo_TanksLockerUnlocking_OneShot2D, // Standard heavy foley click [166]
             carcass.position,
             mod.CreateVector(0, 0, 0)
         );
-        mod.EnableSFX(hitSFX, true);
+        mod.EnableVFX(hitSFX, true);
         mod.PlaySound(hitSFX, 1.0);
 
         // Spawn visual effect at the salvage location for feedback
         const salvageEffect = mod.SpawnObject(
-            mod.RuntimeSpawn_Common.FX_Misc_Explosion_Smoke_GS,
+            mod.RuntimeSpawn_Common.FX_BASE_Smoke_Pillar_Black_L,
             carcass.position,
             mod.CreateVector(0, 0, 0)
         );
@@ -179,9 +179,9 @@ export class VehicleWreckSalvageSystem {
             
             // Show special visual effect for full salvage
             const fullSalvageEffect = mod.SpawnObject(
-                mod.RuntimeSpawn_Common.FX_Misc_Explosion_Large_GS,
-                carcass.position,
-                mod.CreateVector(0, 0, 0)
+              mod.RuntimeSpawn_Common.FX_BASE_Smoke_Pillar_White_L,
+              carcass.position,
+              mod.CreateVector(0, 0, 0),
             );
             mod.EnableVFX(fullSalvageEffect, true);
             

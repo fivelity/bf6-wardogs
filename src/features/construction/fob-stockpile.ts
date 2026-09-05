@@ -57,58 +57,80 @@ export class FobLogisticsManager {
 
         // Check if player is carrying a role-defining Logistics Cargo Pack
         // Repurposed from standard Deployable Supply Crate slot (GadgetOne)
-        if (mod.HasEquipment(player, mod.Gadgets.U_Gadget_MedicCrate)) {
-            
-            // Unload cargo pack programmatically by stripping the slot
-            mod.RemoveEquipment(player, mod.InventorySlots.GadgetOne);
+        if (mod.HasEquipment(player, mod.Gadgets.Class_Supply_Bag)) {
+          // Unload cargo pack programmatically by stripping the slot
+          mod.RemoveEquipment(player, mod.InventorySlots.GadgetOne);
 
-            // Resolve target FOB Sector based on buyStationId
-            const targetSectorId = this.getSectorFromBuyStation(buyStationId);
-            const currentMaterials = this.fobMaterialStockpiles.get(targetSectorId) ?? 0;
+          // Resolve target FOB Sector based on buyStationId
+          const targetSectorId = this.getSectorFromBuyStation(buyStationId);
+          const currentMaterials =
+            this.fobMaterialStockpiles.get(targetSectorId) ?? 0;
 
-            if (currentMaterials >= this.maxStockpileCapacity) {
-                mod.DisplayNotificationMessage(
-                    mod.Message("DELIVERY BLOCKED: FOB Stockpile is already at maximum capacity (2,000/2,000)!"),
-                    player
-                );
-                // Return the crate to the player's loadout to prevent loss
-                mod.AddEquipment(player, mod.Gadgets.U_Gadget_MedicCrate);
-                return;
-            }
-
-            // Credit 500 Materials to the FOB's local stockpile
-            const newMaterials = Math.min(this.maxStockpileCapacity, currentMaterials + 500);
-            this.fobMaterialStockpiles.set(targetSectorId, newMaterials);
-
-            // Award persistent match cash and specialized Driver track XP
-            profile.addCash(this.supplyCargoAwardCash, "FOB Logistics Cargo Dropoff");
-            profile.addTrackXp("Driver", this.supplyCargoAwardXp);
-
-            // Trigger positive pickup audio feedback
-            const eyePos = mod.GetSoldierState(player, mod.SoldierStateVector.EyePosition);
-            const dropoffSfx = mod.SpawnObject(
-                mod.RuntimeSpawn_Common.SFX_Gadgets_Defibrillator_Equipped_Fire_OneShot2D,
-                eyePos,
-                mod.CreateVector(0, 0, 0)
-            );
-            mod.PlaySound(dropoffSfx, 50);
-
-            // Broadcast delivery notifications directly to the player's HUD
+          if (currentMaterials >= this.maxStockpileCapacity) {
             mod.DisplayNotificationMessage(
-                mod.Message("CARGO SECURED: +500 FOB Materials. Earnings: +${}, +{} Driver XP!", this.supplyCargoAwardCash, this.supplyCargoAwardXp),
-                player
+              mod.Message(
+                "DELIVERY BLOCKED: FOB Stockpile is already at maximum capacity (2,000/2,000)!",
+              ),
+              player,
             );
+            // Return the crate to the player's loadout to prevent loss
+            mod.AddEquipment(player, mod.Gadgets.Class_Supply_Bag);
+            return;
+          }
 
-            console.log(`[WARDOGS LOGISTICS] Contractor ${profile.name} delivered Supplies to FOB Sector ${targetSectorId}. New Stockpile: ${newMaterials}/2000`);
+          // Credit 500 Materials to the FOB's local stockpile
+          const newMaterials = Math.min(
+            this.maxStockpileCapacity,
+            currentMaterials + 500,
+          );
+          this.fobMaterialStockpiles.set(targetSectorId, newMaterials);
+
+          // Award persistent match cash and specialized Driver track XP
+          profile.addCash(
+            this.supplyCargoAwardCash,
+            "FOB Logistics Cargo Dropoff",
+          );
+          profile.addTrackXp("Driver", this.supplyCargoAwardXp);
+
+          // Trigger positive pickup audio feedback
+          const eyePos = mod.GetSoldierState(
+            player,
+            mod.SoldierStateVector.EyePosition,
+          );
+          const dropoffSfx = mod.SpawnObject(
+            mod.RuntimeSpawn_Common
+              .SFX_Gadgets_Defibrillator_Equipped_Fire_OneShot2D,
+            eyePos,
+            mod.CreateVector(0, 0, 0),
+          );
+          mod.PlaySound(dropoffSfx, 50);
+
+          // Broadcast delivery notifications directly to the player's HUD
+          mod.DisplayNotificationMessage(
+            mod.Message(
+              "CARGO SECURED: +500 FOB Materials. Earnings: +${}, +{} Driver XP!",
+              this.supplyCargoAwardCash,
+              this.supplyCargoAwardXp,
+            ),
+            player,
+          );
+
+          console.log(
+            `[WARDOGS LOGISTICS] Contractor ${profile.name} delivered Supplies to FOB Sector ${targetSectorId}. New Stockpile: ${newMaterials}/2000`,
+          );
         } else {
-            // Player interacted without supplies
-            const targetSectorId = this.getSectorFromBuyStation(buyStationId);
-            const currentMaterials = this.fobMaterialStockpiles.get(targetSectorId) ?? 0;
+          // Player interacted without supplies
+          const targetSectorId = this.getSectorFromBuyStation(buyStationId);
+          const currentMaterials =
+            this.fobMaterialStockpiles.get(targetSectorId) ?? 0;
 
-            mod.DisplayNotificationMessage(
-                mod.Message("FOB Stockpile: {} / 2,000 Materials. (Requires Cargo Pack from HQ)", currentMaterials),
-                player
-            );
+          mod.DisplayNotificationMessage(
+            mod.Message(
+              "FOB Stockpile: {} / 2,000 Materials. (Requires Cargo Pack from HQ)",
+              currentMaterials,
+            ),
+            player,
+          );
         }
     }
 

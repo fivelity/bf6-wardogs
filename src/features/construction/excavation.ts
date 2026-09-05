@@ -153,7 +153,7 @@ export class ExcavationSystem {
             mod.CreateVector(0, 0, 0)
         ) as mod.WorldIcon;
 
-        mod.SetWorldIconImage(socket.worldIconNode, mod.WorldIconImages.Supplies);
+        mod.SetWorldIconImage(socket.worldIconNode, mod.WorldIconImages.Alert);
         mod.EnableWorldIconImage(socket.worldIconNode, true);
         mod.SetWorldIconColor(socket.worldIconNode, mod.CreateVector(1.0, 0.8, 0.0)); // Blueprint Warning Yellow
         mod.EnableWorldIconText(socket.worldIconNode, true);
@@ -241,7 +241,7 @@ export class ExcavationSystem {
         // Check if player's team owns the F.O.B sector first
         // (In WARDOGS, team materials are simulated from individual cash conversions during construction)
         const hitMaterialCost = Math.round(socket.materialCost / socket.totalHitsRequired);
-        if (profile.cash < hitMaterialCost) {
+        if (profile.getCash() < hitMaterialCost) {
             mod.DisplayNotificationMessage(
                 mod.Message("CONSTRUCTION FAILED: Insufficient Cash for Material Conversion"),
                 player

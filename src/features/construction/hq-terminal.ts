@@ -87,7 +87,7 @@ export class HQLogisticsTerminalSystem {
         }
 
         // Check B: Ensure player has a primary slot or Gadget slot free to carry the cargo
-        if (mod.HasEquipment(player, mod.Gadgets.U_Gadget_SupplyCrate)) {
+        if (mod.HasEquipment(player, mod.Gadgets.Deployable_Vehicle_Supply_Crate)) {
             mod.DisplayNotificationMessage(
                 mod.Message("LOADING DENIED: Gadget slots are currently occupied."),
                 player
@@ -97,7 +97,10 @@ export class HQLogisticsTerminalSystem {
 
         // Equip the physical Logistics Cargo Pack (repurposing native supply crate mesh) [240]
         try {
-            mod.AddEquipment(player, mod.Gadgets.U_Gadget_SupplyCrate);
+            mod.AddEquipment(
+              player,
+              mod.Gadgets.Deployable_Vehicle_Supply_Crate,
+            );
         } catch (e) {
             console.log(`[WARDOGS LOGISTICS] Fail-safe error adding cargo pack equipment: ${e}`);
             return false;
@@ -112,12 +115,10 @@ export class HQLogisticsTerminalSystem {
 
         // Apply Heavy Object Weight Debuffs to mimic Project Reality and Squad: [29]
         // 1. Slow movement velocity to 0.7x normal speeds
-        mod.SetPlayerSpeedMultiplier(player, 0.7);
+        mod.SetPlayerMovementSpeedMultiplier(player, 0.7);
         // 2. Lock sprinting capabilities
         mod.EnableInputRestriction(player, mod.RestrictedInputs.Sprint, true);
-        // 3. Lock physical slide maneuvers
-        mod.EnableInputRestriction(player, mod.RestrictedInputs.Slide, true);
-
+     
         console.log(`[WARDOGS LOGISTICS] Player ${profile.name} loaded heavy logistics crate. Speed throttled to 0.7x.`);
         
         mod.DisplayNotificationMessage(
@@ -144,8 +145,7 @@ export class HQLogisticsTerminalSystem {
         if (!mod.IsPlayerValid(player)) return;
 
         // Restore baseline physics values
-        mod.SetPlayerSpeedMultiplier(player, 1.0);
+        mod.SetPlayerMovementSpeedMultiplier(player, 1.0);
         mod.EnableInputRestriction(player, mod.RestrictedInputs.Sprint, false);
-        mod.EnableInputRestriction(player, mod.RestrictedInputs.Slide, false);
     }
 }

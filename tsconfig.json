@@ -9,9 +9,10 @@
     "resolveJsonModule": true,
     "target": "ES2015",
     "module": "ES2015",
-    "lib": ["ES2015"],
+    "lib": ["ES2017"],
     "skipLibCheck": true,
-    "types": ["bf6-portal-mod-types"]
+    "types": ["bf6-portal-mod-types"],
+    "allowImportingTsExtensions": true
   },
   "include": ["src/**/*.ts", "src/mock-server.ts"]
 }

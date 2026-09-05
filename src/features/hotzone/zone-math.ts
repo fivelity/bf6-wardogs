@@ -1,5 +1,3 @@
-import { Vectors } from "bf6-portal-utils/vectors";
-
 /**
  * Representing a 2D horizontal plane coordinate (East-West as X, North-South as Z).
  * Battlefield 6 Portal maps height to Y, which is ignored for 2D polygonal boundary checks.
@@ -25,11 +23,10 @@ export interface Segment2D {
 export class ZoneMath {
     /**
      * Converts a native Frostbite opaque vector to a plain Point2D horizontal coordinate.
-     * Uses bf6-portal-utils Vector wrappers for seamless conversion.
+     * Uses direct property access on mod.Vector.
      */
     public static toPoint2D(vector: mod.Vector): Point2D {
-        const plainVec = Vectors.toVector3(vector);
-        return { x: plainVec.x, z: plainVec.z };
+        return { x: vector.x, z: vector.z };
     }
 
     /**
@@ -37,7 +34,7 @@ export class ZoneMath {
      * preserving the target altitude (Y).
      */
     public static toModVector(point: Point2D, altitude: number): mod.Vector {
-        return Vectors.toModVector({ x: point.x, y: altitude, z: point.z });
+        return mod.CreateVector(point.x, altitude, point.z);
     }
 
     /**
@@ -226,5 +223,77 @@ export class ZoneMath {
         const dx = p1.x - p2.x;
         const dz = p1.z - p2.z;
         return dx * dx + dz * dz;
+    }
+
+    /**
+     * Computes an inward-offset (shrunk) polygon by a given distance.
+     * Shifts each edge toward the polygon's centroid and computes the intersection
+     * of consecutive shifted edges to form the new vertex set.
+     * 
+     * @param vertices The original polygon vertices.
+     * @param offset The distance (in meters) to shrink the polygon inward.
+     * @returns The shrunk polygon vertices, or an empty array if the polygon collapses.
+     */
+    public static shrinkPolygon(vertices: Point2D[], offset: number): Point2D[] {
+        if (vertices.length < 3) return [];
+        
+        const centroid = this.calculateCentroid(vertices);
+        
+        // Compute shifted edge lines (each line: nx * x + nz * z = c)
+        interface ShiftedLine {
+            nx: number;
+            nz: number;
+            c: number;
+        }
+        
+        const lines: ShiftedLine[] = [];
+        
+        for (let i = 0; i < vertices.length; i++) {
+            const p1 = vertices[i];
+            const p2 = vertices[(i + 1) % vertices.length];
+            
+            const dx = p2.x - p1.x;
+            const dz = p2.z - p1.z;
+            const len = Math.sqrt(dx * dx + dz * dz) + 1e-9;
+            
+            // Left normal (perpendicular, 90° CCW from edge direction)
+            let nx = -dz / len;
+            let nz = dx / len;
+            
+            // Ensure normal points inward (toward centroid)
+            const midX = (p1.x + p2.x) / 2;
+            const midZ = (p1.z + p2.z) / 2;
+            const toCentroidX = centroid.x - midX;
+            const toCentroidZ = centroid.z - midZ;
+            const dot = nx * toCentroidX + nz * toCentroidZ;
+            
+            if (dot < 0) {
+                nx = -nx;
+                nz = -nz;
+            }
+            
+            // Shift line inward by offset
+            const c = nx * p1.x + nz * p1.z + offset;
+            
+            lines.push({ nx, nz, c });
+        }
+        
+        // Compute intersections of consecutive shifted lines
+        const result: Point2D[] = [];
+        
+        for (let i = 0; i < lines.length; i++) {
+            const a = lines[i];
+            const b = lines[(i + 1) % lines.length];
+            
+            const det = a.nx * b.nz - a.nz * b.nx;
+            if (Math.abs(det) < 1e-9) continue; // Parallel edges
+            
+            const x = (a.c * b.nz - b.c * a.nz) / det;
+            const z = (b.c * a.nx - a.c * b.nx) / det;
+            
+            result.push({ x, z });
+        }
+        
+        return result;
     }
 }

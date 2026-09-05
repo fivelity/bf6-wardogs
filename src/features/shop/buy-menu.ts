@@ -1,6 +1,16 @@
 // src/features/shop/buy-menu.ts
-import { Events, Timers, SolidUI } from "bf6-portal-utils";
+import { SolidUI } from "bf6-portal-utils/solid-ui";
+import { Events } from "bf6-portal-utils/events";
+import { Timers } from "bf6-portal-utils/timers";
 import { mercenaryRegistry, TrackData, ProgressionTrackKey } from "../progression/profile";
+
+// Module-level map to track active buy menus by player ID (replaces profile.ShopUI)
+const activeBuyMenus = new Map<number, WardogsBuyMenu>();
+
+// Export accessor for external references
+export function getBuyMenu(playerId: number): WardogsBuyMenu | undefined {
+    return activeBuyMenus.get(playerId);
+}
 import { 
     carbinePackage_Tier1, 
     carbinePackage_Tier3, 
@@ -58,6 +68,7 @@ export class WardogsBuyMenu {
     constructor(player: mod.Player) {
         this.player = player;
         this.playerId = mod.GetObjId(player);
+        activeBuyMenus.set(this.playerId, this);
         this.initializeUI();
     }
 
@@ -446,6 +457,8 @@ export class WardogsBuyMenu {
             mod.SetUIWidgetVisible(this.rootWidget, false);
             this.isStoreVisible = false;
         }
+        // Unregister from active menus
+        activeBuyMenus.delete(this.playerId);
     }
 
     /**
@@ -722,7 +735,7 @@ export const storeDatabase: ShopItem[] = [
         requiredTrack: "Medic",
         requiredTier: 2,
         gearType: "gadget",
-        assetId: mod.Gadgets.U_Gadget_MedicCrate,
+        assetId: mod.Gadgets.Deployable_Medic_Crate,
         isPooled: false,
         pooledCash: 0,
         imageType: mod.UIImageType.TEMP_PortalIcon
@@ -736,7 +749,7 @@ export const storeDatabase: ShopItem[] = [
         requiredTrack: "Recon",
         requiredTier: 3,
         gearType: "gadget",
-        assetId: mod.Gadgets.U_SpawnBeacon,
+        assetId: mod.Gadgets.Deployable_Deploy_Beacon,
         isPooled: false,
         pooledCash: 0,
         imageType: mod.UIImageType.TEMP_PortalIcon
@@ -767,7 +780,9 @@ export function OnPlayerUIButtonEvent(player: mod.Player, widget: mod.UIWidget, 
 
     if (!profile) return;
 
-    const buyMenu = profile.ShopUI; // Assuming the Profile class binds its active WardogsBuyMenu reference to .ShopUI
+    const buyMenu = getBuyMenu(playerId);
+
+    if (!buyMenu) return;
 
     // --- HANDLE TAB CLICK EVENTS ---
     if (widgetName.startsWith("ShopTabBtn_")) {

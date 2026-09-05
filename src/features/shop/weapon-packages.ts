@@ -81,7 +81,7 @@ export const ATTACHMENT_REGISTRY: Record<string, AttachmentMetadata> = {
         requiredTrack: "Recon",
         requiredTier: 3,
         slot: "optic",
-        sdkEnum: mod.WeaponAttachments.Scope_Bravo_400x
+        sdkEnum: mod.WeaponAttachments.Scope_PVQ_31_400x
     },
     "optic_m11": {
         id: "optic_m11",
@@ -90,7 +90,7 @@ export const ATTACHMENT_REGISTRY: Record<string, AttachmentMetadata> = {
         requiredTrack: "Recon",
         requiredTier: 4,
         slot: "optic",
-        sdkEnum: mod.WeaponAttachments.Scope_M11_Sniper_800x
+        sdkEnum: mod.WeaponAttachments.Scope_LERT_800x
     },
 
     // --- MAGAZINES ---
@@ -157,7 +157,7 @@ export const ATTACHMENT_REGISTRY: Record<string, AttachmentMetadata> = {
         requiredTrack: "Assault",
         requiredTier: 1,
         slot: "muzzle",
-        sdkEnum: mod.WeaponAttachments.Muzzle_Tactical_Flash_Hider
+        sdkEnum: mod.WeaponAttachments.Muzzle_Flash_Hider
     },
     "muzzle_suppressor_std": {
         id: "muzzle_suppressor_std",
@@ -462,7 +462,7 @@ export function purchaseAndEquipAttachment(
     }
 
     // Check progression mastery levels
-    const currentTier = profile.getTrackLevel(attachmentMeta.requiredTrack);
+    const currentTier = profile.tracks[attachmentMeta.requiredTrack].level;
     if (currentTier < attachmentMeta.requiredTier) {
         mod.DisplayNotificationMessage(
             mod.Message("LOCKED: Higher Mastery Tier required in track: " + attachmentMeta.requiredTrack),
@@ -482,7 +482,7 @@ export function purchaseAndEquipAttachment(
     }
 
     // Process secure financial deduction
-    profile.deductCash(cost, `Gunsmith Customization: ${attachmentMeta.name}`);
+    profile.removeCash(cost, `Gunsmith Customization: ${attachmentMeta.name}`);
 
     // Update in-memory customizations
     let playerConfigs = playerWeaponCustomizations.get(playerId);

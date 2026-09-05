@@ -5,8 +5,8 @@
 ## Quick Reference
 - **Game**: WARDOGS — 3-faction tactical King of the Hill
 - **SDK**: BF6 Portal SDK v1.4.2.0 (global `mod` namespace, async event handlers)
-- **SDK Types**: `bf6-portal-mod-types` package contains all available `mod` typings. 
-- **Build**: `pnpm bundle` → flat single-file `dist/portal-bundle.ts`
+- **`bf6-portal-mod-types`**: Contains latest available `mod` namespace from Official BF6 Portal SDK.
+- **`bf6-portal-utils`**: Contains useful custom libraries, tools, examples, and documentation for use with Battlefield 6 Portal SDK.
 - **Validate**: `pnpm validate` before every commit
 - **Deploy**: `pnpm deploy` (requires `.env` present)
 
@@ -22,7 +22,7 @@ src/
 │   ├── construction/      # Shovel construction, socket triggers
 │   ├── scavenger/         # Salvage Pack carrier & death drop systems
 │   ├── ai/                # Rogue AI Threat Faction (Team 4)
-│   └── scoreboard/        # 3-Faction scoreboard columns
+│   └── interface /        # UI for 3-Faction scoreboard columns & reactive HUD 
 ├── shared/                # Reusable utility helpers
 │   └── utils.ts           # Vector math, random helpers, MakeMessage
 └── index.ts               # Main entry point; registers features & lifecycles

@@ -208,7 +208,7 @@ export class ScavengerDropSystem {
 
         // Flash HUD notification message
         mod.DisplayNotificationMessage(
-            mod.Message("BACKPACK LOOTED: Ammo Restocked, Salvaged ${} Cash, +{} Assault XP", salvagedCash, this.trackXpReward),
+            mod.Message("BACKPACK LOOTED: Ammo Restocked, Salvaged {} Cash, +{} Assault XP", salvagedCash, this.trackXpReward),
             scavenger
         );
 

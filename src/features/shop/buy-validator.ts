@@ -68,21 +68,20 @@ export class BuyValidator {
 
         // --- HANDLE COOPERATIVE POOLED FORWARD OPERATING BASE DEFENSES ---
         if (item.isPooled) {
-            if (profile.cash <= 0) {
+            if (profile.getCash() <= 0) {
                 mod.DisplayNotificationMessage(mod.Message("Transaction Failed: You have no cash to contribute!"), player);
                 return false;
             }
 
             const neededCash = calculatedCost - item.pooledCash;
-            const contribution = Math.min(profile.cash, neededCash);
+            const contribution = Math.min(profile.getCash(), neededCash);
 
-            profile.cash -= contribution;
+            profile.removeCash(contribution);
             item.pooledCash += contribution;
 
             // Broadlog the contribution to the active faction/team
             mod.DisplayNotificationMessage(
                 mod.Message("CO-OP UPGRADE: Contributed ${}! Total Funded: ${}/${}", contribution, item.pooledCash, calculatedCost),
-                null, // Broadlogged to the team only
                 mod.GetTeam(player)
             );
 
@@ -91,13 +90,12 @@ export class BuyValidator {
                 this.completePooledConstruction(player, item);
             }
 
-            // Sync the reactive HUD cash wallet display
-            profile.ProgressUI.updateCurrencyUI(profile.cash);
+            // Sync the reactive HUD cash wallet display (handled by profile.removeCash internally)
             return true;
         }
 
         // --- HANDLE INDIVIDUAL LOADOUT PURCHASES ---
-        if (profile.cash < calculatedCost) {
+        if (profile.getCash() < calculatedCost) {
             const trackLvl = profile.tracks[item.requiredTrack].level;
             mod.DisplayNotificationMessage(
                 mod.Message("INSUFFICIENT FUNDS: Surcharged Cost is ${} (Your Tier Lvl: {})", calculatedCost, trackLvl),
@@ -107,7 +105,7 @@ export class BuyValidator {
         }
 
         // Complete transaction: deduct MATCH cash
-        profile.cash -= calculatedCost;
+        profile.removeCash(calculatedCost);
 
         // Override loadout inventory programmatically to prevent duplicate inventory clogging
         this.grantPurchasedGear(player, item);
@@ -126,8 +124,7 @@ export class BuyValidator {
             player
         );
 
-        // Sync the reactive HUD cash wallet display
-        profile.ProgressUI.updateCurrencyUI(profile.cash);
+        // Sync the reactive HUD cash wallet display (handled by profile.removeCash internally)
         return true;
     }
 
@@ -152,7 +149,6 @@ export class BuyValidator {
     private completePooledConstruction(player: mod.Player, item: ShopItem): void {
         mod.DisplayNotificationMessage(
             mod.Message("COOPERATIVE UNLOCK: {} is fully funded and constructed!", item.name),
-            null, // Broadlog
             mod.GetTeam(player)
         );
 

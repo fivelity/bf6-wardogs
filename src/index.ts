@@ -78,8 +78,8 @@ export function OnPlayerJoinGameHook(player: mod.Player): void {
  * Disconnection event handler.
  * Performs clean directory memory wipes to prevent server microtask desyncs.
  */
-export function OnPlayerLeaveGameHook(player: mod.Player): void {
-    OnPlayerLeaveGame(player);
+export function OnPlayerLeaveGameHook(playerId: number): void {
+    OnPlayerLeaveGame(playerId);
 }
 
 /**
@@ -145,7 +145,7 @@ export function OnPlayerUIButtonEvent(player: mod.Player, widget: mod.UIWidget, 
     if (!profile) return;
 
     // Direct UI interactions to the Buy Menu controllers
-    OnPlayerUIButtonEvent(player, widget, event);
+    WardogsBuyMenu.OnPlayerUIButtonEvent(player, widget, event);
 }
 
 /**

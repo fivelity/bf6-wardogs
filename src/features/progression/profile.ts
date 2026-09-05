@@ -40,6 +40,10 @@ export class PlayerProfile {
     // Thresholds required to graduate to Tiers 1, 2, 3, 4, and 5 respectively
     private readonly xpThresholds = [0, 1000, 2500, 5000, 10000];
 
+    // Exposed last transaction state for HUD feedback
+    public lastTransactionDelta: number = 0;
+    public lastTransactionReason: string = "";
+
     constructor(player: mod.Player) {
         this.player = player;
         this.playerId = mod.GetObjId(player);
@@ -126,6 +130,9 @@ export class PlayerProfile {
      * Fires a localized screen notification showing balance changes.
      */
     private syncWalletUI(delta: number, reason?: string): void {
+        this.lastTransactionDelta = delta;
+        this.lastTransactionReason = reason ?? "";
+
         // Safe UI synchronization: trigger standard ParseUI HUD updates
         const walletLabel = mod.FindUIWidgetWithName(`Shop_Wallet_${this.playerId}`);
         if (walletLabel) {
@@ -165,8 +172,7 @@ export function OnPlayerJoinGame(player: mod.Player): void {
 /**
  * Centralized cleanup hook triggered upon game leave.
  */
-export function OnPlayerLeaveGame(player: mod.Player): void {
-    const playerId = mod.GetObjId(player);
+export function OnPlayerLeaveGame(playerId: number): void {
     if (mercenaryRegistry.has(playerId)) {
         mercenaryRegistry.delete(playerId);
     }

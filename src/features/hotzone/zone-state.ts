@@ -106,8 +106,7 @@ export class HotZoneManager {
         });
 
         // Ensure disconnected players are cleaned up to prevent directory leakage
-        Events.OnPlayerLeaveGame.subscribe((player) => {
-            const playerId = mod.GetObjId(player);
+        Events.OnPlayerLeaveGame.subscribe((playerId) => {
             this.zonePlayers.delete(playerId);
         });
     }

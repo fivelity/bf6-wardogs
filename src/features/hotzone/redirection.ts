@@ -1,6 +1,5 @@
 import { Events } from "bf6-portal-utils/events";
 import { Timers } from 'bf6-portal-utils/timers';
-import { SolidUI } from 'bf6-portal-utils/solid-ui';
 import { mercenaryRegistry } from "../progression/profile";
 import { Point2D, ZoneMath } from "../hotzone/zone-math";
 
@@ -55,8 +54,9 @@ export class TowerRedirectionSystem {
         }
 
         // Subscribe to capture events using bf6-portal-utils central events broker
-        Events.OnCapturePointCaptured.subscribe((capturePoint, team) => {
+        Events.OnCapturePointCaptured.subscribe((capturePoint) => {
             const cpId = mod.GetObjId(capturePoint);
+            const team = mod.GetCurrentOwnerTeam(capturePoint);
             const teamId = mod.GetObjId(team);
 
             if (this.towers.has(cpId)) {
@@ -70,7 +70,7 @@ export class TowerRedirectionSystem {
                 
                 // Alert the capturing team
                 mod.DisplayNotificationMessage(
-                    mod.Message(`TOWER CONNECTED: ${tower.name} is now uploading decryption keys!`),
+                    mod.Message("TOWER CONNECTED: {} is now uploading decryption keys!", tower.name),
                     undefined,
                     team
                 );
@@ -86,9 +86,9 @@ export class TowerRedirectionSystem {
         this.towers.forEach((tower) => {
             const iconPos = ZoneMath.toModVector(tower.position, 230.0); // Slightly above ground
             
-            // Create a visual indicator for the tower
-            tower.visualIndicator = mod.SpawnWorldIcon(
-                mod.RuntimeSpawn_Common.WorldIcon_Tower, // Use appropriate icon type
+            // Create a visual indicator for the tower using base WorldIcon
+            tower.visualIndicator = mod.SpawnObject(
+                mod.RuntimeSpawn_Common.WorldIcon,
                 iconPos,
                 mod.CreateVector(0, 0, 0)
             );
@@ -101,23 +101,23 @@ export class TowerRedirectionSystem {
     private updateTowerVisualIndicator(tower: RadioTowerState): void {
         if (!tower.visualIndicator) return;
         
-        // Update icon based on tower's state
-        let iconType = mod.RuntimeSpawn_Common.WorldIcon_Tower; // Default neutral
+        // Update icon text based on tower's controlling team
+        let indicatorText = "TOWER: NEUTRAL";
         
         if (tower.controllingTeam === 1) {
-            iconType = mod.RuntimeSpawn_Common.WorldIcon_Tower_Lonestar;
+            indicatorText = "TOWER: LONESTAR";
         } else if (tower.controllingTeam === 2) {
-            iconType = mod.RuntimeSpawn_Common.WorldIcon_Tower_Manticore;
+            indicatorText = "TOWER: MANTICORE";
         } else if (tower.controllingTeam === 3) {
-            iconType = mod.RuntimeSpawn_Common.WorldIcon_Tower_Valkyra;
+            indicatorText = "TOWER: VALKYRA";
         }
         
-        // Update the world icon type
-        mod.SetWorldIconType(tower.visualIndicator, iconType);
+        // Update the world icon text to show current state
+        mod.SetWorldIconText(tower.visualIndicator, indicatorText);
         
         // If tower is redirecting, show a special indicator
         if (tower.isRedirecting) {
-            mod.SetWorldIconType(tower.visualIndicator, mod.RuntimeSpawn_Common.WorldIcon_Tower_Redirect);
+            mod.SetWorldIconText(tower.visualIndicator, "REDIRECT: ACTIVE");
         }
     }
 
@@ -185,7 +185,7 @@ export class TowerRedirectionSystem {
         // Validation A: Ensure Faction owns 100% decryption keys
         if (tower.decryptionProgress[teamId] < 100) {
             mod.DisplayNotificationMessage(
-                mod.Message(`ACCESS DENIED: Direct redirection requires 100% Decryption Progress (Current: ${tower.decryptionProgress[teamId]}%)`),
+                mod.Message("ACCESS DENIED: Direct redirection requires 100% Decryption Progress (Current: {}%)", tower.decryptionProgress[teamId]),
                 player
             );
             return false;

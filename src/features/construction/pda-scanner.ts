@@ -127,9 +127,9 @@ export class PDAScannerSystem {
         // Spawn or update the holographic cursor VFX loop at the target surface
         if (!state.visualCursor) {
             state.visualCursor = mod.SpawnObject(
-                mod.RuntimeSpawn_Common.Modbuilder_FX_Gadget_Sabotage_02_SparkLoop, // Highly visible sparking cursor decal
-                hitPoint,
-                mod.CreateVector(0, 0, 0)
+              mod.RuntimeSpawn_Common.FX_Gadget_Sabotage_02_SparkLoop, // Highly visible sparking cursor decal
+              hitPoint,
+              mod.CreateVector(0, 0, 0),
             );
         } else {
             // Slide cursor smoothly to new coordinates
