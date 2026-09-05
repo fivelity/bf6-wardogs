@@ -1,18 +1,22 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "outDir": "build",
-    "rootDir": "src",
-    "strict": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
     "target": "ES2015",
     "module": "ES2015",
-    "lib": ["ES2017"],
+    "lib": ["ES2017", "DOM"],
+
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+
+    "strict": true,
     "skipLibCheck": true,
-    "types": ["bf6-portal-mod-types"],
-    "allowImportingTsExtensions": true
+
+    "declaration": true,
+    "rootDir": "src",
+    "outDir": "build",
+
+    "types": ["bf6-portal-mod-types"]
   },
-  "include": ["src/**/*.ts", "src/mock-server.ts"]
+  "include": ["src/**/*.ts"]
 }

@@ -308,8 +308,8 @@ export const WEAPON_REGISTRY: Record<number, WeaponSpec> = {
         }
     },
     // PP-19 Vityaz SMG
-    [mod.Weapons.PP19_Vityaz]: {
-        assetId: mod.Weapons.PP19_Vityaz,
+    [mod.Weapons.SMG_PP_19]: {
+        assetId: mod.Weapons.SMG_PP_19,
         name: "PP-19 Vityaz SMG",
         allowedSlots: ["optic", "magazine", "muzzle", "barrel", "ammunition"],
         defaultCustomization: {

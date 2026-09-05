@@ -2,7 +2,6 @@
 // All game events and their handlers are managed here
 // Import and call these from event handlers
 
-import mod from "mod";
 
 // ============================================================
 // Game State Tracking
@@ -27,7 +26,7 @@ let team1Score: number = 0;
 let team2Score: number = 0;
 let team3Score: number = 0;
 let hotZoneActive: boolean = false;
-let hotZoneCenter: mod.Vector = null;
+let hotZoneCenter: mod.Vector | null = null;
 
 // Cash economy
 let globalCashPool: number = 0;

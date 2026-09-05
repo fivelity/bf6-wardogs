@@ -440,7 +440,7 @@ export class WardogsBuyMenu {
 
         // Update Wallet UI Text directly
         const walletText = mod.FindUIWidgetWithName(`Shop_Wallet${uniqueSuffix}`) as mod.UIWidget;
-        mod.SetUITextLabel(walletText, mod.Message("WALLET: ${}", profile.cash));
+        mod.SetUITextLabel(walletText, mod.Message("WALLET: ${}", profile.getCash()));
 
         // Enforce focus to default first tab
         this.selectTab(ShopTab.Assault);
@@ -574,7 +574,7 @@ export class WardogsBuyMenu {
         // Action button labeling based on individual vs pooled checkout types
         if (item.isPooled) {
             const need = dynamicCost - item.pooledCash;
-            mod.SetUITextLabel(actionLabel, mod.Message(`POOL ${Math.min(profile.cash, need)} / ${dynamicCost}`));
+            mod.SetUITextLabel(actionLabel, mod.Message(`POOL ${Math.min(profile.getCash(), need)} / ${dynamicCost}`));
         } else {
             mod.SetUITextLabel(actionLabel, mod.Message("PURCHASE LOADOUT"));
         }
@@ -596,15 +596,15 @@ export class WardogsBuyMenu {
 
         // --- HANDLE COOPERATIVE POOLED DEFENSES ---
         if (item.isPooled) {
-            if (profile.cash <= 0) {
+            if (profile.getCash() <= 0) {
                 mod.DisplayNotificationMessage(mod.Message("You have no cash to contribute!"), this.player);
                 return;
             }
 
             const needed = dynamicCost - item.pooledCash;
-            const contribution = Math.min(profile.cash, needed);
+            const contribution = Math.min(profile.getCash(), needed);
 
-            profile.cash -= contribution;
+            profile.setCash(profile.getCash() - contribution);
             item.pooledCash += contribution;
 
             mod.DisplayNotificationMessage(
@@ -623,12 +623,12 @@ export class WardogsBuyMenu {
         }
 
         // --- HANDLE DIRECT EQUIPMENT PURCHASES ---
-        if (profile.cash < dynamicCost) {
+        if (profile.getCash() < dynamicCost) {
             mod.DisplayNotificationMessage(mod.Message("Insolvent! Insufficient funds to buy loadout."), this.player);
             return;
         }
 
-        profile.cash -= dynamicCost;
+        profile.setCash(profile.getCash() - dynamicCost);
 
         // Clean redundant gear slots and compile new weapon pack definitions
         if (item.gearType === "weapon") {

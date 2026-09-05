@@ -10,7 +10,7 @@
 | `PROJECT_CHECKLIST.md` | 11-phase task tracker                                            |
 | `BF6_API_SUMMARY.md`   | SDK function cheat-sheet                                         |
 | `GODOT_SETUP.md`       | Godot editor setup instructions                                  |
-| `brief.md`             | Your game mode design document                                   |
+| `brief.md`             | Project Design Spec document                                     |
 | `todo.md`              | Progress tracker (synced to checklist)                           |
 | `memory.md`            | Persistent notes, decisions, findings                            |
 
@@ -18,29 +18,29 @@
 
 ## 🚀 Phase 1: Initial Documentation Generation
 
-> **Use when:** The SDK changes and you need to update your template repo.
+> **Use when:** Changes to project repo are needed to maintain accuracy/currency/relevance. 
 
 > **Prompt:**
 > 
-> "Based on the official BF6 Portal SDK (index.ts, index.d.ts) and the example mods (Vertigo.ts, BombSquad.ts, AcePursuit.ts, Exfil.ts), create/update:
+> "Based on the official BF6 Portal SDK ([`.llm/sdk.d.ts`], [`.llm/modlib.ts`]), and the example mods (shop-example: `BombSquad`, base-building-example: `WarFactory`, moving-controlpoint-example: `GolmudTrainExample`) create/update:
 > 
-> 1. A comprehensive dev guidelines markdown file covering best practices derived from official mods
-> 2. A TypeScript skeleton file with all essential functions and event handlers
+> 1. A comprehensive [dev_guidelines.md] doc covering best practices derived from official mods [`../DOCS/BF6_PORTAL_MOD_EXAMPLES`]
+> 2. A TypeScript file with all essential [functions.ts] and [event-handlers.ts]
 > 3. A high-level 11-phase checklist for mod development
 > 
-> Base everything on actual SDK patterns, not assumptions. Generate code that works with BF6 Portal SDK version 1.4.2.0."
+> Base everything on Official BF6 Portal SDK patterns, not assumptions. Generate code that works with BF6 Portal SDK version 1.4.2.0."
 
 ---
 
 ## 📋 Phase 2: TODO Generation
 
-> **Use when:** You've filled out `brief.md` and need a granular task list.
+> **Use when:** Implementing  `brief.md` and need a granular task list.
 
 > **Prompt:**
 > 
-> "Based on the following game mode brief, generate a detailed, phased TODO list in checklist format (with checkboxes). Each item should be specific and actionable. Reference the BF6 Mod Development Checklist structure.
+> "Based on the [.llm/brief.md], generate a detailed, phased TODO list in checklist format (with checkboxes). Each item should be specific and actionable. Reference the BF6 Mod Development Checklist structure.
 > 
-> [.llm/brief.md]"
+> [`.llm/brief.md`]"
 
 ---
 
@@ -52,7 +52,7 @@
 > 
 > "I'm working on a BF6 Portal SDK mod. Here's my game mode brief:
 > 
-> [PASTE BRIEF]
+> [`./.llm/brief.md`]
 > 
 > Now implement Phase [X]: [PHASE NAME]
 > 

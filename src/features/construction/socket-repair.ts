@@ -6,6 +6,7 @@ import mod from "mod";
 import * as config from "../core/config";
 import * as vec from "../shared/utils";
 import * as events from "../core/events";
+import { MakeMessage } from "../../modlib";
 
 // ============================================================
 // Construction State Tracking
