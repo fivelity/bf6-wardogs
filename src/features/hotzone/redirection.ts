@@ -101,7 +101,7 @@ export class TowerRedirectionSystem {
     private updateTowerVisualIndicator(tower: RadioTowerState): void {
         if (!tower.visualIndicator) return;
         
-        // Update icon text based on tower's controlling team
+        // Build indicator text based on tower's controlling team
         let indicatorText = "TOWER: NEUTRAL";
         
         if (tower.controllingTeam === 1) {
@@ -112,13 +112,14 @@ export class TowerRedirectionSystem {
             indicatorText = "TOWER: VALKYRA";
         }
         
-        // Update the world icon text to show current state
-        mod.SetWorldIconText(tower.visualIndicator, indicatorText);
-        
-        // If tower is redirecting, show a special indicator
+        // If tower is redirecting, append the special status to the existing text
+        // Instead of overwriting, combine both states into one display string
         if (tower.isRedirecting) {
-            mod.SetWorldIconText(tower.visualIndicator, "REDIRECT: ACTIVE");
+            indicatorText += " [REDIRECT: ACTIVE]";
         }
+        
+        // Update the world icon text with the combined state
+        mod.SetWorldIconText(tower.visualIndicator, mod.Message(indicatorText));
     }
 
     private startTowerLifecycle(): void {
