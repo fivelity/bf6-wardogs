@@ -10,7 +10,7 @@
 **Last Updated:** September 4, 2026  
 **Development Status:**
 * [ ] Planning
-* [/] In Development (Phase 1 Base Engine & Core Economy Completed; Phase 2 Dynamic Drift & AI Commenced)
+* [/] In Development
 * [x] Testing (Logical units validated inside compiler)
 * [ ] Complete
 
@@ -44,7 +44,7 @@ The core gameplay centers around a strict, punishing **Match Economy**. Players 
 
 #### 👥 Players & Teams
 ##### Player Count
-* **Minimum Players:** 6 (2 per human team)
+* **Minimum Players:** 6 (2 per human team) - 1 player needed to start (Bot Backfilled)
 * **Maximum Players:** 36 Human Players (12 per team) + 12 Programmatic Bots (4 squads of 3)
 * **Recommended:** 36 Human Players
 
@@ -305,6 +305,7 @@ If two teams hit the victory limit simultaneously, the faction with the highest 
 WARDOGS strives to merge the high-stakes, tactical decision-making of hardcore military-simulation games (like *Squad* and *Project Reality*) with the accessible, fast-paced vehicle and infantry sandboxes of the Battlefield franchise. By separating transactional cash (match utility) from permanent XP progression (mastery limits), the mod creates a rewarding, strategic battle of attrition where team coordination and logistical supply lines are the primary vectors of victory.
 
 ##### Inspiration
+* *WARDOGS* ControlZone/HotZone gamemode, main gameplay inspiration.
 * *Project Reality* (Cooperative logistics, base construction, and class structures)
 * *Squad* (Melee shovel building, FOB fortification, and teamplay-centric spawning)
 * *Escape from Tarkov* (Gunsmith customization, wallet progression, and high-risk equipment loss)
@@ -313,9 +314,6 @@ WARDOGS strives to merge the high-stakes, tactical decision-making of hardcore m
 
 #### 📚 Additional Resources
 ##### Related Documentation
-* **WARDOGS Master Blueprint Outline (v2):** `wardogs-master-outline-v2.md`
-* **WARDOGS Core Mechanics Specification:** `wardogs-core-mechanics-spec.md`
-* **WARDOGS Phase 1 Build Specification & Gunsmith:** `WARDOGS Mod Phase 1 Build Specification & Gunsmith Architecture`
 * **BF6 Portal SDK Typed Definitions:** `index.d.ts.txt`
 * **BF6 Portal Utilities Package:** `deluca-mike/bf6-portal-utils`
 
