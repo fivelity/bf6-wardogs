@@ -26,10 +26,10 @@ export let currentHotZonePosition = mod.CreateVector(903.11, 228.33, 203.79);
 // Define our role-defining gadgets that must survive death
 const ROLE_DEFINING_GADGETS = [
     mod.Gadgets.Misc_Defibrillator,          // Medic Defibrillator
-    mod.Gadgets.U_Gadget_MedicCrate,         // Medic Healing Crate
-    mod.Gadgets.U_SpawnBeacon,               // Recon Spawn Beacon
-    mod.Gadgets.U_TUGS,                      // Recon Active Radar
-    mod.Gadgets.U_DeployableCover,           // Support Barricade/Hammer
+    mod.Gadgets.Class_Supply_Bag,         // Medic Healing Crate
+    mod.Gadgets.Deployable_Deploy_Beacon,               // Recon Spawn Beacon
+    mod.Gadgets.CallIn_UAV_Overwatch,                      // Recon Active Radar
+    mod.Gadgets.Deployable_Cover,           // Support Barricade/Hammer
     mod.Gadgets.Misc_PortalGadget            // Driver/Pilot Teleporter
 ];
 
@@ -41,7 +41,7 @@ export async function OnGameModeStarted(): void {
     console.log("WARDOGS: Global Game Mode Initiated.");
     
     // Configure Spawn Mode to Manual to give teams staging periods
-    mod.SetSpawnMode(mod.SpawnModes.ManualSpawn);
+    mod.SetSpawnMode(mod.SpawnModes.Deploy);
     
     // Set target score to 1 to bypass the native end-game block bug
     mod.SetGameModeTargetScore(1);
@@ -71,7 +71,7 @@ export function OnPlayerJoinGameHook(player: mod.Player): void {
 
     // Call profile initializer to construct the persistent profile in mercenaryRegistry
     OnPlayerJoinGame(player);
-    console.log(`[WARDOGS CONNECT] Contractor joined: ${mod.GetPlayerName(player)}. Starting Balance: $10,000 Issued.`);
+    console.log(`[WARDOGS CONNECT] Contractor joined: ${mod.GetPlayer(0)}. Starting Balance: $10,000 Issued.`);
 }
 
 /**
@@ -145,7 +145,7 @@ export function OnPlayerUIButtonEvent(player: mod.Player, widget: mod.UIWidget, 
     if (!profile) return;
 
     // Direct UI interactions to the Buy Menu controllers
-    WardogsBuyMenu.OnPlayerUIButtonEvent(player, widget, event);
+    WardogsBuyMenu.(player, widget, event);
 }
 
 /**

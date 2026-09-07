@@ -608,7 +608,7 @@ export class WardogsBuyMenu {
             item.pooledCash += contribution;
 
             mod.DisplayNotificationMessage(
-                mod.Message("CO-OP UPGRADE: Contributed ${}! Total: ${}/${}", contribution, item.pooledCash, dynamicCost),
+                mod.Message("CO-OP UPGRADE: Contributed {}! Total: {}/{}", contribution, `${item.pooledCash}/${dynamicCost}`),
                 null,
                 mod.GetTeam(this.player)
             );
@@ -686,88 +686,88 @@ export class WardogsBuyMenu {
  * and cooperative pooled parameters.
  */
 export const storeDatabase: ShopItem[] = [
-    // --- ASSAULT PRODUCTS ---
-    {
-        id: "carbine_tier1",
-        name: "AK205 Combat Carbine",
-        baseCost: 1200,
-        requiredTrack: "Assault",
-        requiredTier: 1,
-        gearType: "weapon",
-        assetId: mod.Weapons.Carbine_AK_205,
-        weaponPackage: carbinePackage_Tier1,
-        isPooled: false,
-        pooledCash: 0,
-        imageType: mod.UIImageType.TEMP_PortalIcon
-    },
-    {
-        id: "m4a1_tier3",
-        name: "M4A1 Standard Tactical",
-        baseCost: 2000,
-        requiredTrack: "Assault",
-        requiredTier: 3,
-        gearType: "weapon",
-        assetId: mod.Weapons.Carbine_M4A1,
-        weaponPackage: carbinePackage_Tier3,
-        isPooled: false,
-        pooledCash: 0,
-        imageType: mod.UIImageType.TEMP_PortalIcon
-    },
-    {
-        id: "m4a1_tier5",
-        name: "M4A1 Tungsten Special",
-        baseCost: 3500,
-        requiredTrack: "Assault",
-        requiredTier: 5,
-        gearType: "weapon",
-        assetId: mod.Weapons.Carbine_M4A1,
-        weaponPackage: carbinePackage_Tier5,
-        isPooled: false,
-        pooledCash: 0,
-        imageType: mod.UIImageType.TEMP_PortalIcon
-    },
+  // --- ASSAULT PRODUCTS ---
+  {
+    id: "carbine_tier1",
+    name: "AK205 Combat Carbine",
+    baseCost: 1200,
+    requiredTrack: "Assault",
+    requiredTier: 1,
+    gearType: "weapon",
+    assetId: mod.Weapons.Carbine_AK_205,
+    weaponPackage: carbinePackage_Tier1,
+    isPooled: false,
+    pooledCash: 0,
+    imageType: mod.UIImageType.TEMP_PortalIcon,
+  },
+  {
+    id: "m4a1_tier3",
+    name: "M4A1 Standard Tactical",
+    baseCost: 2000,
+    requiredTrack: "Assault",
+    requiredTier: 3,
+    gearType: "weapon",
+    assetId: mod.Weapons.Carbine_M4A1,
+    weaponPackage: carbinePackage_Tier3,
+    isPooled: false,
+    pooledCash: 0,
+    imageType: mod.UIImageType.TEMP_PortalIcon,
+  },
+  {
+    id: "m4a1_tier5",
+    name: "M4A1 Tungsten Special",
+    baseCost: 3500,
+    requiredTrack: "Assault",
+    requiredTier: 5,
+    gearType: "weapon",
+    assetId: mod.Weapons.Carbine_M4A1,
+    weaponPackage: carbinePackage_Tier5,
+    isPooled: false,
+    pooledCash: 0,
+    imageType: mod.UIImageType.TEMP_PortalIcon,
+  },
 
-    // --- MEDIC PRODUCTS ---
-    {
-        id: "medic_box",
-        name: "Medical Supply Crate",
-        baseCost: 500,
-        requiredTrack: "Medic",
-        requiredTier: 2,
-        gearType: "gadget",
-        assetId: mod.Gadgets.Deployable_Medic_Crate,
-        isPooled: false,
-        pooledCash: 0,
-        imageType: mod.UIImageType.TEMP_PortalIcon
-    },
+  // --- MEDIC PRODUCTS ---
+  {
+    id: "medic_box",
+    name: "Medical Supply Crate",
+    baseCost: 500,
+    requiredTrack: "Medic",
+    requiredTier: 2,
+    gearType: "gadget",
+    assetId: mod.Gadgets.Class_Supply_Bag,
+    isPooled: false,
+    pooledCash: 0,
+    imageType: mod.UIImageType.TEMP_PortalIcon,
+  },
 
-    // --- RECON PRODUCTS ---
-    {
-        id: "beacon_beacon",
-        name: "Squad Insertion Beacon",
-        baseCost: 800,
-        requiredTrack: "Recon",
-        requiredTier: 3,
-        gearType: "gadget",
-        assetId: mod.Gadgets.Deployable_Deploy_Beacon,
-        isPooled: false,
-        pooledCash: 0,
-        imageType: mod.UIImageType.TEMP_PortalIcon
-    },
+  // --- RECON PRODUCTS ---
+  {
+    id: "beacon_beacon",
+    name: "Squad Insertion Beacon",
+    baseCost: 800,
+    requiredTrack: "Recon",
+    requiredTier: 3,
+    gearType: "gadget",
+    assetId: mod.Gadgets.Deployable_Deploy_Beacon,
+    isPooled: false,
+    pooledCash: 0,
+    imageType: mod.UIImageType.TEMP_PortalIcon,
+  },
 
-    // --- COOPERATIVE FOB DEFENSES (Pooled) ---
-    {
-        id: "fort_aa_spawner",
-        name: "GDF009 Stationary AA",
-        baseCost: 1500,
-        requiredTrack: "Support",
-        requiredTier: 4,
-        gearType: "emplacement",
-        assetId: 83, // Godot ObjId representing the stationary AA emplacement spawner node
-        isPooled: true,
-        pooledCash: 0,
-        imageType: mod.UIImageType.TEMP_PortalIcon
-    }
+  // --- COOPERATIVE FOB DEFENSES (Pooled) ---
+  {
+    id: "fort_aa_spawner",
+    name: "GDF009 Stationary AA",
+    baseCost: 1500,
+    requiredTrack: "Support",
+    requiredTier: 4,
+    gearType: "emplacement",
+    assetId: 83, // Godot ObjId representing the stationary AA emplacement spawner node
+    isPooled: true,
+    pooledCash: 0,
+    imageType: mod.UIImageType.TEMP_PortalIcon,
+  },
 ];
 
 /**

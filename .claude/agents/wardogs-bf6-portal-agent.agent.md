@@ -12,7 +12,7 @@ tools: Read, Grep, Glob, Bash
 
 **Game:** WARDOGS (Battlefield 6 Portal Mod)  
 **Type:** 3-faction asymmetric King-of-the-Hill tactical skirmish mod  
-**SDK:** BF6 Portal SDK v1.4.2.0 — global `mod` namespace, event-driven architecture  
+**SDK:** BF6 Portal SDK v1.4.2.0 — global `mod` namespace provided via `bf6-portal-mod-types`, do not import `mod`  
 **Map:** MP_Granite_MilitaryStorage (2×2 km sector) 
 **Custom Spatial:** `mp_granite_militarystorage_spatial.json` — defines TeamHQs, Spawners, BuyStations, ControlZone, HotZone, Towers, and SpawnPoints 
 **Version:** 1.0.0 — Complete Phase 1 'WARDOGS Gameplay/Engine & Core Economy' + Phase 2 'Dynamic Drift & AI'
@@ -24,25 +24,25 @@ tools: Read, Grep, Glob, Bash
 
 ```
 src/
-├── core/                  # Experience-wide engine bootstrap
-│   ├── config.ts          # All constants: IDs, timings, colors, rewards, XP
-│   └── events.ts           # Centralized event broker (OnPlayerJoinGame, OnPlayerDeployed, etc.)
-├── features/              # Autonomous vertical gameplay feature slices
-│   ├── hotzone/           # Drifting HotZone / ControlZone math & scoring
-│   │   ├── zone-math.ts    # PIP ray-casting, centroid drift, polygon shrinking
-│   │   ├── zone-state.ts   # Occupancy tracking, ticket allocation, victory threshold (100)
-│   │   ├── redirection.ts  # Tower-redirected HotZone override
-│   │   └── pda-system.ts  # PDA tower interaction
-│   ├── shop/              # Buy station UI, wallets, loadouts
-│   │   ├── buy-menu.ts     # ParseUI-based modular storefront with wallet display
-│   │   ├── buy-validator.ts
-│   │   └── weapon-packages.ts
-│   ├── construction/      # Shovel/sledgehammer excavation & sandbag placement
-│   ├── scavenger/         # Salvage Pack carrier & death drop systems (native E-interact)
-│   ├── ai/                # Rogue AI Threat Faction (Team 4, 12 bots in 4 squads of 3)
-│   └── interface/         # UI: 3-Faction scoreboard columns & reactive HUD
-├── shared/utils.ts        # Vector math, random helpers, MakeMessage
-└── index.ts               # Main entry point; registers features & lifecycles
+├── core/                          # Experience-wide engine bootstrap
+│   ├── config.ts                  # All constants: IDs, timings, colors, rewards, XP
+│   └── ---events.ts---           # Use `bf6-portal-utils/events` package instead of raw `mod.RegisterEventHandler`
+├── features/                      # Autonomous vertical gameplay feature slices
+│   ├── hotzone/                   # Drifting HotZone / ControlZone math & scoring
+│   │   ├── zone-math.ts           # PIP ray-casting, centroid drift, polygon shrinking
+│   │   ├── zone-state.ts          # Occupancy tracking, ticket allocation, victory threshold (100)
+│   │   ├── redirection.ts         # Tower-redirected HotZone override
+│   │   └── pda-system.ts          # PDA tower interaction
+│   ├── shop/                      # Buy station UI, wallets, loadouts
+│   │   ├── buy-menu.ts            # Buy menu UI & wallet management
+│   │   ├── buy-validator.ts       # Loadout validation & role-defining
+│   │   └── weapon-packages.ts     # Weapon package definitions & progression gating
+│   ├── construction/              # Shovel/sledgehammer excavation & sandbag placement
+│   ├── scavenger/                 # Salvage Pack carrier & death drop systems (native E-interact)
+│   ├── ai/                        # Rogue AI Threat Faction (Team 4, 12 bots in 4 squads of 3)
+│   └── interface/                 # UI: 3-Faction scoreboard columns & reactive HUD
+├── shared/utils.ts                # Shared helpers: equivalents not exposed by `mod` namespace or `bf6-portal-utils`
+└── index.ts                       # Main entry point
 ```
 
 ---

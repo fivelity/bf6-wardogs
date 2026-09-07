@@ -16,6 +16,7 @@
     "rootDir": "src",
     "outDir": "build",
 
+    "noEmit": true,
     "types": ["bf6-portal-mod-types"]
   },
   "include": ["src/**/*.ts"]
