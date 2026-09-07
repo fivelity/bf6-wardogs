@@ -1,6 +1,7 @@
 // src/features/construction/excavation.ts
 import { Timers } from 'bf6-portal-utils/timers';
 import { mercenaryRegistry } from "../progression/profile";
+import { FobLogisticsManager } from "./fob-stockpile";
 
 export type FortificationClass = "sandbags" | "hesco_wall" | "watchtower" | "emplacement";
 
@@ -34,10 +35,22 @@ export class ExcavationSystem {
     private sockets: Map<number, FortificationSocket> = new Map();
     private activeSwings: Map<number, { lastSwingTime: number }> = new Map();
     private meleeCheckInterval: any = null;
+    private materialStockpile: FobLogisticsManager | null = null;
 
     constructor() {
         this.registerSockets();
         this.startMeleeSwingListener();
+    }
+
+    public setMaterialStockpile(stockpile: FobLogisticsManager): void {
+        this.materialStockpile = stockpile;
+    }
+
+    private getSocketSectorId(socket: FortificationSocket): number {
+        if (socket.objId >= 5001 && socket.objId <= 5003) {
+            return 3001 + (socket.objId - 5001);
+        }
+        return 3001;
     }
 
     /**
@@ -237,19 +250,21 @@ export class ExcavationSystem {
 
         if (!socket || !profile) return;
 
-        // Check if player's team owns the F.O.B sector first
-        // (In WARDOGS, team materials are simulated from individual cash conversions during construction)
-        const hitMaterialCost = Math.round(socket.materialCost / socket.totalHitsRequired);
-        if (profile.getCash() < hitMaterialCost) {
+        // Design brief: construction consumes the active FOB material pool, not the
+        // player's personal wallet. The builder still receives the manual cash reward
+        // for completing the hit while the stockpile funds the build step.
+        const hitMaterialCost = Math.max(1, Math.round(socket.materialCost / socket.totalHitsRequired));
+        const buildSectorId = this.getSocketSectorId(socket);
+
+        if (!this.materialStockpile || !this.materialStockpile.consumeMaterials(buildSectorId, hitMaterialCost)) {
             mod.DisplayNotificationMessage(
-                mod.Message("CONSTRUCTION FAILED: Insufficient Cash for Material Conversion"),
+                mod.Message("CONSTRUCTION FAILED: Insufficient FOB materials for this socket"),
                 player
             );
             return;
         }
 
-        // Deduct transactional cash, converting it to active structural materials
-        profile.removeCash(hitMaterialCost, "Fortification Materials");
+        profile.addCash(100, "Fortification Materials");
         profile.addTrackXp("Support", 15); // Award Support XP for building bases
 
         // Play sledgehammer impact thud audio at hitting coordinate

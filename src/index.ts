@@ -5,6 +5,9 @@ import { mercenaryRegistry, PlayerProfile, OnPlayerJoinGame, OnPlayerLeaveGame }
 import { BuyValidator } from "./features/shop/buy-validator";
 import { WardogsBuyMenu } from "./features/shop/buy-menu";
 import { RogueAIManager } from "./features/ai/chaos-ai";
+import { excavationManager } from "./features/construction/excavation";
+import { pdaScanner } from "./features/construction/pda-scanner";
+import { FobLogisticsManager } from "./features/construction/fob-stockpile";
 import { 
     carbinePackage_Tier1, 
     SidearmPackage_Standard_P18 
@@ -13,6 +16,7 @@ import {
 // Instantiate Core Managers and Systems
 const buyValidator = new BuyValidator();
 const rogueAIManager = new RogueAIManager();
+const fobLogisticsManager = new FobLogisticsManager();
 import { TowerRedirectionSystem } from "./features/hotzone/redirection";
 import { PdaTowerInteractionSystem } from "./features/hotzone/pda-system";
 
@@ -51,7 +55,11 @@ export async function OnGameModeStarted(): Promise<void> {
 
     // Initialize tower redirection system
     towerRedirectionSystem = new TowerRedirectionSystem();
-    
+
+    // Bind excavation to the live FOB stockpile and activate the support build tools.
+    excavationManager.setMaterialStockpile(fobLogisticsManager);
+    void pdaScanner;
+
     // Initialize PDA interaction system
     pdaInteractionSystem = new PdaTowerInteractionSystem(towerRedirectionSystem);
 
