@@ -1,206 +1,126 @@
-# BF6 Mod SDK — LLM-Assisted Development Guide
+# LLM Workflow — WARDOGS
+
+This document describes how LLM agents should operate within this repository.
+For SDK-specific rules, see `DOCS/BF6_SDK.md`.
+For the complete rule set, see `AGENTS.md`.
 
 ---
 
-## 📂 File Map
+## Session startup checklist
 
-| File                   | Purpose                                                          |
-| ---------------------- | ---------------------------------------------------------------- |
-| `LLM_TEMPLATE.ts`      | Complete TypeScript skeleton with event handlers, classes, loops |
-| `PROJECT_CHECKLIST.md` | 11-phase task tracker                                            |
-| `BF6_API_SUMMARY.md`   | SDK function cheat-sheet                                         |
-| `GODOT_SETUP.md`       | Godot editor setup instructions                                  |
-| `brief.md`             | Project Design Spec document                                     |
-| `todo.md`              | Progress tracker (synced to checklist)                           |
-| `memory.md`            | Persistent notes, decisions, findings                            |
+Every new agent session must do these in order before writing code:
 
----
-
-## 🚀 Phase 1: Initial Documentation Generation
-
-> **Use when:** Changes to project repo are needed to maintain accuracy/currency/relevance. 
-
-> **Prompt:**
-> 
-> "Based on the official BF6 Portal SDK ([`.llm/sdk.d.ts`], [`.llm/modlib.ts`]), and the example mods (shop-example: `BombSquad`, base-building-example: `WarFactory`, moving-controlpoint-example: `GolmudTrainExample`) create/update:
-> 
-> 1. A comprehensive [dev_guidelines.md] doc covering best practices derived from official mods [`../DOCS/BF6_PORTAL_MOD_EXAMPLES`]
-> 2. A TypeScript file with all essential [functions.ts] and [event-handlers.ts]
-> 3. A high-level 11-phase checklist for mod development
-> 
-> Base everything on Official BF6 Portal SDK patterns, not assumptions. Generate code that works with BF6 Portal SDK version 1.4.2.0."
+1. **Read `AGENTS.md`** — the single source of truth for all project rules.
+2. **Read `.llm/brief.md`** — the WARDOGS game design contract.
+   - If it is empty or contains only placeholder text, **stop** and request the user fill it
+     in. Do not generate game logic without a design contract.
+3. **Read `.llm/todo.md`** — understand what is complete and what is pending.
+4. **Read `.llm/memory.md`** — review durable facts from prior sessions.
+5. **Verify SDK types** — for any new API usage, check
+   `node_modules/bf6-portal-mod-types/index.d.ts` before writing.
 
 ---
 
-## 📋 Phase 2: TODO Generation
+## `.llm/` directory — agent-facing files
 
-> **Use when:** Implementing  `brief.md` and need a granular task list.
-
-> **Prompt:**
-> 
-> "Based on the [.llm/brief.md], generate a detailed, phased TODO list in checklist format (with checkboxes). Each item should be specific and actionable. Reference the BF6 Mod Development Checklist structure.
-> 
-> [`.llm/brief.md`]"
-
----
-
-## 💻 Phase 3: Phase-by-Phase Development
-
-> **Use when:** Starting a specific phase. Tailor to the phase.
-
-> **General prompt:**
-> 
-> "I'm working on a BF6 Portal SDK mod. Here's my game mode brief:
-> 
-> [`./.llm/brief.md`]
-> 
-> Now implement Phase [X]: [PHASE NAME]
-> 
-> Follow these rules:
-> 
-> 1. Use the JsPlayer tracking pattern from LLM_TEMPLATE.ts
-> 2. Define all magic numbers as named constants
-> 3. Use async/await properly with mod.Wait()
-> 4. Cache GetObjId results, don't call repeatedly
-> 5. Add clear comments explaining complex logic
-> 6. Keep debug flags enabled for now
-> 7. Handle AI players separately from human players
-> 8. Include cleanup logic for player leave events
-> 9. Write helper functions, don't duplicate logic
-> 10. Return type annotations where helpful"
-
-> **Examples per phase:**
-
-> **Phase 3.1 — Game State Management:**
-> "Implement the GameState enum and state transition logic. Add a game state variable that tracks Lobby → Countdown → InProgress → Ended transitions. Create helper functions to check/set state. Use async/await where needed."
-
-> **Phase 3.2 — Player Management:**
-> "Implement the JsPlayer class with:
-> 
-> - Static get() method that creates/returns JsPlayer instances
-> - Static removeInvalidJSPlayers() that cleans up dictionary AND array
-> - Custom properties for score, deaths, etc.
-> - UI references (lobbyUI, messageUI)
-> - destroyUI() method for cleanup"
-
-> **Phase 3.3 — Core Game Loop:**
-> "Implement TickUpdate() (60fps, 16ms) and ThrottledUpdate() (1-second) loops. Both should check gameOver first. TickUpdate handles fast updates (proximity, progress). ThrottledUpdate handles slower updates (UI refresh, victory checks, timers). Don't await inside the loops — do work, then await mod.Wait()."
+| File                  | Purpose                                                     | Rule                        |
+|-----------------------|-------------------------------------------------------------|-----------------------------|
+| `brief.md`            | WARDOGS game rules, mechanics, win conditions               | Fill before coding; authoritative |
+| `todo.md`             | Task list, open issues, pending fixes                       | Update after every session  |
+| `memory.md`           | Persistent facts across sessions                            | Append only, never overwrite|
+| `skeleton.ts`         | Template for new module files                               | Reference when creating files|
+| `modlib.ts`           | Patterns for `modlib/` wrapper functions                    | Reference for undocumented APIs|
+| `dev_guidelines.md`   | Extended coding standards beyond AGENTS.md                  | Read before non-trivial work|
+| `prompts.md`          | Reusable prompt fragments for common tasks                  | Use for consistency         |
+| `index.ts.txt`        | Latest copy of `src/index.ts` for context                   | Keep in sync                |
+| `index.d.ts.txt`      | Snapshot of `bf6-portal-mod-types/index.d.ts`              | Reference for type verification|
+| `template.ts`         | Boilerplate for new mod features                            | Reference when scaffolding  |
 
 ---
 
-## 🧹 Phase 4: Cleanup Documentation
+## `DOCS/` directory — human-facing reference
 
-> **Use when:** `todo.md` or `memory.md` exceed ~500 lines.
+| File                  | Purpose                                         |
+|-----------------------|-------------------------------------------------|
+| `BF6_SDK.md`          | SDK patterns, import rules, API corrections     |
+| `LLM_WORKFLOW.md`     | This file                                       |
+| `LLM_TEMPLATE.md`     | Template for new DOCS pages                     |
+| `PROJECT_CHECKLIST.md`| High-level project milestone tracker            |
+| `README.md`           | Project overview for humans                     |
+| `example.index.ts`    | Full working example of `src/index.ts`          |
 
-> **Prompt:**
-> 
-> "My todo/memory docs are getting long. Summarize them concisely. Keep critical decisions, pending items, and key findings. Discard redundant or completed items. Preserve any technical details that would be useful for someone continuing the project."
-
----
-
-## 💡 LLM Tips for BF6 Mod Development
-
-1. **Always reference `index.d.ts`** for exact type signatures before calling SDK functions
-2. **Use the `ParseUI` pattern** from official mods — don't reinvent UI creation
-3. **Never skip `OnPlayerLeaveGame`** cleanup — UI memory leaks are the #1 complaint
-4. **Cache `GetObjId()` results** — calling it repeatedly is a common performance killer
-5. **Test with 2 players first** — then scale up to 32
-6. **Use `debugJSPlayer = true`** during development, `false` before sharing
-7. **Check `IsAISoldier`** before running human-specific logic on every player
-8. **Always verify async timing** — nested `await` inside loops causes race conditions
-9. **Handle `Redeploy` death type** as a non-kill in your logic
-10. **Use `modlib/index.ts` helpers** — the official modlib has utilities for UI, arrays, and conditions
+**Do not** consolidate `.llm/` into `DOCS/` or vice versa. They serve different audiences.
 
 ---
 
-## 📌 Prompt Shortcuts
+## After each coding session
 
-Copy-paste these for common tasks:
+1. **Update `.llm/todo.md`:**
+   - Mark completed items.
+   - Add newly discovered issues or next steps.
 
-**Generate event handler:**
+2. **Update `.llm/memory.md`** with any durable facts:
+   - API corrections discovered
+   - Architectural decisions made
+   - Files created or significantly changed
 
-```
-Generate an event handler for OnPlayer[Event] following the JsPlayer pattern. The handler should: 1) Get or create JsPlayer instance, 2) Skip invalid players, 3) Handle the event logic, 4) Update UI if needed, 5) Handle edge cases. Include full TypeScript types.
-```
+3. **Do not** update `AGENTS.md` or `.claude/agents/*.agent.md` unless explicitly asked —
+   those are versioned configuration files.
 
-**Generate a UI class:**
+---
 
-```
-Create a [UIType] class for a [describe UI] that: 1) Has open()/close()/refresh()/isOpen() methods, 2) Uses ParseUI or manual AddUIContainer/AddUIText, 3) Stores a reference in JsPlayer, 4) Handles cleanup in destroyUI(). Write complete TypeScript with types.
-```
+## Code output format
 
-**Generate helper function:**
+When producing code edits:
 
-```
-Create a [name] helper function that [what it does]. It should be type-safe, handle edge cases, and follow the mod's naming conventions. Include a clear comment explaining usage.
-```
+- **New file:** Show the complete file.
+- **Existing file edit:** Show only the changed region with ≥5 lines of surrounding context.
+- **Always** state the full file path at the top of each code block.
+- **Never** output code with known TypeScript type errors.
+- If a type error is discovered mid-edit, fix it before outputting.
 
-**Debug an issue:**
+---
 
-```
-I'm seeing [describe issue]. The relevant code is: [PASTE CODE]. The event handler is [handler name]. Check for: 1) Valid player/object references, 2) Proper async timing, 3) State checks, 4) AI player handling, 5) Object ID comparisons. Suggest a fix.
+## TypeScript error workflow
+
+When fixing type errors:
+
+1. Read the error message precisely — do not guess.
+2. Check `node_modules/bf6-portal-mod-types/index.d.ts` for the correct API.
+3. If the function is undocumented, add a declaration to `src/types/mod-extended.d.ts`.
+4. Fix the error at its root cause — do not cast to `any` or use `// @ts-ignore`.
+5. Run `pnpm validate` mentally (or literally if the environment allows) to confirm.
+
+---
+
+## Prohibited patterns (will cause build failure or runtime errors)
+
+```ts
+// ❌ Never import the mod types package
+import mod from "bf6-portal-mod-types";
+import { Player } from "bf6-portal-mod-types";
+
+// ❌ Never import from bf6-portal-utils root
+import { Events } from "bf6-portal-utils";
+
+// ❌ Never implement raw Portal hooks
+export function OnPlayerDeployed(player: mod.Player) { ... }
+
+// ❌ Never use SolidUI APIs
+SolidUI.render(...)
+SolidUI.For(...)
+SolidUI.Index(...)
+
+// ❌ Never access mod.Vector properties directly
+vec.x; vec.y; vec.z;
+
+// ❌ Never use wrong function names
+mod.EnableSFX()
+mod.GetPlayerState()
+mod.SetPlayerSpeedMultiplier()
+Vectors.toModVector()
 ```
 
 ---
 
-## 🔑 Common SDK Functions (Quick Lookup)
-
-| Function                                             | Returns                | Use                          |
-| ---------------------------------------------------- | ---------------------- | ---------------------------- |
-| `mod.GetObjId(object)`                               | `number`               | Get ID of any game object    |
-| `mod.GetTeam(player\|id)`                            | `mod.Team`             | Get team from player or ID   |
-| `mod.GetHQ(id)`                                      | `mod.HQ`               | Get HQ by ID                 |
-| `mod.GetCapturePoint(id)`                            | `mod.CapturePoint`     | Get capture point by ID      |
-| `mod.GetInteractPoint(id)`                           | `mod.InteractPoint`    | Get interact point by ID     |
-| `mod.GetPlayer(id)`                                  | `mod.Player`           | Get player by ID             |
-| `mod.AllPlayers()`                                   | `mod.Array`            | All players                  |
-| `mod.NumberOfPlayers()`                              | `number`               | Player count                 |
-| `mod.ClosestPlayerTo(vector)`                        | `mod.Player`           | Nearest player               |
-| `mod.CreateVector(x, y, z)`                          | `mod.Vector`           | Create position/color vector |
-| `mod.Wait(seconds)`                                  | `Promise<void>`        | Async delay                  |
-| `mod.Message(key, args)`                             | `mod.Message`          | Localized message            |
-| `mod.Message(key)`                                   | `mod.Message`          | Localized message            |
-| `mod.DisplayNotificationMessage(msg)`                | `void`                 | Show notification            |
-| `mod.GetSoldierState(player, stateType)`             | `bool\|number\|Vector` | Query player state           |
-| `mod.IsPlayerValid(player)`                          | `boolean`              | Check player validity        |
-| `mod.GetSoldierStateVector.GetPosition`              | `Vector`               | Player position              |
-| `mod.GetSoldierStateVector.EyePosition`              | `Vector`               | Player eye position          |
-| `mod.GetSoldierStateVector.GetFacingDirection`       | `Vector`               | Player facing                |
-| `mod.GetSoldierStateNumber.CurrentHealth`            | `number`               | Player health                |
-| `mod.GetSoldierStateBool.IsAlive`                    | `boolean`              | Player alive                 |
-| `mod.GetSoldierStateBool.IsAISoldier`                | `boolean`              | Player is AI                 |
-| `mod.GetSoldierStateBool.IsInVehicle`                | `boolean`              | Player in vehicle            |
-| `mod.GetSoldierStateBool.IsManDown`                  | `boolean`              | Player downed                |
-| `mod.EnableInputRestriction(player, input, enabled)` | `void`                 | Restrict input               |
-| `mod.EnableGameModeObjective(obj, enabled)`          | `void`                 | Enable/disable objective     |
-| `mod.EnableHQ(hq, enabled)`                          | `void`                 | Enable/disable HQ            |
-| `mod.EnableVFX(vfx, enabled)`                        | `void`                 | Enable/disable VFX           |
-| `mod.EnableSFX(sfx, enabled)`                        | `void`                 | Enable/disable SFX           |
-| `mod.PlaySound(sfx, volume, target?)`                | `void`                 | Play sound                   |
-| `mod.Teleport(player, position, angle)`              | `void`                 | Move player                  |
-| `mod.SetTeam(player, team)`                          | `void`                 | Set player team              |
-| `mod.SetTeamScore(team, score)`                      | `void`                 | Set team score               |
-| `mod.SetFriendlyFire(enabled)`                       | `void`                 | Enable/disable friendly fire |
-| `mod.EndGameMode(team)`                              | `void`                 | End game                     |
-| `mod.Kill(player)`                                   | `void`                 | Kill player                  |
-| `mod.DealDamage(player, amount)`                     | `void`                 | Deal damage                  |
-| `mod.Heal(player, amount)`                           | `void`                 | Heal player                  |
-| `mod.GetMatchTimeElapsed()`                          | `number`               | Match time (s)               |
-| `mod.GetMatchTimeRemaining()`                        | `number`               | Match time left (s)          |
-| `mod.GetRoundTime()`                                 | `number`               | Round time (s)               |
-| `mod.SetRoundTimeRemaining(s)`                       | `void`                 | Set round time               |
-
----
-
-## 📚 External Resources
-
-| Resource            | Link                                                                                                  |
-| ------------------- | ----------------------------------------------------------------------------------------------------- |
-| BF6 Portal SDK      | https://portal.battlefield.com/bf6/experiences                                                        |
-| Portal 101 Intro    | https://www.ea.com/games/battlefield/battlefield-6/news/portal-101-introduction-to-battlefield-portal |
-| Portal 101 Advanced | https://www.ea.com/games/battlefield/battlefield-6/news/portal-101-advanced-creations                 |
-| BF6 Creator Program | https://www.ea.com/games/battlefield/battlefield-6/news/introducing-the-battlefield-creator-program   |
-| Portal Hub          | https://www.ea.com/games/battlefield/battlefield-6/portal                                             |
-| Community Mods      | https://www.ea.com/games/battlefield/battlefield-6/portal/browse                                      |
-
----
+*Last updated: 2026-09-06*
