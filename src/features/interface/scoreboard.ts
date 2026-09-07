@@ -1,5 +1,5 @@
 // src/features/interface/scoreboard.ts
-import { Events } from "bf6-portal-utils/events";
+import { Events } from "../../shared/portal-utils/events";
 import { mercenaryRegistry } from "../progression/profile";
 
 export interface PlayerScoreEntry {
@@ -52,7 +52,7 @@ export class WARDOGSScoreboardUI {
             children: [this.createFactionHeader(), this.createPlayerListGrid()]
         });
     }
-    private createFactionHeader(): any {
+    private createFactionHeader(): Record<string, unknown> {
         return {
             type: "Container", name: `SB_Header_${this.playerId}`,
             position: mod.CreateVector(0, -280, 0), size: mod.CreateVector(1000, 80, 0),
@@ -64,7 +64,7 @@ export class WARDOGSScoreboardUI {
             ]
         };
     }
-    private createPlayerListGrid(): any {
+    private createPlayerListGrid(): Record<string, unknown> {
         return {
             type: "Container", name: `SB_PlayerList_${this.playerId}`,
             position: mod.CreateVector(0, -180, 0), size: mod.CreateVector(960, 400, 0),
@@ -74,7 +74,7 @@ export class WARDOGSScoreboardUI {
     public toggle(visible: boolean): void {
         if (this.rootWidget) { mod.SetUIWidgetVisible(this.rootWidget, visible); }
     }
-    private renderPlayerRow(entry: PlayerScoreEntry): any {
+    private renderPlayerRow(entry: PlayerScoreEntry): Record<string, unknown> {
         const factionNames: Record<number, string> = { 1: "LONESTAR", 2: "MANTICORE", 3: "VALKYRA" };
         const factionColor = this.colors[entry.factionId] || [1, 1, 1];
         return {

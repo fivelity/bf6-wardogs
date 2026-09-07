@@ -1,5 +1,5 @@
-import { Events } from "bf6-portal-utils/events";
-import { Timers } from 'bf6-portal-utils/timers';
+import { Events } from "../../shared/portal-utils/events";
+import { Timers } from '../../shared/portal-utils/timers';
 import { mercenaryRegistry } from "../progression/profile";
 
 export interface VehicleCarcassState {
@@ -19,7 +19,7 @@ export interface VehicleCarcassState {
  */
 export class VehicleWreckSalvageSystem {
     private carcasses: Map<number, VehicleCarcassState> = new Map();
-    private tickTimerId: any = null;
+    private tickTimerId: number | null = null;
 
     private readonly SALVAGE_RANGE = 4.5;    // Maximum range in meters to swing and salvage scrap
     private readonly SCRAP_PER_HIT = 10;     // Materials extracted per sledgehammer hit

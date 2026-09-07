@@ -1,6 +1,6 @@
 // src/features/progression/profile.ts
-import { Events } from "bf6-portal-utils/events";
-import { Timers } from 'bf6-portal-utils/timers';
+import { Events } from "../../shared/portal-utils/events";
+import { Timers } from '../../shared/portal-utils/timers';
 
 /**
  * Valid progression tracks matching WARDOGS dynamic sandbox roles.
@@ -162,7 +162,7 @@ export const mercenaryRegistry = new Map<number, PlayerProfile>();
 /**
  * Centralized initialization hook for joining human contractors.
  */
-export function OnPlayerJoinGame(player: mod.Player): void {
+export function initializePlayerProfile(player: mod.Player): void {
     if (mod.GetSoldierState(player, mod.SoldierStateBool.IsAISoldier)) return;
 
     const playerId = mod.GetObjId(player);
@@ -175,7 +175,7 @@ export function OnPlayerJoinGame(player: mod.Player): void {
 /**
  * Centralized cleanup hook triggered upon game leave.
  */
-export function OnPlayerLeaveGame(playerId: number): void {
+export function removePlayerProfile(playerId: number): void {
     if (mercenaryRegistry.has(playerId)) {
         mercenaryRegistry.delete(playerId);
     }

@@ -1,8 +1,6 @@
 // src/index.ts
-import { Events } from "bf6-portal-utils/events";
-import { Timers } from 'bf6-portal-utils/timers';
-import { mercenaryRegistry, PlayerProfile, OnPlayerJoinGame, OnPlayerLeaveGame } from "./features/progression/profile";
-import { BuyValidator } from "./features/shop/buy-validator";
+import { Events } from "./shared/portal-utils/events";
+import { mercenaryRegistry, initializePlayerProfile, removePlayerProfile } from "./features/progression/profile";
 import { WardogsBuyMenu } from "./features/shop/buy-menu";
 import { RogueAIManager } from "./features/ai/chaos-ai";
 import { excavationManager } from "./features/construction/excavation";
@@ -13,20 +11,36 @@ import {
     SidearmPackage_Standard_P18 
 } from "./features/shop/weapon-packages";
 
-// Instantiate Core Managers and Systems
-const buyValidator = new BuyValidator();
 const rogueAIManager = new RogueAIManager();
 const fobLogisticsManager = new FobLogisticsManager();
 import { TowerRedirectionSystem } from "./features/hotzone/redirection";
 import { PdaTowerInteractionSystem } from "./features/hotzone/pda-system";
+import { HotZoneManager } from "./features/hotzone/zone-state";
+import { scoreboardManager } from "./features/interface/scoreboard";
+import { WARDOGSActiveHUD } from "./features/interface/reactive-hud";
+import { HotZoneAntiCampingSystem } from "./features/hotzone/mortar-strike";
+import { VehicleWreckSalvageSystem } from "./features/construction/salvage";
+import { HQLogisticsTerminalSystem } from "./features/construction/hq-terminal";
+import { TeamSwitcherSystem } from "./features/progression/team-switcher";
+import { ScavengerDropSystem } from "./features/scavenger/scavenger-drop";
 
-// Global tower redirection system instance
-export let towerRedirectionSystem: TowerRedirectionSystem | null = null;
-export let pdaInteractionSystem: PdaTowerInteractionSystem | null = null;
+const towerRedirectionSystem = new TowerRedirectionSystem();
+const hotZoneManager = new HotZoneManager(towerRedirectionSystem);
+const pdaInteractionSystem = new PdaTowerInteractionSystem(towerRedirectionSystem);
+const antiCampingSystem = new HotZoneAntiCampingSystem(
+    () => hotZoneManager.getHotZonePresence(),
+    () => hotZoneManager.getActiveHotZonePoint(),
+);
+const salvageSystem = new VehicleWreckSalvageSystem((sectorId, amount) => {
+    fobLogisticsManager.addMaterials(sectorId, amount);
+});
+const hqLogisticsSystem = new HQLogisticsTerminalSystem();
+const teamSwitcherSystem = new TeamSwitcherSystem();
+const scavengerDropSystem = new ScavengerDropSystem();
+const activeHuds = new Map<number, WARDOGSActiveHUD>();
+const buyMenus = new Map<number, WardogsBuyMenu>();
 
 // Global placeholder for the active HotZone coordinates (defaulted to ControlZone center)
-export let currentHotZonePosition = mod.CreateVector(903.11, 228.33, 203.79);
-
 // Define our role-defining gadgets that must survive death
 const ROLE_DEFINING_GADGETS = [
     mod.Gadgets.Misc_Defibrillator,          // Medic Defibrillator
@@ -41,7 +55,7 @@ const ROLE_DEFINING_GADGETS = [
  * Main game initialization lifecycle hook.
  * Sets up server-side mutators, map parameters, and starts standard game scoring loops.
  */
-export async function OnGameModeStarted(): Promise<void> {
+function onGameModeStarted(): void {
     console.log("WARDOGS: Global Game Mode Initiated.");
     
     // Configure Spawn Mode to Manual to give teams staging periods
@@ -53,20 +67,8 @@ export async function OnGameModeStarted(): Promise<void> {
     // Spawn 12 Rogue AI bots on unlisted Team 4 organized into 4 squads of 3
     rogueAIManager.SpawnChaosFactions();
 
-    // Initialize tower redirection system
-    towerRedirectionSystem = new TowerRedirectionSystem();
-
     // Bind excavation to the live FOB stockpile and activate the support build tools.
     excavationManager.setMaterialStockpile(fobLogisticsManager);
-    void pdaScanner;
-
-    // Initialize PDA interaction system
-    pdaInteractionSystem = new PdaTowerInteractionSystem(towerRedirectionSystem);
-
-    // Initialize scoring loop using concurrent Timers to avoid wait blockages
-    Timers.setInterval(() => {
-        EvaluateScoringLoop();
-    }, 4000); // 4-second ticket updates matching conquest tick speeds
 }
 
 /**
@@ -74,20 +76,26 @@ export async function OnGameModeStarted(): Promise<void> {
  * Instantiates the player profile ONCE per match session. 
  * This gives them their baseline $10,000 cash reserves exactly once.
  */
-export function OnPlayerJoinGameHook(player: mod.Player): void {
+function onPlayerJoinGame(player: mod.Player): void {
     if (mod.GetSoldierState(player, mod.SoldierStateBool.IsAISoldier)) return;
 
     // Call profile initializer to construct the persistent profile in mercenaryRegistry
-    OnPlayerJoinGame(player);
-    console.log(`[WARDOGS CONNECT] Contractor joined: ${mod.GetPlayer(0)}. Starting Balance: $10,000 Issued.`);
+    initializePlayerProfile(player);
+    buyMenus.set(mod.GetObjId(player), new WardogsBuyMenu(player));
+    activeHuds.set(mod.GetObjId(player), new WARDOGSActiveHUD(player));
+    console.log(`[WARDOGS CONNECT] Contractor joined: ${mod.GetPlayerName(player)}. Starting Balance: $10,000 Issued.`);
 }
 
 /**
  * Disconnection event handler.
  * Performs clean directory memory wipes to prevent server microtask desyncs.
  */
-export function OnPlayerLeaveGameHook(playerId: number): void {
-    OnPlayerLeaveGame(playerId);
+function onPlayerLeaveGame(playerId: number): void {
+    const hud = activeHuds.get(playerId);
+    if (hud) hud.destroy();
+    activeHuds.delete(playerId);
+    buyMenus.delete(playerId);
+    removePlayerProfile(playerId);
 }
 
 /**
@@ -98,7 +106,7 @@ export function OnPlayerLeaveGameHook(playerId: number): void {
  *  3. Baseline kit is equipped (AK-205 primary, P18 pistol sidearm, Mini Frag Grenade).
  *  4. Specialty role-defining gear is kept so classes persist across deaths.
  */
-export function OnPlayerDeployed(player: mod.Player): void {
+function onPlayerDeployed(player: mod.Player): void {
     if (mod.GetSoldierState(player, mod.SoldierStateBool.IsAISoldier)) return;
 
     const playerId = mod.GetObjId(player);
@@ -144,7 +152,7 @@ export function OnPlayerDeployed(player: mod.Player): void {
  * Screen interaction event handler.
  * Translates ParseUI clicks and focuses directly to active Buy Menu tab refreshes.
  */
-export function OnPlayerUIButtonEvent(player: mod.Player, widget: mod.UIWidget, event: mod.UIButtonEvent): void {
+function onPlayerUIButtonEvent(player: mod.Player, widget: mod.UIWidget, event: mod.UIButtonEvent): void {
     if (mod.GetSoldierState(player, mod.SoldierStateBool.IsAISoldier)) return;
 
     const playerId = mod.GetObjId(player);
@@ -156,14 +164,22 @@ export function OnPlayerUIButtonEvent(player: mod.Player, widget: mod.UIWidget, 
     WardogsBuyMenu.OnPlayerUIButtonEvent(player, widget, event);
 }
 
-/**
- * Evaluates tactical zone occupancy, counting faction headcounts \n * and ticking scores to enforce the end-game target score.
- */
-function EvaluateScoringLoop(): void {
-    // Scoring logic, evaluating ControlZone headcounts, adding team ticket scales,
-    // and manually updating overall score headers in real-time.
-    console.log("[WARDOGS SCORING] Ticking faction points...");
-
-    // Feed current HotZone coordinates to the Rogue AI Manager to maintain active combat tracking
-    rogueAIManager.updateTargetCoordinates(currentHotZonePosition);
-}
+Events.OnGameModeStarted.subscribe(onGameModeStarted);
+Events.OnPlayerJoinGame.subscribe(onPlayerJoinGame);
+Events.OnPlayerLeaveGame.subscribe(onPlayerLeaveGame);
+Events.OnPlayerDeployed.subscribe(onPlayerDeployed);
+Events.OnPlayerUIButtonEvent.subscribe(onPlayerUIButtonEvent);
+Events.OnGameModeEnding.subscribe(() => {
+    hotZoneManager.shutdown();
+    towerRedirectionSystem.shutdown();
+    pdaInteractionSystem.shutdown();
+    pdaScanner.shutdown();
+    excavationManager.shutdown();
+    salvageSystem.shutdown();
+    antiCampingSystem.shutdown();
+    scavengerDropSystem.shutdown();
+    rogueAIManager.shutdown();
+    void scoreboardManager;
+    void hqLogisticsSystem;
+    void teamSwitcherSystem;
+});

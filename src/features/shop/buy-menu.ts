@@ -1,6 +1,6 @@
 // src/features/shop/buy-menu.ts
-import { Events } from "bf6-portal-utils/events";
-import { Timers } from "bf6-portal-utils/timers";
+import { Events } from "../../shared/portal-utils/events";
+import { Timers } from "../../shared/portal-utils/timers";
 import { mercenaryRegistry, TrackData, ProgressionTrackKey } from "../progression/profile";
 
 // Module-level map to track active buy menus by player ID (replaces profile.ShopUI)
@@ -26,8 +26,8 @@ export interface ShopItem {
     requiredTrack: ProgressionTrackKey;
     requiredTier: number;           // Tier 1 to 5
     gearType: "weapon" | "gadget" | "emplacement" | "vehicle_key";
-    assetId: any;                   // SDK enum mapped asset reference
-    weaponPackage?: any;            // Pre-compiled WeaponPackage containing attachments
+    assetId: mod.Weapons | mod.Gadgets | number;
+    weaponPackage?: mod.WeaponPackage;
     isPooled: boolean;              // If true, multiple players can contribute cash
     pooledCash: number;             // Track current team/squad contribution
     imageType: mod.UIImageType;     // Background visual or weapon card type
@@ -202,9 +202,9 @@ export class WardogsBuyMenu {
     /**
      * Builds the left sidebar panel harboring the shop division tabs.
      */
-    private buildTabsSidebar(): any {
+    private buildTabsSidebar(): Record<string, unknown> {
         const uniqueSuffix = `_${this.playerId}`;
-        const tabs: any[] = [];
+        const tabs: Record<string, unknown>[] = [];
         const tabKeys = Object.keys(ShopTab) as ShopTab[];
 
         tabKeys.forEach((tab, index) => {
@@ -249,9 +249,9 @@ export class WardogsBuyMenu {
     /**
      * Builds the center grid panel that lists purchasable items for the active tab.
      */
-    private buildItemGridPanel(): any {
+    private buildItemGridPanel(): Record<string, unknown> {
         const uniqueSuffix = `_${this.playerId}`;
-        const gridItems: any[] = [];
+        const gridItems: Record<string, unknown>[] = [];
 
         // Pre-allocate 6 grid button containers (3 columns x 2 rows)
         for (let row = 0; row < 2; row++) {
@@ -337,7 +337,7 @@ export class WardogsBuyMenu {
     /**
      * Builds the right preview sidebar showing specs, dynamic surcharges, and the buy button.
      */
-    private buildDetailPreviewPanel(): any {
+    private buildDetailPreviewPanel(): Record<string, unknown> {
         const uniqueSuffix = `_${this.playerId}`;
 
         return {
@@ -663,10 +663,14 @@ export class WardogsBuyMenu {
         // Clean redundant gear slots and compile new weapon pack definitions
         if (item.gearType === "weapon") {
             mod.RemoveEquipment(this.player, mod.InventorySlots.PrimaryWeapon);
-            mod.AddEquipment(this.player, item.assetId, item.weaponPackage);
+            if (item.weaponPackage) {
+                mod.AddEquipment(this.player, item.assetId as mod.Weapons, item.weaponPackage);
+            } else {
+                mod.AddEquipment(this.player, item.assetId as mod.Weapons);
+            }
         } else if (item.gearType === "gadget") {
             mod.RemoveEquipment(this.player, mod.InventorySlots.GadgetOne);
-            mod.AddEquipment(this.player, item.assetId);
+            mod.AddEquipment(this.player, item.assetId as mod.Gadgets);
         }
 
         mod.DisplayNotificationMessage(mod.Message("Acquisition Success: Loadout Issued! -${}", dynamicCost), this.player);
@@ -802,7 +806,7 @@ export const storeDatabase: ShopItem[] = [
 /**
  * Central event hook handling UI mouse/keyboard interactions.
  */
-export function OnPlayerUIButtonEvent(player: mod.Player, widget: mod.UIWidget, event: mod.UIButtonEvent): void {
+export function handleBuyMenuButtonEvent(player: mod.Player, widget: mod.UIWidget, event: mod.UIButtonEvent): void {
     const widgetName = mod.GetUIWidgetName(widget);
     const playerId = mod.GetObjId(player);
     const profile = mercenaryRegistry.get(playerId);

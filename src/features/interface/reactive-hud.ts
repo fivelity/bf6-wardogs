@@ -1,6 +1,7 @@
 // src/features/interface/reactive-hud.ts
 import { mercenaryRegistry, PlayerProfile, TrackData, ProgressionTrackKey } from "../progression/profile";
-import { MakeMessage } from "../../modlib";
+import { scoreboardState } from "./scoreboard";
+import { MakeMessage } from "../../modlib/index";
 
 // XP thresholds for tiers 1-5 (cumulative XP required)
 const XP_THRESHOLDS: number[] = [0, 1000, 2500, 5000, 10000];
@@ -164,8 +165,7 @@ export class WARDOGSActiveHUD {
    * Updates faction ticket displays from scoreboard state.
    */
   private updateFactionTickets(profile: PlayerProfile): void {
-    const scoreState = (globalThis as any).scoreboardState;
-    const factionScores = scoreState?.factionScores ?? { 1: 0, 2: 0, 3: 0 };
+    const factionScores = scoreboardState.factionScores;
     for (const factionId of [1, 2, 3] as const) {
       const widget = this.factionTextWidgets[factionId];
       if (!widget) continue;

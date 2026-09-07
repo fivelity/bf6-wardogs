@@ -1,5 +1,5 @@
 // src/features/construction/fob-stockpile.ts
-import { Events } from "bf6-portal-utils/events";
+import { Events } from "../../shared/portal-utils/events";
 import { mercenaryRegistry } from "../progression/profile";
 
 /**
@@ -163,5 +163,13 @@ export class FobLogisticsManager {
 
         this.fobMaterialStockpiles.set(sectorId, current - amount);
         return true;
+    }
+
+    public addMaterials(sectorId: number, amount: number): number {
+      if (amount <= 0) return this.getFobStockpile(sectorId);
+      const current = this.getFobStockpile(sectorId);
+      const updated = Math.min(this.maxStockpileCapacity, current + amount);
+      this.fobMaterialStockpiles.set(sectorId, updated);
+      return updated;
     }
 }

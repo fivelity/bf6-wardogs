@@ -1,6 +1,6 @@
 // src/features/scavenger/scavenger-drop.ts
-import { Events } from "bf6-portal-utils/events";
-import { Timers } from 'bf6-portal-utils/timers';
+import { Events } from "../../shared/portal-utils/events";
+import { Timers } from '../../shared/portal-utils/timers';
 import { mercenaryRegistry, PlayerProfile } from "../progression/profile";
 
 /**
@@ -10,7 +10,7 @@ export interface ActiveScavengerDrop {
     id: string;                      // Unique drop UUID
     position: mod.Vector;            // Coordinate center of the drop
     lootObject3D: mod.SpatialObject; // Spawned physical backpack / supplies prop
-    interactPoint: any;              // Dynamically spawned InteractPoint for native E use keys
+    interactPoint: mod.InteractPoint; // Dynamically spawned InteractPoint for native E use keys
     worldIcon: mod.WorldIcon;        // Floating 3D visual indicator above the drop
     spawnTime: number;               // Timestamp when spawned (in milliseconds)
     ownerTeamId: number;             // Faction team of the dead soldier
@@ -34,7 +34,7 @@ export interface ActiveScavengerDrop {
  */
 export class ScavengerDropSystem {
     private activeDrops: Map<string, ActiveScavengerDrop> = new Map();
-    private garbageCollectionTimer: any = null;
+    private garbageCollectionTimer: number | null = null;
     
     // Configurable balancing thresholds
     private readonly dropDuration = 60000;       // Configurable GC window [60s default]

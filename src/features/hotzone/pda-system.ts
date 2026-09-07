@@ -1,5 +1,5 @@
-import { Events } from "bf6-portal-utils/events";
-import { Timers } from 'bf6-portal-utils/timers';
+import { Events } from "../../shared/portal-utils/events";
+import { Timers } from '../../shared/portal-utils/timers';
 import { mercenaryRegistry } from "../progression/profile";
 import { TowerRedirectionSystem } from "./redirection";
 
@@ -9,7 +9,7 @@ import { TowerRedirectionSystem } from "./redirection";
  */
 export class PdaTowerInteractionSystem {
     private towerRedirectionSystem: TowerRedirectionSystem;
-    private pdaInteractionTimerId: any = null;
+    private pdaInteractionTimerId: number | null = null;
 
     constructor(towerRedirectionSystem: TowerRedirectionSystem) {
         this.towerRedirectionSystem = towerRedirectionSystem;
@@ -74,7 +74,7 @@ export class PdaTowerInteractionSystem {
     private isSupportPlayer(player: mod.Player): boolean {
         // Check if player has support role gear or equipment
         // This could be checking for specific gadgets or class roles
-        const hasSupportGadget = mod.HasEquipment(player, mod.Gadgets.U_DeployableCover) || 
+        const hasSupportGadget = mod.HasEquipment(player, mod.Gadgets.Deployable_Cover) ||
                                mod.HasEquipment(player, mod.Gadgets.Misc_PortalGadget);
         
         return hasSupportGadget;
@@ -107,7 +107,7 @@ export class PdaTowerInteractionSystem {
                 pos,
                 mod.CreateVector(0, 0, 0)
             );
-            mod.EnableSFX(sfx, true);
+            mod.EnableVFX(sfx, true);
             mod.PlaySound(sfx, 1.0);
         } else {
             // Show failure feedback

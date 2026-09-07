@@ -1,4 +1,4 @@
-import { Events } from "bf6-portal-utils/events";
+import { Events } from "../../shared/portal-utils/events";
 import { mercenaryRegistry } from "./profile";
 
 /**

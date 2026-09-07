@@ -1,10 +1,9 @@
 // src/features/hotzone/zone-state.ts
-import { Events } from "bf6-portal-utils/events";
-import { Timers } from 'bf6-portal-utils/timers';
+import { Events } from "../../shared/portal-utils/events";
+import { Timers } from '../../shared/portal-utils/timers';
 import { mercenaryRegistry } from "../progression/profile";
 import { ZoneMath, Point2D } from "./zone-math";
-
-declare const towerRedirectionSystem: { getRedirectTargetCoordinates(): Point2D | null } | null | undefined;
+import type { TowerRedirectionSystem } from "./redirection";
 
 /**
  * Interface tracking a player's real-time occupancy status across the concentric zones.
@@ -56,10 +55,12 @@ export class HotZoneManager {
     // Pre-cached inward-offset (shrunk) boundary vertices to keep the 60m radius enclosed
     private innerControlZone: Point2D[] = [];
 
-    private driftTimerId: any = null;
-    private scoringTimerId: any = null;
+    private driftTimerId: number | null = null;
+    private scoringTimerId: number | null = null;
+    private readonly towerRedirectionSystem: Pick<TowerRedirectionSystem, "getRedirectTargetCoordinates"> | null;
 
-    constructor() {
+    constructor(towerRedirectionSystem: Pick<TowerRedirectionSystem, "getRedirectTargetCoordinates"> | null = null) {
+        this.towerRedirectionSystem = towerRedirectionSystem;
         this.initializeZoneContainment();
         this.initializeAreaListeners();
         this.startLoops();
@@ -149,11 +150,7 @@ export class HotZoneManager {
      * This allows other systems to override normal drift behavior.
      */
     private getRedirectTargetCoordinates(): Point2D | null {
-        // Get the redirection target from the global towerRedirectionSystem
-        if (typeof towerRedirectionSystem !== 'undefined' && towerRedirectionSystem !== null) {
-            return towerRedirectionSystem.getRedirectTargetCoordinates();
-        }
-        return null;
+        return this.towerRedirectionSystem?.getRedirectTargetCoordinates() ?? null;
     }
 
     /**
@@ -309,6 +306,22 @@ export class HotZoneManager {
      */
     public getActiveHotZonePos(): mod.Vector {
         return ZoneMath.toModVector(this.currentHotZonePos, this.hotZoneAltitude);
+    }
+
+    public getActiveHotZonePoint(): Point2D {
+        return { ...this.currentHotZonePos };
+    }
+
+    public getHotZonePresence(): Record<number, number> {
+        const presence: Record<number, number> = { 1: 0, 2: 0, 3: 0 };
+        this.zonePlayers.forEach((state, playerId) => {
+            if (!state.insideHot) return;
+            const player = mod.GetPlayer(playerId);
+            if (!player || !mod.GetSoldierState(player, mod.SoldierStateBool.IsAlive)) return;
+            const teamId = mod.GetObjId(mod.GetTeam(player));
+            if (teamId >= 1 && teamId <= 3) presence[teamId]++;
+        });
+        return presence;
     }
 
     /**

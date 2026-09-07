@@ -1,5 +1,5 @@
 // src/features/construction/excavation.ts
-import { Timers } from 'bf6-portal-utils/timers';
+import { Timers } from '../../shared/portal-utils/timers';
 import { mercenaryRegistry } from "../progression/profile";
 import { FobLogisticsManager } from "./fob-stockpile";
 
@@ -34,7 +34,7 @@ export interface FortificationSocket {
 export class ExcavationSystem {
     private sockets: Map<number, FortificationSocket> = new Map();
     private activeSwings: Map<number, { lastSwingTime: number }> = new Map();
-    private meleeCheckInterval: any = null;
+    private meleeCheckInterval: number | null = null;
     private materialStockpile: FobLogisticsManager | null = null;
 
     constructor() {

@@ -1,6 +1,6 @@
 // src/features/construction/pda-scanner.ts
-import { Events } from "bf6-portal-utils/events";
-import { Timers } from 'bf6-portal-utils/timers';
+import { Events } from "../../shared/portal-utils/events";
+import { Timers } from '../../shared/portal-utils/timers';
 import { mercenaryRegistry } from "../progression/profile";
 import { excavationManager } from "./excavation";
 
@@ -20,7 +20,7 @@ interface PDAScanState {
  */
 export class PDAScannerSystem {
     private scanStates: Map<number, PDAScanState> = new Map();
-    private raycastIntervalId: any = null;
+    private raycastIntervalId: number | null = null;
     private readonly maxBuildRange = 8.0; // 8 meters maximum designation range
 
     constructor() {

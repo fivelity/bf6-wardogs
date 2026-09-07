@@ -1,4 +1,4 @@
-import { Timers } from 'bf6-portal-utils/timers';
+import { Timers } from '../../shared/portal-utils/timers';
 import { Point2D } from "./zone-math";
 
 /**
@@ -10,8 +10,8 @@ import { Point2D } from "./zone-math";
 export class HotZoneAntiCampingSystem {
     private holdTimerRecord: Record<number, number> = { 1: 0, 2: 0, 3: 0 };
     private uncontestedTeamId = 0; // Current team holding the zone uncontested
-    private checkTimerId: any = null;
-    private barrageTimerId: any = null;
+    private checkTimerId: number | null = null;
+    private barrageTimerId: number | null = null;
 
     private readonly CAMPING_THRESHOLD = 45; // Time in seconds before mortar strikes trigger
     private readonly DETONATION_INTERVAL = 1500; // Time in milliseconds between mortar shells [168]
@@ -79,7 +79,7 @@ export class HotZoneAntiCampingSystem {
         
         // Spawn siren SFX natively [190]
         const siren = mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_Alarm, centerVec, mod.CreateVector(0, 0, 0));
-        mod.EnableSFX(siren, true);
+        mod.EnableVFX(siren, true);
         mod.PlaySound(siren, 1.0); // Global volume sweep [190]
         
         // Also play a more dramatic artillery warning sound
@@ -88,7 +88,7 @@ export class HotZoneAntiCampingSystem {
             centerVec,
             mod.CreateVector(0, 0, 0)
         );
-        mod.EnableSFX(warningSfx, true);
+        mod.EnableVFX(warningSfx, true);
         mod.PlaySound(warningSfx, 1.0);
         
         // Visual effect for warning
@@ -133,7 +133,7 @@ export class HotZoneAntiCampingSystem {
                 detonationVec,
                 mod.CreateVector(0, 0, 0)
             );
-            mod.EnableSFX(sound, true);
+            mod.EnableVFX(sound, true);
             mod.PlaySound(sound, 1.0);
 
             // Play a more dramatic artillery sound for the barrage
@@ -142,7 +142,7 @@ export class HotZoneAntiCampingSystem {
                 detonationVec,
                 mod.CreateVector(0, 0, 0)
             );
-            mod.EnableSFX(barrageSfx, true);
+            mod.EnableVFX(barrageSfx, true);
             mod.PlaySound(barrageSfx, 1.0);
 
             // Apply direct area splash damage to players standing near the impact vector [189]

@@ -1,5 +1,5 @@
-import { Events } from "bf6-portal-utils/events";
-import { Timers } from 'bf6-portal-utils/timers';
+import { Events } from "../../shared/portal-utils/events";
+import { Timers } from '../../shared/portal-utils/timers';
 import { mercenaryRegistry } from "../progression/profile";
 import { Point2D, ZoneMath } from "../hotzone/zone-math";
 
@@ -22,7 +22,7 @@ export interface RadioTowerState {
 export class TowerRedirectionSystem {
     private towers: Map<number, RadioTowerState> = new Map();
     private activeRedirectionTower: number | null = null;
-    private tickTimerId: any = null;
+    private tickTimerId: number | null = null;
 
     // Hardcoded mp_granite tower coordinate definitions from level.spatial.json
     private readonly TOWER_CONFIGS = [

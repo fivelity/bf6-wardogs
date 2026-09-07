@@ -1,6 +1,6 @@
 // src/features/shop/buy-validator.ts
-import { Events } from "bf6-portal-utils/events";
-import { Timers } from 'bf6-portal-utils/timers';
+import { Events } from "../../shared/portal-utils/events";
+import { Timers } from '../../shared/portal-utils/timers';
 import { mercenaryRegistry, ProgressionTrackKey } from "../progression/profile";
 import { ShopItem } from "./buy-menu";
 
@@ -135,11 +135,15 @@ export class BuyValidator {
         if (item.gearType === "weapon") {
             // Remove current primary weapon first to prevent overlapping bugs
             mod.RemoveEquipment(player, mod.InventorySlots.PrimaryWeapon);
-            mod.AddEquipment(player, item.assetId, item.weaponPackage);
+            if (item.weaponPackage) {
+                mod.AddEquipment(player, item.assetId as mod.Weapons, item.weaponPackage);
+            } else {
+                mod.AddEquipment(player, item.assetId as mod.Weapons);
+            }
         } else if (item.gearType === "gadget") {
             // Remove current deployable gadget slot to replace cleanly
             mod.RemoveEquipment(player, mod.InventorySlots.GadgetOne);
-            mod.AddEquipment(player, item.assetId);
+            mod.AddEquipment(player, item.assetId as mod.Gadgets);
         }
     }
 

@@ -1,5 +1,5 @@
 // src/features/ai/chaos-ai.ts
-import { Timers } from "bf6-portal-utils/timers";
+import { Timers } from "../../shared/portal-utils/timers";
 
 export interface AISquadMember {
     bot: mod.Player | null;
@@ -68,8 +68,8 @@ export class RogueAIManager {
     private squads: ChaosAISquad[] = [];
     private controlZoneCenter = mod.CreateVector(903.11, 228.33, 203.79); // mp_granite ControlZone center
     private activeZonePosition = mod.CreateVector(903.11, 228.33, 203.79);
-    private updateTimerId: any = null;
-    private cohesionTimerId: any = null;
+    private updateTimerId: number | null = null;
+    private cohesionTimerId: number | null = null;
 
     constructor() {
         this.initializeSchedules();
