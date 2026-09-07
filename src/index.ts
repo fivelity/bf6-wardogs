@@ -37,7 +37,7 @@ const ROLE_DEFINING_GADGETS = [
  * Main game initialization lifecycle hook.
  * Sets up server-side mutators, map parameters, and starts standard game scoring loops.
  */
-export async function OnGameModeStarted(): void {
+export async function OnGameModeStarted(): Promise<void> {
     console.log("WARDOGS: Global Game Mode Initiated.");
     
     // Configure Spawn Mode to Manual to give teams staging periods
@@ -145,7 +145,7 @@ export function OnPlayerUIButtonEvent(player: mod.Player, widget: mod.UIWidget, 
     if (!profile) return;
 
     // Direct UI interactions to the Buy Menu controllers
-    WardogsBuyMenu.(player, widget, event);
+    WardogsBuyMenu.OnPlayerUIButtonEvent(player, widget, event);
 }
 
 /**

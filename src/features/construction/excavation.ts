@@ -166,7 +166,6 @@ export class ExcavationSystem {
 
         mod.DisplayNotificationMessage(
             mod.Message("PDA BLUEPRINT SET: {} is marked for construction!", socket.name),
-            null, // Broadlog to team
             mod.GetTeam(player)
         );
 
@@ -336,7 +335,6 @@ export class ExcavationSystem {
 
         mod.DisplayNotificationMessage(
             mod.Message("FORTIFICATION COMPILED: {} is fully constructed!", socket.name),
-            null, // Broadlog
             mod.GetTeam(player)
         );
     }

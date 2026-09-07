@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
-    "module": "ES2015",
+    "target": "ES2020",
+    "module": "ES2020",
     "lib": ["ES2017", "DOM"],
 
     "moduleResolution": "bundler",
@@ -19,5 +19,5 @@
     "noEmit": true,
     "types": ["bf6-portal-mod-types"]
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts"]
 }

@@ -1,5 +1,4 @@
 // src/features/shop/buy-menu.ts
-import { SolidUI } from "bf6-portal-utils/solid-ui";
 import { Events } from "bf6-portal-utils/events";
 import { Timers } from "bf6-portal-utils/timers";
 import { mercenaryRegistry, TrackData, ProgressionTrackKey } from "../progression/profile";
@@ -70,6 +69,38 @@ export class WardogsBuyMenu {
         this.playerId = mod.GetObjId(player);
         activeBuyMenus.set(this.playerId, this);
         this.initializeUI();
+    }
+
+    public static OnPlayerUIButtonEvent(player: mod.Player, widget: mod.UIWidget, event: mod.UIButtonEvent): void {
+        const playerId = mod.GetObjId(player);
+        const menu = getBuyMenu(playerId);
+        if (!menu) return;
+
+        const widgetName = mod.GetUIWidgetName(widget);
+        if (widgetName.startsWith("ShopTabBtn_")) {
+            const tabKeyStr = widgetName.substring("ShopTabBtn_".length, widgetName.indexOf(`_${playerId}`));
+            menu.selectTab(tabKeyStr as ShopTab);
+        }
+
+        if (widgetName.startsWith("ShopItemBtn_")) {
+            const gridIndexStr = widgetName.substring("ShopItemBtn_".length, widgetName.indexOf(`_${playerId}`));
+            const index = parseInt(gridIndexStr, 10);
+            if (event === mod.UIButtonEvent.FocusIn) {
+                menu.previewItem(index);
+            }
+        }
+
+        if (widgetName.startsWith("Shop_BuyActionBtn_")) {
+            if (event === mod.UIButtonEvent.ButtonDown) {
+                menu.executeAcquisition();
+            }
+        }
+
+        if (widgetName.startsWith("Shop_CloseBtn_")) {
+            if (event === mod.UIButtonEvent.ButtonDown) {
+                menu.close();
+            }
+        }
     }
 
     /**
@@ -609,7 +640,6 @@ export class WardogsBuyMenu {
 
             mod.DisplayNotificationMessage(
                 mod.Message("CO-OP UPGRADE: Contributed {}! Total: {}/{}", contribution, `${item.pooledCash}/${dynamicCost}`),
-                null,
                 mod.GetTeam(this.player)
             );
 
@@ -649,7 +679,6 @@ export class WardogsBuyMenu {
     private completePooledConstruction(item: ShopItem): void {
         mod.DisplayNotificationMessage(
             mod.Message("COOPERATIVE UNLOCK: {} has been fully funded!", item.name),
-            null,
             mod.GetTeam(this.player)
         );
 

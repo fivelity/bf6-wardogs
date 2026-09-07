@@ -71,7 +71,6 @@ export class TowerRedirectionSystem {
                 // Alert the capturing team
                 mod.DisplayNotificationMessage(
                     mod.Message("TOWER CONNECTED: {} is now uploading decryption keys!", tower.name),
-                    undefined,
                     team
                 );
             }
@@ -156,7 +155,6 @@ export class TowerRedirectionSystem {
                             console.log(`[WARDOGS TOWERS] Cryptographic Key Decrypted for Faction ${teamId} at ${tower.name}!`);
                             mod.DisplayNotificationMessage(
                                 mod.Message(`DECRYPTION SECURED: Keys fully decrypted at ${tower.name}! Support players can redirect the HotZone.`),
-                                undefined,
                                 mod.GetTeam(teamId)
                             );
                         }

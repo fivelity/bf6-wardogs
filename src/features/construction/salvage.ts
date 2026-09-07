@@ -1,3 +1,4 @@
+import { Events } from "bf6-portal-utils/events";
 import { Timers } from 'bf6-portal-utils/timers';
 import { mercenaryRegistry } from "../progression/profile";
 
@@ -35,7 +36,7 @@ export class VehicleWreckSalvageSystem {
 
     private registerVehicleCarcassHooks(): void {
         // Listen for vehicle destruction events to properly track when vehicles are destroyed
-        mod.Events.OnVehicleDestroyed.subscribe((vehicle) => {
+        Events.OnVehicleDestroyed.subscribe((vehicle) => {
             const vehicleId = mod.GetObjId(vehicle);
             
             // Get vehicle position
@@ -95,7 +96,8 @@ export class VehicleWreckSalvageSystem {
                                 name: "Destroyed Vehicle Husk",
                                 position: pos,
                                 scrapMaterialsRemaining: this.MAX_SCRAP_PER_VEHICLE,
-                                isFullySalvaged: false
+                                isFullySalvaged: false,
+                                vehicleType: this.determineVehicleType(objId)
                             });
 
                             console.log(`[WARDOGS SALVAGE] Destroyed vehicle husk registered at: ${mod.XComponentOf(pos)}, ${mod.ZComponentOf(pos)}`);
@@ -112,7 +114,8 @@ export class VehicleWreckSalvageSystem {
     }
 
     private evaluateSledgehammerSwings(): void {
-        mod.AllPlayers().forEach((player) => {
+        const players = mod.AllPlayers() as unknown as mod.Player[];
+        players.forEach((player) => {
             if (!mod.GetSoldierState(player, mod.SoldierStateBool.IsAlive)) return;
 
             // Step A: Ensure player is holding their Sledgehammer and swinging/firing [188]

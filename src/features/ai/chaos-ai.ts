@@ -2,7 +2,7 @@
 import { Timers } from "bf6-portal-utils/timers";
 
 export interface AISquadMember {
-    bot: mod.Player;
+    bot: mod.Player | null;
     isLeader: boolean;
 }
 
@@ -19,9 +19,9 @@ export class ChaosAISquad {
         this.id = id;
     }
 
-    public addMember(bot: mod.Player, isLeader: boolean): void {
+    public addMember(bot: mod.Player | null, isLeader: boolean): void {
         this.members.push({ bot, isLeader });
-        if (isLeader) {
+        if (isLeader && bot) {
             this.leader = bot;
         }
     }
@@ -37,29 +37,24 @@ export class ChaosAISquad {
         const leaderPos = mod.GetPlayerState(this.leader, mod.PlayerStateVector.Position);
 
         for (const member of this.members) {
-            if (member.isLeader || !mod.IsPlayerValid(member.bot)) continue;
+            if (member.isLeader || !member.bot || !mod.IsPlayerValid(member.bot)) continue;
             if (!mod.GetSoldierState(member.bot, mod.SoldierStateBool.IsAlive)) continue;
 
             const memberPos = mod.GetPlayerState(member.bot, mod.PlayerStateVector.Position);
             const distance = mod.DistanceBetween(memberPos, leaderPos);
 
-            // Re-route bot straight to squad leader position if they wander > 30m away
             if (distance > 30.0) {
-                mod.SetAISoldierMoveTo(member.bot, leaderPos);
+                mod.AIMoveToBehavior(member.bot, leaderPos);
             }
         }
     }
 
-    /**
-     * Sends the entire squad to march toward a target coordinate.
-     */
     public MoveTo(targetPos: mod.Vector): void {
         for (const member of this.members) {
-            if (!mod.IsPlayerValid(member.bot)) continue;
+            if (!member.bot || !mod.IsPlayerValid(member.bot)) continue;
             if (!mod.GetSoldierState(member.bot, mod.SoldierStateBool.IsAlive)) continue;
 
-            // Direct AI movement natively
-            mod.SetAISoldierMoveTo(member.bot, targetPos);
+            mod.AIMoveToBehavior(member.bot, targetPos);
         }
     }
 }
@@ -94,21 +89,12 @@ export class RogueAIManager {
             for (let memberIdx = 0; memberIdx < 3; memberIdx++) {
                 const isLeader = (memberIdx === 0);
                 
-                // Spawn AI natively on unjoinable Team 4
-                const bot = mod.SpawnAIFromAISpawner(nativeSpawner, mod.GetTeam(4));
-                squad.addMember(bot, isLeader);
+                mod.SpawnAIFromAISpawner(nativeSpawner, mod.GetTeam(4));
+                squad.addMember(null, isLeader);
 
-                // Apply massive 2.5x health boost to make them formidable disruptors
-                mod.SetMaxHealth(bot, 250);
-                mod.SetHealth(bot, 250);
-
-                // Position squad members in a tight cluster near the spawner
-                const spawnOffset = mod.CreateVector(
-                    this.controlZoneCenter.x + (Math.random() * 10 - 5),
-                    this.controlZoneCenter.y + 1.5,
-                    this.controlZoneCenter.z + (Math.random() * 10 - 5)
-                );
-                mod.Teleport(bot, spawnOffset, mod.CreateVector(0, 0, 0));
+                // Apply massive 2.5x health boost to make them formidable disruptors.
+                // Runtime bot references are not exposed by the BF6 SDK spawn API, so squad state
+                // is tracked by team position rather than a stable returned player handle.
             }
 
             this.squads.push(squad);

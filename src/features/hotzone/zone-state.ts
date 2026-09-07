@@ -4,6 +4,8 @@ import { Timers } from 'bf6-portal-utils/timers';
 import { mercenaryRegistry } from "../progression/profile";
 import { ZoneMath, Point2D } from "./zone-math";
 
+declare const towerRedirectionSystem: { getRedirectTargetCoordinates(): Point2D | null } | null | undefined;
+
 /**
  * Interface tracking a player's real-time occupancy status across the concentric zones.
  */

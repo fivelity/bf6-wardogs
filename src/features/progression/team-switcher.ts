@@ -57,7 +57,8 @@ export class TeamSwitcherSystem {
 
         // Count headcounts
         const counts: Record<number, number> = { 1: 0, 2: 0, 3: 0 };
-        mod.AllPlayers().forEach((p) => {
+        const players = mod.AllPlayers() as unknown as mod.Player[];
+        players.forEach((p) => {
             const tid = mod.GetObjId(mod.GetTeam(p));
             if (tid >= 1 && tid <= 3) {
                 counts[tid]++;
@@ -104,7 +105,8 @@ export class TeamSwitcherSystem {
 
         // Validation 2: Enforce strict 12-player team limits [230]
         let targetHeadcount = 0;
-        mod.AllPlayers().forEach((p) => {
+        const players = mod.AllPlayers() as unknown as mod.Player[];
+        players.forEach((p) => {
             if (mod.GetObjId(mod.GetTeam(p)) === targetTeamId) {
                 targetHeadcount++;
             }

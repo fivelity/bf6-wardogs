@@ -35,19 +35,16 @@ let globalCashPool: number = 0;
 // HotZone Tracking
 // ============================================================
 
-let hotZonePosition: mod.Vector = null;
-let hotZoneTargetPosition: mod.Vector = null;
-let hotZoneDriftDirection: mod.Vector = null;
+let hotZonePosition: mod.Vector | null = null;
+let hotZoneTargetPosition: mod.Vector | null = null;
+let hotZoneDriftDirection: mod.Vector | null = null;
 let hotZoneLastUpdate: number = 0;
 
 // ============================================================
 // Event Handlers Registry
 // ============================================================
 
-interface EventHandler {
-    handler: (...args: any[]) => void;
-    priority?: number;
-}
+type EventHandler = (...args: any[]) => void;
 
 const eventRegistry: Record<string, EventHandler[]> = {
     OnGameModeStarted: [],

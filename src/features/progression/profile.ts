@@ -43,6 +43,9 @@ export class PlayerProfile {
     // Exposed last transaction state for HUD feedback
     public lastTransactionDelta: number = 0;
     public lastTransactionReason: string = "";
+    public ProgressUI?: {
+        updateBar(team: mod.Team, value: number): void;
+    };
 
     constructor(player: mod.Player) {
         this.player = player;

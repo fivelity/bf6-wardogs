@@ -146,7 +146,8 @@ export class HotZoneAntiCampingSystem {
             mod.PlaySound(barrageSfx, 1.0);
 
             // Apply direct area splash damage to players standing near the impact vector [189]
-            mod.AllPlayers().forEach((player) => {
+            const players = mod.AllPlayers() as unknown as mod.Player[];
+            players.forEach((player) => {
                 if (!mod.GetSoldierState(player, mod.SoldierStateBool.IsAlive)) return;
 
                 const playerPos = mod.GetPlayerState(player, mod.PlayerStateVector.Position);
