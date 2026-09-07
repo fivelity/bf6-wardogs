@@ -21,7 +21,7 @@ export interface AttachmentMetadata {
     requiredTrack: "Assault" | "Medic" | "Recon" | "Support" | "Driver" | "Pilot";
     requiredTier: number;
     slot: AttachmentSlot;
-    sdkEnum: any; // Raw mod.WeaponAttachments enum value
+    sdkEnum: mod.WeaponAttachments;
 }
 
 // Player weapon attachment configurations
@@ -36,7 +36,7 @@ export interface PlayerWeaponCustomization {
 
 // Core weapons available to contractors
 export interface WeaponSpec {
-    assetId: any; // Raw mod.Weapons enum value
+    assetId: mod.Weapons;
     name: string;
     allowedSlots: AttachmentSlot[];
     defaultCustomization: PlayerWeaponCustomization;

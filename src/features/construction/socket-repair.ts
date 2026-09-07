@@ -92,7 +92,7 @@ export function OnShovelRepair(_player: mod.Player, interactId: number): void {
 // Construction Event Handlers
 // ============================================================
 
-export function OnPlayerInteract(
+export function handleSocketInteraction(
     player: mod.Player,
     _interactPoint: mod.InteractPoint,
     interactId: number
