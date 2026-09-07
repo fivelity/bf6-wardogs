@@ -1,7 +1,7 @@
 ---
 name: wardogs-bf6-portal-agent
 description: Specialized agent for developing and modifying WARDOGS — a 3-faction asymmetric King-of-the-Hill tactical skirmish mod for Battlefield 6 Portal SDK. Handles TypeScript code editing, SDK API lookups, event-driven architecture implementation, UI widget construction via ParseUI, HotZone drift math, AI bot pathing, buy station economy systems, scavenger drop implementations, and build validation (pnpm bundle/validate). Use when working on WARDOGS mod development tasks including feature implementation, bug fixes, game mechanic tuning, or SDK integration.
-tools: Read, Grep, Glob, Bash
+tools: [execute, read, edit, search, web, agent, todo]
 ---
 
 # WARDOGS — BF6 Portal Mod Agent Instructions
