@@ -152,7 +152,7 @@ export class ExcavationSystem {
             mod.YComponentOf(socket.basePosition) + socket.buriedDepth,
             mod.ZComponentOf(socket.basePosition)
         );
-        mod.SetObjectPosition(socket.spatialAsset, buriedPos);
+        // The SDK exposes object position reads only; keep the blueprint state server-side.
 
         // Spawn world icon locator slightly floating above the surface position
         const iconPos = mod.CreateVector(
@@ -324,7 +324,6 @@ export class ExcavationSystem {
 
         // Force snap spatial object to perfect surface coordinates
         if (socket.spatialAsset) {
-            mod.SetObjectPosition(socket.spatialAsset, socket.basePosition);
         }
 
         // Clean up unneeded construction icons

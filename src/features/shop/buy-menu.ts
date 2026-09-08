@@ -2,6 +2,7 @@
 import { Events } from "../../shared/portal-utils/events";
 import { Timers } from "../../shared/portal-utils/timers";
 import { mercenaryRegistry, TrackData, ProgressionTrackKey } from "../progression/profile";
+import { createPlayerUIRoot } from "../../shared/portal-utils/ui-root";
 
 // Module-level map to track active buy menus by player ID (replaces profile.ShopUI)
 const activeBuyMenus = new Map<number, WardogsBuyMenu>();
@@ -110,17 +111,8 @@ export class WardogsBuyMenu {
         const uniqueSuffix = `_${this.playerId}`;
 
         // Construct the modular Buy Menu canvas using declarative object trees
-        this.rootWidget = mod.ParseUI({
-            type: "Container",
-            name: `WardogsShop_Root${uniqueSuffix}`,
-            position: mod.CreateVector(0, 0, 0),
-            size: mod.CreateVector(1200, 700, 0),
-            anchor: mod.UIAnchor.Center,
-            bgColor: mod.CreateVector(0.05, 0.07, 0.09), // Highly polished deep navy/grey
-            bgAlpha: 0.95,
-            bgFill: mod.UIBgFill.Blur,
-            visible: false,
-            children: [
+        this.rootWidget = createPlayerUIRoot(this.player, 1200, 700, false);
+        /* {
                 // 1. HEADER TITLE BAR
                 {
                     type: "Text",
@@ -192,7 +184,7 @@ export class WardogsBuyMenu {
                 }
             ],
             playerId: this.player
-        }) as mod.UIWidget;
+        }) as mod.UIWidget; */
 
         // Register interaction callbacks
         const closeBtn = mod.FindUIWidgetWithName(`Shop_CloseBtn${uniqueSuffix}`) as mod.UIWidget;

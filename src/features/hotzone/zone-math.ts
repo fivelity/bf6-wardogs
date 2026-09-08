@@ -26,7 +26,7 @@ export class ZoneMath {
      * Uses direct property access on mod.Vector.
      */
     public static toPoint2D(vector: mod.Vector): Point2D {
-        return { x: vector.x, z: vector.z };
+        return { x: mod.XComponentOf(vector), z: mod.ZComponentOf(vector) };
     }
 
     /**

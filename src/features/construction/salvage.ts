@@ -86,7 +86,7 @@ export class VehicleWreckSalvageSystem {
             for (const objId of activeVehicleObjIds) {
                 try {
                     const vehicle = mod.GetVehicle(objId);
-                    if (vehicle && !mod.GetVehicleState(vehicle, mod.VehicleStateVector.IsAlive)) {
+                    if (vehicle && mod.GetVehicleState(vehicle, mod.VehicleStateVector.VehiclePosition)) {
                         // If vehicle is dead/destroyed and not yet registered as a carcass
                         if (!this.carcasses.has(objId)) {
                             const pos = mod.GetObjectPosition(vehicle);
@@ -124,7 +124,7 @@ export class VehicleWreckSalvageSystem {
 
             if (!isHoldingMelee) return;
 
-            const playerPos = mod.GetPlayerState(player, mod.PlayerStateVector.Position);
+            const playerPos = mod.GetSoldierState(player, mod.SoldierStateVector.GetPosition);
 
             // Step B: Check proximity to any registered vehicle carcasses
             this.carcasses.forEach((carcass, objId) => {

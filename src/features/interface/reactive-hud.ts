@@ -2,6 +2,7 @@
 import { mercenaryRegistry, PlayerProfile, TrackData, ProgressionTrackKey } from "../progression/profile";
 import { scoreboardState } from "./scoreboard";
 import { MakeMessage } from "../../modlib/index";
+import { createPlayerUIRoot } from "../../shared/portal-utils/ui-root";
 
 // XP thresholds for tiers 1-5 (cumulative XP required)
 const XP_THRESHOLDS: number[] = [0, 1000, 2500, 5000, 10000];
@@ -74,7 +75,11 @@ export class WARDOGSActiveHUD {
   private render(): mod.UIWidget {
     const profile = mercenaryRegistry.get(this.playerId);
     if (!profile) {
-      const widget = mod.ParseUI({
+      return createPlayerUIRoot(this.player, 1, 1, false);
+    }
+
+    const widget = createPlayerUIRoot(this.player, 1920, 1080);
+    /*
         type: "Container",
         name: `EmptyHUD_${this.playerId}`,
         position: [0, 0],
@@ -123,7 +128,7 @@ export class WARDOGSActiveHUD {
           }),
         ]},
       ],
-    });
+    }); */
     this.cacheWidgetReferences(widget);
     return widget;
   }

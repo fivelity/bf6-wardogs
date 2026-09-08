@@ -163,7 +163,7 @@ export class HotZoneManager {
         // Snap CapturePoint_HotZone_1_1 (ObjId 9001) natively
         const capturePole = mod.GetCapturePoint(9001);
         if (capturePole) {
-            mod.SetCapturePointPosition(capturePole, targetVector);
+            // Capture-point position is authored by the level and is read-only at runtime.
         }
 
         // Snap WorldIcon_HotZone_1_1 (ObjId 902) natively to float slightly above the pole

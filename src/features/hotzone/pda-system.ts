@@ -42,7 +42,7 @@ export class PdaTowerInteractionSystem {
     private handlePdaInteraction(player: mod.Player): void {
         if (!mod.GetSoldierState(player, mod.SoldierStateBool.IsAlive)) return;
 
-        const playerPos = mod.GetPlayerState(player, mod.PlayerStateVector.Position);
+        const playerPos = mod.GetSoldierState(player, mod.SoldierStateVector.GetPosition);
         const playerId = mod.GetObjId(player);
         const profile = mercenaryRegistry.get(playerId);
 
@@ -101,9 +101,9 @@ export class PdaTowerInteractionSystem {
             );
             
             // Play success sound effect
-            const pos = mod.GetPlayerState(player, mod.PlayerStateVector.Position);
+            const pos = mod.GetSoldierState(player, mod.SoldierStateVector.GetPosition);
             const sfx = mod.SpawnObject(
-                mod.RuntimeSpawn_Common.SFX_UI_Artillery,
+                mod.RuntimeSpawn_Common.SFX_Alarm,
                 pos,
                 mod.CreateVector(0, 0, 0)
             );

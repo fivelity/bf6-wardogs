@@ -122,9 +122,9 @@ export class ScavengerDropSystem {
             mod.ZComponentOf(deathPosition)
         );
         const propObject = mod.SpawnObject(
-            mod.RuntimeSpawn_Common.SuppliesPack_01, // Backpack / supplies prop
+            mod.RuntimeSpawn_Common.SupplyCase_01_A, // Backpack / supplies prop
             spawnPos,
-            mod.CreateVector(0, mod.GetPlayerYaw(player), 0)
+            mod.CreateVector(0, 0, 0)
         );
 
         // 2. Spawn the native InteractPoint at the exact same location
@@ -190,12 +190,8 @@ export class ScavengerDropSystem {
         profile.addTrackXp("Assault", this.trackXpReward);
 
         // --- 2. RESTOCK WEAPON AMMUNITION ---
-        const activeWeapon = mod.GetInventoryEquipment(scavenger, mod.InventorySlots.PrimaryWeapon);
-        if (activeWeapon) {
-            // Restore full ammo to active weapon
-            mod.SetInventoryAmmo(scavenger, mod.InventorySlots.PrimaryWeapon, 500);
-            mod.SetInventoryMagazineAmmo(scavenger, mod.InventorySlots.PrimaryWeapon, 500);
-        }
+        mod.SetInventoryAmmo(scavenger, mod.InventorySlots.PrimaryWeapon, 500);
+        mod.SetInventoryMagazineAmmo(scavenger, mod.InventorySlots.PrimaryWeapon, 500);
 
         // --- 3. AUDITORY AND VISUAL FEEDBACK ---
         const scavengerEyePos = mod.GetSoldierState(scavenger, mod.SoldierStateVector.EyePosition);

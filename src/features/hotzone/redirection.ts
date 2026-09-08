@@ -255,7 +255,8 @@ export class TowerRedirectionSystem {
         // Clean up visual indicators
         this.towers.forEach((tower) => {
             if (tower.visualIndicator) {
-                mod.DestroyWorldIcon(tower.visualIndicator);
+                // The SDK does not expose a world-icon destroy operation.
+                tower.visualIndicator = undefined;
             }
         });
     }

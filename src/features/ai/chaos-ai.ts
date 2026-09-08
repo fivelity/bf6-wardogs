@@ -34,13 +34,13 @@ export class ChaosAISquad {
         if (!this.leader || !mod.IsPlayerValid(this.leader)) return;
         if (!mod.GetSoldierState(this.leader, mod.SoldierStateBool.IsAlive)) return;
 
-        const leaderPos = mod.GetPlayerState(this.leader, mod.PlayerStateVector.Position);
+        const leaderPos = mod.GetSoldierState(this.leader, mod.SoldierStateVector.GetPosition);
 
         for (const member of this.members) {
             if (member.isLeader || !member.bot || !mod.IsPlayerValid(member.bot)) continue;
             if (!mod.GetSoldierState(member.bot, mod.SoldierStateBool.IsAlive)) continue;
 
-            const memberPos = mod.GetPlayerState(member.bot, mod.PlayerStateVector.Position);
+            const memberPos = mod.GetSoldierState(member.bot, mod.SoldierStateVector.GetPosition);
             const distance = mod.DistanceBetween(memberPos, leaderPos);
 
             if (distance > 30.0) {

@@ -132,8 +132,7 @@ export class PDAScannerSystem {
               mod.CreateVector(0, 0, 0),
             );
         } else {
-            // Slide cursor smoothly to new coordinates
-            mod.SetObjectPosition(state.visualCursor, hitPoint);
+            // The SDK does not expose a runtime object-position setter.
         }
     }
 

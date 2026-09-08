@@ -50,7 +50,7 @@ export class PlayerProfile {
     constructor(player: mod.Player) {
         this.player = player;
         this.playerId = mod.GetObjId(player);
-        this.name = mod.GetPlayerName(player);
+        this.name = `Contractor ${this.playerId}`;
     }
 
     /**

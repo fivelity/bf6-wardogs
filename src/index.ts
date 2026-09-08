@@ -83,7 +83,7 @@ function onPlayerJoinGame(player: mod.Player): void {
     initializePlayerProfile(player);
     buyMenus.set(mod.GetObjId(player), new WardogsBuyMenu(player));
     activeHuds.set(mod.GetObjId(player), new WARDOGSActiveHUD(player));
-    console.log(`[WARDOGS CONNECT] Contractor joined: ${mod.GetPlayerName(player)}. Starting Balance: $10,000 Issued.`);
+    console.log(`[WARDOGS CONNECT] Contractor ${mod.GetObjId(player)} joined. Starting Balance: $10,000 Issued.`);
 }
 
 /**

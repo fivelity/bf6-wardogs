@@ -99,7 +99,7 @@ export class TeamSwitcherSystem {
                 player
             );
             // Play error sound effect
-            mod.PlaySound(mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_Alarm, mod.GetPlayerState(player, mod.PlayerStateVector.Position), mod.CreateVector(0, 0, 0)), 1, mod.GetTeam(player));
+            mod.PlaySound(mod.SpawnObject(mod.RuntimeSpawn_Common.SFX_Alarm, mod.GetSoldierState(player, mod.SoldierStateVector.GetPosition), mod.CreateVector(0, 0, 0)), 1, mod.GetTeam(player));
             return;
         }
 

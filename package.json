@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "bundle": "ts-portal-bundle src/index.ts dist/portal-bundle.ts tsconfig.json",
+    "bundle": "pnpm strings && ts-portal-bundle src/index.ts dist/portal-bundle.ts tsconfig.json",
     "strings": "ts-bf6-strings --source ./src --output ./dist/strings.json",
     "validate": "ts-bf6-validate-config",
     "list-mutators": "ts-bf6-list-mutators",

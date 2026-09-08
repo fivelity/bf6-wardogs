@@ -84,7 +84,7 @@ export class HotZoneAntiCampingSystem {
         
         // Also play a more dramatic artillery warning sound
         const warningSfx = mod.SpawnObject(
-            mod.RuntimeSpawn_Common.SFX_UI_Artillery,
+            mod.RuntimeSpawn_Common.SFX_Alarm,
             centerVec,
             mod.CreateVector(0, 0, 0)
         );
@@ -93,7 +93,7 @@ export class HotZoneAntiCampingSystem {
         
         // Visual effect for warning
         const warningVfx = mod.SpawnObject(
-            mod.RuntimeSpawn_Common.FX_UI_Artillery_Warning,
+            mod.RuntimeSpawn_Common.FX_ArtilleryStrike_Explosion_01,
             centerVec,
             mod.CreateVector(0, 0, 0)
         );
@@ -138,7 +138,7 @@ export class HotZoneAntiCampingSystem {
 
             // Play a more dramatic artillery sound for the barrage
             const barrageSfx = mod.SpawnObject(
-                mod.RuntimeSpawn_Common.SFX_UI_Artillery,
+                mod.RuntimeSpawn_Common.SFX_Alarm,
                 detonationVec,
                 mod.CreateVector(0, 0, 0)
             );
@@ -150,7 +150,7 @@ export class HotZoneAntiCampingSystem {
             players.forEach((player) => {
                 if (!mod.GetSoldierState(player, mod.SoldierStateBool.IsAlive)) return;
 
-                const playerPos = mod.GetPlayerState(player, mod.PlayerStateVector.Position);
+                const playerPos = mod.GetSoldierState(player, mod.SoldierStateVector.GetPosition);
                 const distanceToImpact = mod.DistanceBetween(playerPos, detonationVec);
 
                 // Splash falloff math (lethal within 3 meters, scaling down to 10 meters)

@@ -1,6 +1,7 @@
 // src/features/interface/scoreboard.ts
 import { Events } from "../../shared/portal-utils/events";
 import { mercenaryRegistry } from "../progression/profile";
+import { createPlayerUIRoot } from "../../shared/portal-utils/ui-root";
 
 export interface PlayerScoreEntry {
     playerId: number;
@@ -44,13 +45,14 @@ export class WARDOGSScoreboardUI {
         this.rootWidget = this.render();
     }
     private render(): mod.UIWidget {
-        return mod.ParseUI({
+        return createPlayerUIRoot(this.player, 1100, 650, false);
+        /* return mod.ParseUI({
             type: "Container", name: `WardogsSB_Root_${this.playerId}`,
             position: mod.CreateVector(0, 0, 0), size: mod.CreateVector(1100, 650, 0),
             anchor: mod.UIAnchor.Center, bgColor: mod.CreateVector(0.03, 0.03, 0.03),
             bgAlpha: 0.90, bgFill: mod.UIBgFill.Blur, visible: false,
             children: [this.createFactionHeader(), this.createPlayerListGrid()]
-        });
+        }); */
     }
     private createFactionHeader(): Record<string, unknown> {
         return {
@@ -103,7 +105,7 @@ export class ScoreboardManager {
             const playerTeam = mod.GetTeam(player);
             const factionId = mod.GetObjId(playerTeam);
             scoreboardState.players[playerId] = {
-                playerId, name: mod.GetPlayerName(player), factionId,
+                playerId, name: `Contractor ${playerId}`, factionId,
                 cash: 10000, kills: 0, deaths: 0, fobAssetsBuilt: 0
             };
             this.playerUIs.set(playerId, new WARDOGSScoreboardUI(player));
