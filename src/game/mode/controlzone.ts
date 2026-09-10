@@ -16,7 +16,7 @@
  *     grepped: only setters exist, no `AddGameModeScore` getter/adder (see AGENTS.md §2).
  */
 
-import { Events } from "bf6-portal-utils/events/index.ts";
+import { Events } from "../../../node_modules/bf6-portal-utils/events/index.ts";
 import { OBJECT_ID } from "../../config/ids.ts";
 import { requirePlayerState, getAllTrackedPlayers } from "../../player/player-state.ts";
 import { getFactionId, isScoringFaction, SCORING_FACTION_IDS, type FactionId } from "../../config/teams.ts";

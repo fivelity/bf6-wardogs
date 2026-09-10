@@ -25,7 +25,7 @@
  * towers.ts — Control Towers logic and decryption states.
  */
 
-import { Events } from "bf6-portal-utils/events/index.ts";
+import { Events } from "../../../node_modules/bf6-portal-utils/events/index.ts";
 import { OBJECT_ID } from "../../config/ids.ts";
 import { getFactionId, type FactionId } from "../../config/teams.ts";
 import { lockDriftTarget } from "./hotzone.ts";

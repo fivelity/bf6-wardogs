@@ -18,8 +18,8 @@
  * fob.ts — freely-placeable Forward Operating Bases.
  */
 
-import { Events } from "bf6-portal-utils/events/index.ts";
-import { PortalGadget } from "bf6-portal-utils/portal-gadget/index.ts";
+import { Events } from "../../../node_modules/bf6-portal-utils/events/index.ts";
+import { PortalGadget } from "../../../node_modules/bf6-portal-utils/portal-gadget/index.ts";
 import { TransitionState } from "../core/transition-state.ts";
 import { spendMaterials } from "../../player/wallet.ts";
 import { FOB_MATERIAL_COST } from "../../config/economy.ts";

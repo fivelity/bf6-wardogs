@@ -16,11 +16,11 @@
  */
 
 // src/ui/scoreboard.ts
-import { Events } from "bf6-portal-utils/events/index.ts";
-import { SolidUI } from "bf6-portal-utils/solid-ui/index.ts";
-import { UI } from "bf6-portal-utils/ui/index.ts";
-import { UIContainer } from "bf6-portal-utils/ui/components/container/index.ts";
-import { UIText } from "bf6-portal-utils/ui/components/text/index.ts";
+import { Events } from "../../node_modules/bf6-portal-utils/events/index.ts";
+import { SolidUI } from "../../node_modules/bf6-portal-utils/solid-ui/index.ts";
+import { UI } from "../../node_modules/bf6-portal-utils/ui/index.ts";
+import { UIContainer } from "../../node_modules/bf6-portal-utils/ui/components/container/index.ts";
+import { UIText } from "../../node_modules/bf6-portal-utils/ui/components/text/index.ts";
 import { getAllTickets } from "../game/mode/controlzone.ts";
 import { FACTIONS, SCORING_FACTION_IDS } from "../config/teams.ts";
 

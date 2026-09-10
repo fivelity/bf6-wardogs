@@ -11,11 +11,11 @@
  */
 
 // src/ui/buy-menu.ts
-import { Events } from "bf6-portal-utils/events/index.ts";
-import { UI } from "bf6-portal-utils/ui/index.ts";
-import { UIContainer } from "bf6-portal-utils/ui/components/container/index.ts";
-import { UIText } from "bf6-portal-utils/ui/components/text/index.ts";
-import { UITextButton } from "bf6-portal-utils/ui/components/text-button/index.ts";
+import { Events } from "../../node_modules/bf6-portal-utils/events/index.ts";
+import { UI } from "../../node_modules/bf6-portal-utils/ui/index.ts";
+import { UIContainer } from "../../node_modules/bf6-portal-utils/ui/components/container/index.ts";
+import { UIText } from "../../node_modules/bf6-portal-utils/ui/components/text/index.ts";
+import { UITextButton } from "../../node_modules/bf6-portal-utils/ui/components/text-button/index.ts";
 import { OBJECT_ID } from "../config/ids.ts";
 import { BASE_PRICES } from "../config/economy.ts";
 import { spendCash } from "../player/wallet.ts";

@@ -27,7 +27,7 @@
  * hotzone.ts — the drifting 60m HotZone.
  */
 
-import { Events } from "bf6-portal-utils/events/index.ts";
+import { Events } from "../../../node_modules/bf6-portal-utils/events/index.ts";
 import { OBJECT_ID } from "../../config/ids.ts";
 import {
   HOTZONE_DRIFT_STEP_RADIUS,

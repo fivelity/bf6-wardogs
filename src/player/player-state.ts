@@ -11,7 +11,7 @@
  * `bf6-portal-mod-types/event-handler-signatures.d.ts`.
  */
 
-import { Events } from "bf6-portal-utils/events/index.ts";
+import { Events } from "../../node_modules/bf6-portal-utils/events/index.ts";
 import { STARTING_CASH } from "../config/constants.ts";
 import { createInitialTrackState, type TrackId, type TrackState } from "./progression.ts";
 

@@ -25,7 +25,7 @@
  * chaos-ai.ts — Team 4 (Chaos Squads), the unlisted, unjoinable, non-scoring AI-only faction.
  */
 
-import { Events } from "bf6-portal-utils/events/index.ts";
+import { Events } from "../../../node_modules/bf6-portal-utils/events/index.ts";
 import { OBJECT_ID } from "../../config/ids.ts";
 import {
   CHAOS_AI_TOTAL_BOTS,

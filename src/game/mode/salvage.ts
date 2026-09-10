@@ -26,7 +26,7 @@
  * salvage.ts — Salvage Pack drop-on-undeploy.
 [cite: 10] */
 
-import { Events } from "bf6-portal-utils/events/index.ts";
+import { Events } from "../../../node_modules/bf6-portal-utils/events/index.ts";
 import { addCash } from "../../player/wallet.ts";
 import { SALVAGE_PACK_CASH, SALVAGE_PACK_LIFETIME_SECONDS } from "../../config/constants.ts";
 
