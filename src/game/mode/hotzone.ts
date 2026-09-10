@@ -96,6 +96,7 @@ function driftStep(): void {
   }
   const origin = lastDriftTarget ?? mod.GetObjectPosition(hotZoneCapturePoint);
   const target = randomDriftTarget(origin);
+  lastDriftTarget = target;
   const delta = mod.CreateVector(
     mod.XComponentOf(target) - mod.XComponentOf(origin),
     mod.YComponentOf(target) - mod.YComponentOf(origin),
@@ -111,17 +112,17 @@ function driftStep(): void {
   );
 }
 
-let accumulatedSeconds = 0;
-const ASSUMED_SERVER_TICK_SECONDS = 1 / 30;
+let hotZoneAccumulatedSeconds = 0;
+const HOTZONE_ASSUMED_SERVER_TICK_SECONDS = 1 / 30;
 
 Events.OngoingGlobal.subscribe(() => {
-  accumulatedSeconds += ASSUMED_SERVER_TICK_SECONDS;
+  hotZoneAccumulatedSeconds += HOTZONE_ASSUMED_SERVER_TICK_SECONDS;
   const interval = isPhase3()
     ? HOTZONE_DRIFT_INTERVAL_SECONDS / PHASE_3_HOTZONE_DRIFT_SPEED_MULTIPLIER
     : HOTZONE_DRIFT_INTERVAL_SECONDS;
-  if (accumulatedSeconds < interval) {
+  if (hotZoneAccumulatedSeconds < interval) {
     return;
   }
-  accumulatedSeconds = 0;
+  hotZoneAccumulatedSeconds = 0;
   driftStep();
 });

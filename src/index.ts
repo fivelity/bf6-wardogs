@@ -38,5 +38,5 @@ import "./game/mode/index.ts";
 import "./ui/scoreboard.ts";
 import "./ui/hud.ts";
 import "./ui/buy-menu.ts";
-import { SCORING_FACTION_IDS } from "./config/teams.ts";
+
 

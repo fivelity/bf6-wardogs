@@ -47,7 +47,6 @@ function spawnOneBot(): void {
   if (!chaosSpawner) {
     return;
   }
-  // Using the correct global SDK function for spawning AI from a spawner instance
   mod.SpawnAIFromAISpawner(chaosSpawner, mod.GetTeam(1));
 }
 
@@ -69,19 +68,19 @@ Events.OnPlayerDied.subscribe((eventPlayer: mod.Player) => {
   }
 });
 
-let accumulatedSeconds = 0;
-const ASSUMED_SERVER_TICK_SECONDS = 1 / 30;
+let chaosAccumulatedSeconds = 0;
+const CHAOS_ASSUMED_SERVER_TICK_SECONDS = 1 / 30;
 
 Events.OngoingGlobal.subscribe(() => {
-  accumulatedSeconds += ASSUMED_SERVER_TICK_SECONDS;
+  chaosAccumulatedSeconds += CHAOS_ASSUMED_SERVER_TICK_SECONDS;
   const interval = isPhase3()
     ? CHAOS_AI_RESPAWN_INTERVAL_SECONDS * CHAOS_AI_PHASE_3_RESPAWN_MULTIPLIER
     : CHAOS_AI_RESPAWN_INTERVAL_SECONDS;
 
-  if (accumulatedSeconds < interval) {
+  if (chaosAccumulatedSeconds < interval) {
     return;
   }
 
-  accumulatedSeconds = 0;
+  chaosAccumulatedSeconds = 0;
   topUpBots();
 });

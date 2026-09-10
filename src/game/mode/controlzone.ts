@@ -18,13 +18,21 @@
 
 import { Events } from "../../../node_modules/bf6-portal-utils/events/index.ts";
 import { OBJECT_ID } from "../../config/ids.ts";
-import { requirePlayerState, getAllTrackedPlayers } from "../../player/player-state.ts";
-import { getFactionId, isScoringFaction, SCORING_FACTION_IDS, type FactionId } from "../../config/teams.ts";
 import {
-	CONTROL_ZONE_TICK_SECONDS,
-	CONTROL_ZONE_TICKET_REWARD,
-	HOTZONE_PRESENCE_WEIGHT,
-	PHASE_3_TICKET_THRESHOLD,
+  requirePlayerState,
+  getAllTrackedPlayers,
+} from "../../player/player-state.ts";
+import {
+  getFactionId,
+  isScoringFaction,
+  SCORING_FACTION_IDS,
+  type FactionId,
+} from "../../config/teams.ts";
+import {
+  CONTROL_ZONE_TICK_SECONDS,
+  CONTROL_ZONE_TICKET_REWARD,
+  HOTZONE_PRESENCE_WEIGHT,
+  PHASE_3_TICKET_THRESHOLD,
 } from "../../config/constants.ts";
 import { evaluateWinCondition } from "./win-condition.ts";
 
@@ -32,11 +40,11 @@ import { evaluateWinCondition } from "./win-condition.ts";
 const ticketsByFaction: Record<FactionId, number> = { 1: 0, 2: 0, 3: 0, 4: 0 };
 
 export function getTickets(faction: FactionId): number {
-	return ticketsByFaction[faction];
+  return ticketsByFaction[faction];
 }
 
 export function getAllTickets(): Readonly<Record<FactionId, number>> {
-	return ticketsByFaction;
+  return ticketsByFaction;
 }
 
 /**
@@ -44,33 +52,35 @@ export function getAllTickets(): Readonly<Record<FactionId, number>> {
  * `chaos-ai.ts` both gate their Phase-3 acceleration behavior on this.
  */
 export function isPhase3(): boolean {
-	return SCORING_FACTION_IDS.some((faction) => ticketsByFaction[faction] >= PHASE_3_TICKET_THRESHOLD);
+  return SCORING_FACTION_IDS.some(
+    (faction) => ticketsByFaction[faction] >= PHASE_3_TICKET_THRESHOLD,
+  );
 }
 
 /** Applies `newTicketTotal` for `faction` to both our tracked state and the native score. */
 function setTickets(faction: FactionId, newTicketTotal: number): void {
-	ticketsByFaction[faction] = newTicketTotal;
-	mod.SetGameModeScore(mod.GetTeam(faction), newTicketTotal);
+  ticketsByFaction[faction] = newTicketTotal;
+  mod.SetGameModeScore(mod.GetTeam(faction), newTicketTotal);
 }
 
 Events.OnPlayerEnterAreaTrigger.subscribe((eventPlayer, eventAreaTrigger) => {
-	const areaTriggerId = mod.GetObjId(eventAreaTrigger);
-	const state = requirePlayerState(eventPlayer);
-	if (areaTriggerId === OBJECT_ID.AT_CONTROLZONE) {
-		state.insideControl = true;
-	} else if (areaTriggerId === OBJECT_ID.AT_HOTZONE) {
-		state.insideHot = true;
-	}
+  const areaTriggerId = mod.GetObjId(eventAreaTrigger);
+  const state = requirePlayerState(eventPlayer);
+  if (areaTriggerId === OBJECT_ID.AT_CONTROLZONE) {
+    state.insideControl = true;
+  } else if (areaTriggerId === OBJECT_ID.AT_HOTZONE) {
+    state.insideHot = true;
+  }
 });
 
 Events.OnPlayerExitAreaTrigger.subscribe((eventPlayer, eventAreaTrigger) => {
-	const areaTriggerId = mod.GetObjId(eventAreaTrigger);
-	const state = requirePlayerState(eventPlayer);
-	if (areaTriggerId === OBJECT_ID.AT_CONTROLZONE) {
-		state.insideControl = false;
-	} else if (areaTriggerId === OBJECT_ID.AT_HOTZONE) {
-		state.insideHot = false;
-	}
+  const areaTriggerId = mod.GetObjId(eventAreaTrigger);
+  const state = requirePlayerState(eventPlayer);
+  if (areaTriggerId === OBJECT_ID.AT_CONTROLZONE) {
+    state.insideControl = false;
+  } else if (areaTriggerId === OBJECT_ID.AT_HOTZONE) {
+    state.insideHot = false;
+  }
 });
 
 /**
@@ -81,74 +91,72 @@ Events.OnPlayerExitAreaTrigger.subscribe((eventPlayer, eventAreaTrigger) => {
  * presence as a multiplier on the SAME majority count, not an additional track.
  */
 function computeWeightedPresence(): Record<FactionId, number> {
-	const presence: Record<FactionId, number> = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  const presence: Record<FactionId, number> = { 1: 0, 2: 0, 3: 0, 4: 0 };
 
-	for (const [player, state] of getAllTrackedPlayers()) {
-		if (!state.insideControl && !state.insideHot) {
-			continue;
-		}
-		const team = mod.GetTeam(player);
-		const faction = getFactionId(team);
-		if (!isScoringFaction(team)) {
-			continue; // Chaos Squads (Team4) never contribute to majority-hold, per the brief.
-		}
-		presence[faction] += state.insideHot ? HOTZONE_PRESENCE_WEIGHT : 1;
-	}
+  for (const [player, state] of getAllTrackedPlayers()) {
+    if (!state.insideControl && !state.insideHot) {
+      continue;
+    }
+    const team = mod.GetTeam(player);
+    const faction = getFactionId(team);
+    if (!isScoringFaction(team)) {
+      continue; // Chaos Squads (Team4) never contribute to majority-hold, per the brief.
+    }
+    presence[faction] += state.insideHot ? HOTZONE_PRESENCE_WEIGHT : 1;
+  }
 
-	return presence;
+  return presence;
 }
 
-let accumulatedSeconds = 0;
-/** Portal's OngoingGlobal fires roughly every server tick (~30Hz per AGENTS.md's own note). */
-const ASSUMED_SERVER_TICK_SECONDS = 1 / 30;
+let controlZoneAccumulatedSeconds = 0;
+const CONTROL_ZONE_ASSUMED_SERVER_TICK_SECONDS = 1 / 30;
 
 Events.OngoingGlobal.subscribe(() => {
-	accumulatedSeconds += ASSUMED_SERVER_TICK_SECONDS;
-	if (accumulatedSeconds < CONTROL_ZONE_TICK_SECONDS) {
-		return;
-	}
-	accumulatedSeconds = 0;
+  controlZoneAccumulatedSeconds += CONTROL_ZONE_ASSUMED_SERVER_TICK_SECONDS;
+  if (controlZoneAccumulatedSeconds < CONTROL_ZONE_TICK_SECONDS) {
+    return;
+  }
+  controlZoneAccumulatedSeconds = 0;
 
-	const presence = computeWeightedPresence();
+  const presence = computeWeightedPresence();
 
-	// Majority-hold: whichever scoring faction has the single highest weighted presence, with no
-	// tie for first place, holds the zone this tick.
-	let leader: FactionId | undefined;
-	let leaderWeight = 0;
-	let tied = false;
-	for (const faction of SCORING_FACTION_IDS) {
-		const weight = presence[faction];
-		if (weight > leaderWeight) {
-			leader = faction;
-			leaderWeight = weight;
-			tied = false;
-		} else if (weight === leaderWeight && weight > 0) {
-			tied = true;
-		}
-	}
+  // Majority-hold: whichever scoring faction has the single highest weighted presence, with no
+  // tie for first place, holds the zone this tick.
+  let leader: FactionId | undefined;
+  let leaderWeight = 0;
+  let tied = false;
+  for (const faction of SCORING_FACTION_IDS) {
+    const weight = presence[faction];
+    if (weight > leaderWeight) {
+      leader = faction;
+      leaderWeight = weight;
+      tied = false;
+    } else if (weight === leaderWeight && weight > 0) {
+      tied = true;
+    }
+  }
 
-	if (leader !== undefined && !tied && leaderWeight > 0) {
-		setTickets(leader, ticketsByFaction[leader] + CONTROL_ZONE_TICKET_REWARD);
-	}
+  if (leader !== undefined && !tied && leaderWeight > 0) {
+    setTickets(leader, ticketsByFaction[leader] + CONTROL_ZONE_TICKET_REWARD);
+  }
 
-	evaluateWinCondition(ticketsByFaction);
+  evaluateWinCondition(ticketsByFaction);
 });
 
-
-	// Force the native win-target to 1 so Portal's own win-detection never fires prematurely;
-	// win-condition.ts's explicit EndGameMode call is the real win trigger. `SetGameModeCriteria`
-	// only sets which direction of score change counts as "winning" (HighestProgress here) — the
-	// actual target number is `SetGameModeTargetScore`, confirmed real at index.d.ts:816 (with a
-	// matching `GetTargetScore` getter at index.d.ts:2276). Both are needed; conflating them was
-	// an earlier draft mistake in this file. See AGENTS.md §2 and WARDOGS_DESIGN_BRIEF.md →
-	// "Win Conditions" for why this workaround exists at all.
+// Force the native win-target to 1 so Portal's own win-detection never fires prematurely;
+// win-condition.ts's explicit EndGameMode call is the real win trigger. `SetGameModeCriteria`
+// only sets which direction of score change counts as "winning" (HighestProgress here) — the
+// actual target number is `SetGameModeTargetScore`, confirmed real at index.d.ts:816 (with a
+// matching `GetTargetScore` getter at index.d.ts:2276). Both are needed; conflating them was
+// an earlier draft mistake in this file. See AGENTS.md §2 and WARDOGS_DESIGN_BRIEF.md →
+// "Win Conditions" for why this workaround exists at all.
 Events.OnGameModeStarted.subscribe(() => {
-    mod.SetGameModeCriteria(mod.ScoreCriteria.HighestProgress);
-    mod.SetGameModeTargetScore(1);
-    
-    for (const faction of SCORING_FACTION_IDS) {
-        mod.SetGameModeInitialScore(mod.GetTeam(faction), 0);
-    }
+  mod.SetGameModeCriteria(mod.ScoreCriteria.HighestProgress);
+  mod.SetGameModeTargetScore(1);
+
+  for (const faction of SCORING_FACTION_IDS) {
+    mod.SetGameModeInitialScore(mod.GetTeam(faction), 0);
+  }
 });
 
 export { setTickets };

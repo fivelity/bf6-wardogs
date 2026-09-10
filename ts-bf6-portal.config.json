@@ -1,6 +1,6 @@
 {
-  "name": "ExampleExperience",
-  "description": "Some description of my ExampleExperience",
+  "name": "WARDOGS",
+  "description": "Gritty, high-stakes three-faction featuring a drifting \"HotZone\" multiplier, persistent server-side wallets, modular weaponassembly, and cooperative sandbag-excavation base building.",
   "bundle": {
     "entry": "src/index.ts",
     "outFile": "dist/bundle.ts",
@@ -8,7 +8,7 @@
   },
   "maps": [
     {
-      "map": "MP_Battery",
+      "map": "MP_Granite_MilitaryStorage_Portal",
       "rounds": 1,
       "spectators": 4,
       "teams": [

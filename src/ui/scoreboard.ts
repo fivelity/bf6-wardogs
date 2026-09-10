@@ -15,7 +15,10 @@
  * `node_modules/bf6-portal-utils/solid-ui/` before shipping and adjust call shapes if they differ.
  */
 
-// src/ui/scoreboard.ts
+/**
+ * scoreboard.ts — the custom 3-faction scoreboard overlay.
+ */
+
 import { Events } from "../../node_modules/bf6-portal-utils/events/index.ts";
 import { SolidUI } from "../../node_modules/bf6-portal-utils/solid-ui/index.ts";
 import { UI } from "../../node_modules/bf6-portal-utils/ui/index.ts";
@@ -52,11 +55,11 @@ function refreshTicketSignals(): void {
 	}
 }
 
-let ticketAccumulator = 0;
+let scoreboardTicketAccumulator = 0;
 Events.OngoingGlobal.subscribe(() => {
-	ticketAccumulator++;
-	if (ticketAccumulator >= 20) {
-		ticketAccumulator = 0;
+	scoreboardTicketAccumulator++;
+	if (scoreboardTicketAccumulator >= 20) {
+		scoreboardTicketAccumulator = 0;
 		refreshTicketSignals();
 	}
 });
