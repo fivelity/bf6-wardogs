@@ -40,7 +40,7 @@ Wired via `tsconfig.json`:
 
 Always import from a specific subpath. The package root is not a valid entrypoint.
 
-### Events
+### Events Example
 
 ```ts
 import { Events } from "bf6-portal-utils/events";
@@ -63,7 +63,7 @@ Events.OnGameModeEnded.subscribe(() => {
 - `Events.OnPlayerUIButtonEvent`
 - `Events.OnObjectDestroyed`
 
-### UI
+### UI Example
 
 ```ts
 import { UI }           from "bf6-portal-utils/ui";
@@ -103,7 +103,7 @@ Events.OnPlayerDeployed.subscribe((player: mod.Player) => {
 - `UI.COLORS.GREY_50`
 - `UI.COLORS.GREY_75`
 
-### Timers
+### Timers Example
 
 ```ts
 import { Timers } from "bf6-portal-utils/timers";
@@ -135,7 +135,7 @@ const z = mod.ZComponentOf(vec);
 > **Note:** `mod.Vector` is an opaque type — never access `.x`, `.y`, `.z` directly.
 > Always use `mod.XComponentOf()`, `mod.YComponentOf()`, `mod.ZComponentOf()`.
 
-### Portal Gadget
+### Portal Gadget Example
 
 ```ts
 import { PortalGadget } from "bf6-portal-utils/portal-gadget";
@@ -162,9 +162,9 @@ Events.OnGameModeEnded.subscribe(() => {
 
 ---
 
-## Known API name corrections
+## Known API name corrections 
 
-The following names differ from intuitive guesses. Always use the right column.
+The following names differ from previously-discovered intuitive guesses. Always use the right column.
 
 | Wrong                              | Correct                                   |
 |------------------------------------|-------------------------------------------|
@@ -178,37 +178,9 @@ The following names differ from intuitive guesses. Always use the right column.
 
 ---
 
-## Undocumented runtime functions
-
-Some `mod.*` functions exist at runtime but are absent from `bf6-portal-mod-types`.
-Declare them in `src/types/mod-extended.d.ts`:
-
-```ts
-// src/types/mod-extended.d.ts
-declare namespace mod {
-  function ParseUI(player: mod.Player, ui: string): void;
-  function SpawnWorldIcon(params: SpawnWorldIconParams): mod.WorldIcon;
-  function DestroyWorldIcon(icon: mod.WorldIcon): void;
-  function GetPlayerName(player: mod.Player): string;
-  function SetObjectPosition(obj: mod.Entity, pos: mod.Vector): void;
-  function SetMaxHealth(entity: mod.Entity, hp: number): void;
-  function SetHealth(entity: mod.Entity, hp: number): void;
-  function GetPlayerYaw(player: mod.Player): number;
-  function GetInventoryEquipment(player: mod.Player, slot: number): mod.Entity | null;
-  function SetCapturePointPosition(cp: mod.Entity, pos: mod.Vector): void;
-  function VehicleStateBool(vehicle: mod.Entity, state: string, value: boolean): void;
-}
-```
-
-Add new entries here as they are discovered. Never add them to the package itself.
-
----
-
 ## Enum verification
 
-Before using any enum member, verify it in:
-```
-node_modules/bf6-portal-mod-types/index.d.ts
+Before using any enum member, verify it in `node_modules/bf6-portal-mod-types/index.d.ts`
 ```
 
 Known gotchas — enum members that differ from what you might expect:
@@ -220,7 +192,7 @@ Known gotchas — enum members that differ from what you might expect:
 - `RestrictedInputs.*`
 - `RuntimeSpawn_Common.*`
 
-When in doubt: look it up, don't guess.
+When unsure: look it up, don't guess!
 
 ---
 
@@ -233,4 +205,4 @@ pnpm validate  # tsc --noEmit type check only
 
 ---
 
-*Last updated: 2026-09-06*
+*Last updated: 2026-09-08*
