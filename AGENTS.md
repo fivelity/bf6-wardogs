@@ -53,6 +53,8 @@
 | `bf6-portal-utils/portal-gadget`             | `PortalGadget`                       |
 | `bf6-portal-utils/timers`                    | `Timers`                             |
 | `bf6-portal-utils/vectors`                   | `Vectors`                            |
+| `bf6-portal-utils/player-undeploy-fixer`     | (side effects only)                  |
+| `bf6-portal-utils/mod-extensions`            | `isDeathType`, `isDamageType`, etc.  |
 
 **Never** import from the bare `"bf6-portal-utils"` root — it is not a valid entrypoint.
 
