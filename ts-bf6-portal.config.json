@@ -13,11 +13,12 @@
       "spectators": 4,
       "teams": [
         16,
+        16,
         16
       ],
       "balancing": "none",
       "spatial": {
-        "file": "levels/mp_granite_military_storage_portal_wardogs.spatial.json"
+        "file": "levels/mp_granite_military_storage_portal.spatial.json"
       }
     }
   ],
@@ -26,6 +27,7 @@
     {
       "name": "MaxPlayerCount_PerTeam",
       "perTeamValues": [
+        16,
         16,
         16
       ],
