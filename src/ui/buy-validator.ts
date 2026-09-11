@@ -19,11 +19,20 @@ export interface ShopItem {
 	requiredTier: number;
 }
 
+/**
+ * Deliberately holds no formatted `reason` string — `mod.Message()` requires every displayed
+ * string to be a `strings.json`-registered `mod.stringkeys.*` reference (see
+ * WARDOGS_COMPLETION_REPORT.md §2.1), and this file must stay Portal-runtime-free (no `mod.*`
+ * calls), so it can't build that Message itself. `currentCash` is echoed back alongside `price` so
+ * the caller (`buy-menu.ts`) has both numbers needed to build
+ * `mod.Message(mod.stringkeys.shop_insufficient_funds, price, currentCash)` without recomputing
+ * anything.
+ */
 export interface PurchaseCheckResult {
 	canAfford: boolean;
 	price: number;
+	currentCash: number;
 	surchargeApplied: boolean;
-	reason?: string;
 }
 
 /**
@@ -39,16 +48,7 @@ export function checkPurchase(
 	const price = getSurchargedPrice(item.basePrice, playerTrackLevel, item.requiredTier);
 	const surchargeApplied = playerTrackLevel < item.requiredTier;
 
-	if (currentCash < price) {
-		return {
-			canAfford: false,
-			price,
-			surchargeApplied,
-			reason: `Insufficient funds: need $${price}, have $${currentCash}.`,
-		};
-	}
-
-	return { canAfford: true, price, surchargeApplied };
+	return { canAfford: currentCash >= price, price, currentCash, surchargeApplied };
 }
 
 /** Whether a player's current track level meets an item's hard eligibility gate (e.g. weapon tier locks). */

@@ -89,7 +89,7 @@ function tryPlaceFob(
 ): ActiveFob | undefined {
 	const afforded = spendMaterials(player, FOB_MATERIAL_COST, "fobPlacement");
 	if (!afforded) {
-		mod.DisplayNotificationMessage(mod.Message("Not enough materials to build a FOB."), player);
+		mod.DisplayNotificationMessage(mod.Message(mod.stringkeys.fob_insufficient_materials), player);
 		return undefined;
 	}
 	return placeFob(team, position, facing);

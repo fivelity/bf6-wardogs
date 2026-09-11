@@ -1,0 +1,1075 @@
+diff --git a/src/config/ids.ts b/src/config/ids.ts
+index a3dc549..1650a3e 100644
+--- a/src/config/ids.ts
++++ b/src/config/ids.ts
+@@ -2,16 +2,37 @@
+  * OBJECT_ID — single source of truth for every ObjId referenced from code.
+  *
+  * Rule (AGENTS.md §7): no numeric ObjId literal appears anywhere else in `src/`.
+- * Verified directly against:
+- * `levels/MP_Granite_MilitaryStorage/MP_Granite_MilitaryStorage_Portal-ModBuilderCustom0.spatial.json`
+- * in `fivelity/wardogs` (RedlineStorage map). Re-run this reconciliation any time
+- * the Godot scene is edited — a value here with no matching placed object is a
+- * silent runtime failure, not a compile error.
++ * Reconciled directly against the real level's spatial scene data
++ * (`mp_granite_military_storage_portal_spatial.json`, `Portal_Dynamic` block) — every ObjId
++ * below is copied verbatim from a `Portal_Dynamic` entry's own `"ObjId"` field, not
++ * reconstructed or guessed. Re-run this reconciliation any time the scene is edited.
+  *
+- * KNOWN ISSUE: the scene currently has FIVE VehicleSpawner objects sharing
+- * ObjId 104 (VehicleSpawner_Bike_104, _0_2, _0_3, _0_4, _0_5). Only one is
+- * addressable by `mod.GetVehicleSpawner(104)` — fix in Godot (assign unique
+- * ObjIds) before any code depends on the others individually.
++ * CORRECTIONS MADE IN THIS PASS (see WARDOGS_COMPLETION_REPORT.md addendum): the previous
++ * version of this file had `CP_TOWER_A: 1001` / `CP_TOWER_B: 2001` — those are actually the
++ * ObjIds of `CapturePoint_FOB_A_1` / `CapturePoint_FOB_B_1` (a pair of pre-placed "FOB
++ * Alpha"/"FOB Bravo" capture points that are NOT the same thing as `game/mode/fob.ts`'s
++ * freely-player-placed FOBs). The scene has exactly ONE placed tower
++ * (`CapturePoint_Tower_A`, ObjId 76) — there is no Tower B. `game/mode/towers.ts` has been
++ * redesigned around a single tower accordingly. `game/mode/fob.ts` keeps its existing
++ * free-placement design unchanged and does not reference any OBJECT_ID entry — the pre-placed
++ * FOB Alpha/Bravo capture points (`SECTOR_FOB_A`/`SECTOR_FOB_B` etc. below) are unused scene
++ * dressing as far as `src/` is concerned; kept here only so a future pass can reconcile them
++ * deliberately if desired.
++ *
++ * KNOWN SCENE BUG — flagged, not fixed here (this file can't change the scene): `Sector_HotZone`
++ * (ObjId 333) collides with `IP_BUY_MENU_VALKYRA`'s `InteractPoint _BS_310` (also ObjId 333).
++ * Two different Portal_Dynamic objects sharing one ObjId means only one is addressable by
++ * `mod.GetSector(333)` / `mod.GetInteractPoint(333)` — this needs a unique ObjId assigned to
++ * one of them in the Godot/spatial-JSON scene before Valkyra's buy menu and the HotZone sector
++ * can both be reliably referenced by ID. `game/mode/hotzone.ts` currently only reads
++ * `AT_HOTZONE`/`CP_HOTZONE`/`ICON_HOTZONE` (900/9001/902 respectively — none of which collide),
++ * so this mod doesn't currently reference the colliding `Sector_HotZone` ObjId anywhere, but the
++ * collision remains a scene defect to fix before anything needs `mod.GetSector` for the HotZone.
++ *
++ * KNOWN ISSUE (unchanged from previous pass): the scene has FIVE VehicleSpawner objects sharing
++ * ObjId 104 (VehicleSpawner_Bike_104, _0_2, _0_3, _0_4, _0_5). Only one is addressable by
++ * `mod.GetVehicleSpawner(104)` — fix in Godot (assign unique ObjIds) before any code depends on
++ * the others individually.
+  */
+ export const OBJECT_ID = {
+ 	// ── HQs (Team1 = Lonestar, Team2 = Manticore, Team3 = Valkyra) ──
+@@ -27,6 +48,7 @@ export const OBJECT_ID = {
+ 	// ── Buy station interact points ──
+ 	IP_BUY_MENU_LONESTAR: 112,
+ 	IP_BUY_MENU_MANTICORE: 222,
++	// NOTE: also collides with Sector_HotZone's ObjId — see KNOWN SCENE BUG above.
+ 	IP_BUY_MENU_VALKYRA: 333,
+ 
+ 	// ── HQ vehicle spawners (per-faction, MatchingTeam-restricted) ──
+@@ -35,22 +57,32 @@ export const OBJECT_ID = {
+ 	VEHICLE_SPAWNER_HQ_VALKYRA: 330,
+ 
+ 	// ── ControlZone (majority-hold, standard ticket bleed) ──
++	SECTOR_CONTROLZONE: 555,
+ 	AT_CONTROLZONE: 900,
+ 	CP_CONTROLZONE: 9000,
+ 	ICON_CONTROLZONE: 903,
+ 
+ 	// ── HotZone (drifting, 2x scoring) ──
++	// Sector_HotZone's own ObjId (333) is NOT listed here — see KNOWN SCENE BUG above; this file
++	// only references the AreaTrigger/CapturePoint/WorldIcon ObjIds, none of which collide.
+ 	AT_HOTZONE: 901,
+ 	CP_HOTZONE: 9001,
+ 	ICON_HOTZONE: 902,
+ 
+-	// ── Central watchtower sector (contested high ground overlooking both zones) ──
+-	SECTOR_TOWER: 3001,
++	// ── Control Tower (single — see CORRECTIONS above; there is only one placed tower) ──
++	SECTOR_TOWER_A: 3001,
++	CP_TOWER_A: 76,
++	ICON_TOWER_A: 3000,
+ 
+-	// ── Control Towers (outlying, capturable by any team; each grants a decryption segment
+-	//    toward HotZone-drift locking, per Secondary Objective 1 in the design brief) ──
+-	CP_TOWER_A: 1001,
+-	CP_TOWER_B: 2001,
++	// ── Pre-placed "FOB Alpha"/"FOB Bravo" capture points — currently unreferenced by src/;
++	//    kept for a future deliberate reconciliation pass. NOT the same system as
++	//    game/mode/fob.ts's freely-player-placed FOBs. ──
++	SECTOR_FOB_A: 999,
++	CP_FOB_A: 1001,
++	ICON_FOB_A: 1000,
++	SECTOR_FOB_B: 2222,
++	CP_FOB_B: 2001,
++	ICON_FOB_B: 2000,
+ 
+ 	// ── Neutral/open-map vehicle spawners ──
+ 	VEHICLE_SPAWNER_AH64: 101,
+diff --git a/src/game/mode/chaos-ai.ts b/src/game/mode/chaos-ai.ts
+index 2083d3e..8c72a76 100644
+--- a/src/game/mode/chaos-ai.ts
++++ b/src/game/mode/chaos-ai.ts
+@@ -10,11 +10,16 @@
+  *     `OnAIWaypointIdleFailed/Running/Succeeded`, `OnAIParachuteRunning/Succeeded` — all confirmed
+  *     real in `event-handler-signatures.d.ts`.
+  *
+- * NOTE (AGENTS.md §2): `mod.SpawnAIFromAISpawner`'s exact overload used below
+- * (`(spawner, team)` — spawner + Team4, no explicit class/loadout) is the simplest of its seven
+- * overloads; confirm this specific overload compiles against the real `.d.ts` before shipping —
+- * if Team4 requires an explicit AI class parameter in the real signature, add it here rather than
+- * guessing a default.
++ * `(spawner, team: Team)` overload confirmed real against index.d.ts (one of seven overloads);
++ * spawns onto `mod.GetTeam(4)` (Chaos Squads per config/teams.ts's FACTIONS table — NOT
++ * `GetTeam(1)`, which was an earlier draft bug that put Chaos bots on Team1/Lonestar).
++ *
++ * Bot-count tracking uses `Events.OnSpawnerSpawned(eventPlayer, eventSpawner)` — confirmed real,
++ * event-handler-signatures.d.ts, doc comment: "This will trigger when an AISpawner spawns an AI
++ * Soldier." `SpawnAIFromAISpawner` itself returns `void` (no direct handle), so this event is the
++ * only real hook that hands back the spawned bot's `mod.Player`; filtered to `chaosSpawner` via
++ * `mod.Equals` in case other AI spawners exist elsewhere on the map. See
++ * WARDOGS_COMPLETION_REPORT.md §3.4.
+  *
+  * Team 4 must never appear in `controlzone.ts`'s majority-hold tallying (already enforced there
+  * via `isScoringFaction`) or `ui/scoreboard.ts`'s ticket display (enforced by that file only
+@@ -47,21 +52,36 @@ function spawnOneBot(): void {
+   if (!chaosSpawner) {
+     return;
+   }
+-  mod.SpawnAIFromAISpawner(chaosSpawner, mod.GetTeam(1));
++  // Team4 = Chaos Squads (config/teams.ts's FACTIONS table). liveBots is populated by
++  // Events.OnSpawnerSpawned below once the engine confirms the spawn, not here — this call
++  // itself returns void.
++  mod.SpawnAIFromAISpawner(chaosSpawner, mod.GetTeam(4));
+ }
+ 
++/**
++ * Requests up to `CHAOS_AI_TOTAL_BOTS` worth of spawns. Each call to `spawnOneBot()` is a
++ * fire-and-forget request; `liveBots` only grows once `Events.OnSpawnerSpawned` confirms a bot
++ * actually came into existence, so this loop intentionally requests the full remaining deficit
++ * up front rather than spawning one-at-a-time and re-checking `liveBots.size` mid-loop (that
++ * size won't change synchronously within this function).
++ */
+ function topUpBots(): void {
+-  while (liveBots.size < CHAOS_AI_TOTAL_BOTS) {
++  if (!chaosSpawner) {
++    return;
++  }
++  const deficit = CHAOS_AI_TOTAL_BOTS - liveBots.size;
++  for (let i = 0; i < deficit; i++) {
+     spawnOneBot();
+-    if (!chaosSpawner) {
+-      break;
+-    }
+-    if (liveBots.size === 0) {
+-      break;
+-    }
+   }
+ }
+ 
++Events.OnSpawnerSpawned.subscribe((eventPlayer: mod.Player, eventSpawner: mod.Spawner) => {
++  if (!chaosSpawner || !mod.Equals(eventSpawner, chaosSpawner)) {
++    return; // Not our Chaos spawner — ignore (defense in depth if other AI spawners exist).
++  }
++  liveBots.add(eventPlayer);
++});
++
+ Events.OnPlayerDied.subscribe((eventPlayer: mod.Player) => {
+   if (liveBots.has(eventPlayer)) {
+     liveBots.delete(eventPlayer);
+diff --git a/src/game/mode/controlzone.ts b/src/game/mode/controlzone.ts
+index 7235999..f97c936 100644
+--- a/src/game/mode/controlzone.ts
++++ b/src/game/mode/controlzone.ts
+@@ -157,6 +157,32 @@ Events.OnGameModeStarted.subscribe(() => {
+   for (const faction of SCORING_FACTION_IDS) {
+     mod.SetGameModeInitialScore(mod.GetTeam(faction), 0);
+   }
++
++  // Objectives (CapturePoint/HQ/Sector/MCOM) and AreaTriggers are inert — no capture ring, no
++  // minimap/bigmap icon — until explicitly enabled. HQs are enabled by default in Portal's base
++  // template, which is why only the HQs were visible before this fix; the custom WARDOGS
++  // objectives below need it done manually. Confirmed real:
++  // `EnableGameModeObjective`/`SetObjectiveUIEnabled` (index.d.ts:1006/1358),
++  // `EnableAreaTrigger` (index.d.ts:857). See WARDOGS_COMPLETION_REPORT.md §2.3.
++  //
++  // ObjIds reconciled against the real scene (mp_granite_military_storage_portal_spatial.json):
++  // only ONE tower exists (CP_TOWER_A / ObjId 76) — no Tower B. `Sector_HotZone`'s own ObjId
++  // (333) collides with IP_BUY_MENU_VALKYRA's InteractPoint in the scene (see config/ids.ts's
++  // KNOWN SCENE BUG note), so the HotZone's Sector is deliberately NOT enabled here by ObjId —
++  // only its CapturePoint/AreaTrigger, which don't collide with anything.
++  const controlZoneSector = mod.GetSector(OBJECT_ID.SECTOR_CONTROLZONE);
++  const towerASector = mod.GetSector(OBJECT_ID.SECTOR_TOWER_A);
++  const controlZoneCp = mod.GetCapturePoint(OBJECT_ID.CP_CONTROLZONE);
++  const hotZoneCp = mod.GetCapturePoint(OBJECT_ID.CP_HOTZONE);
++  const towerACp = mod.GetCapturePoint(OBJECT_ID.CP_TOWER_A);
++
++  for (const objective of [controlZoneSector, towerASector, controlZoneCp, hotZoneCp, towerACp]) {
++    mod.EnableGameModeObjective(objective, true);
++    mod.SetObjectiveUIEnabled(objective, true);
++  }
++
++  mod.EnableAreaTrigger(mod.GetAreaTrigger(OBJECT_ID.AT_CONTROLZONE), true);
++  mod.EnableAreaTrigger(mod.GetAreaTrigger(OBJECT_ID.AT_HOTZONE), true);
+ });
+ 
+ export { setTickets };
+diff --git a/src/game/mode/fob.ts b/src/game/mode/fob.ts
+index 46481ea..96bfd9b 100644
+--- a/src/game/mode/fob.ts
++++ b/src/game/mode/fob.ts
+@@ -89,7 +89,7 @@ function tryPlaceFob(
+ ): ActiveFob | undefined {
+ 	const afforded = spendMaterials(player, FOB_MATERIAL_COST, "fobPlacement");
+ 	if (!afforded) {
+-		mod.DisplayNotificationMessage(mod.Message("Not enough materials to build a FOB."), player);
++		mod.DisplayNotificationMessage(mod.Message(mod.stringkeys.fob_insufficient_materials), player);
+ 		return undefined;
+ 	}
+ 	return placeFob(team, position, facing);
+diff --git a/src/game/mode/hotzone.ts b/src/game/mode/hotzone.ts
+index f87a9e1..ebd8e9d 100644
+--- a/src/game/mode/hotzone.ts
++++ b/src/game/mode/hotzone.ts
+@@ -1,82 +1,74 @@
+ /**
+- * hotzone.ts — the drifting 60m HotZone (`AT_HOTZONE` / `CP_HOTZONE`).
++ * hotzone.ts — the HotZone (`AT_HOTZONE` / `CP_HOTZONE` / `ICON_HOTZONE`).
+  *
+  * Design: WARDOGS_DESIGN_BRIEF.md → "HotZone Contestation" / Secondary Objective 1.
+  * The 2x presence-weight scoring rule itself is implemented in `controlzone.ts` (per that file's
+  * header comment — HotZone presence is a multiplier on the SAME majority tally, not a second
+- * ticket track). This file owns only the flag's physical drift: picking a new random target
+- * inside a bounded radius, gliding the `CapturePoint` object there with `mod.MoveObjectOverTime`,
+- * accelerating that cadence once Phase 3 triggers (`controlzone.ts`'s `isPhase3()`), and exposing
+- * `lockDriftTarget()` so `towers.ts` can freeze the flag once a team fully decrypts a tower.
++ * ticket track). This file owns the HotZone's "drift" behavior and exposes `lockDriftTarget()` so
++ * `towers.ts` can freeze it once Tower A is held.
+  *
+- * Symbol verification note: `mod.MoveObjectOverTime` is confirmed real (BUILD_GUIDE.md §4,
+- * `index.d.ts:1204`), but this codebase has not independently re-confirmed its exact parameter
+- * order for this file — per AGENTS.md §2, re-check the signature in
+- * `node_modules/bf6-portal-mod-types/index.d.ts` before this file ships, and adjust the single
+- * call site in `driftStep()` below if the real signature differs from the
+- * `(object, targetPosition, durationSeconds)` shape assumed here.
++ * REDESIGNED IN THIS PASS (see WARDOGS_COMPLETION_REPORT.md §3.1 and its addendum): the previous
++ * version of this file tried to move the pre-placed `CapturePoint_HotZone_1_1` itself via
++ * `mod.MoveObjectOverTime(hotZoneCapturePoint as unknown as mod.SpatialObject, ...)` — a type
++ * violation papered over with a cast. Checked exhaustively against the real SDK:
++ *   - `MoveObjectOverTime` / `MoveObject` (both confirmed real, index.d.ts) both take a parameter
++ *     union of `Bomb | EmplacementSpawner | FixedCamera | InteractPoint | LootSpawner | MCOM |
++ *     SFX | SpatialObject | Spawner | VehicleSpawner | VL7Cloud | VO | WorldIcon` — CapturePoint
++ *     and AreaTrigger are excluded from BOTH movement functions, deliberately.
++ *   - There is no `SetObjectPosition`/`SetCapturePointPosition`-style setter anywhere in the API
++ *     surface; `GetObjectPosition` is read-only.
++ *   - `CapturePoint` IS a `RuntimeSpawn_Common` prefab (confirmed,
++ *     `node_modules/bf6-portal-mod-types/runtime-spawn-enums/common.d.ts`), so a *freshly spawned*
++ *     CapturePoint is possible via `mod.SpawnObject`/`mod.UnspawnObject` — but redefining the
++ *     HotZone as "unspawn the pre-placed one, spawn a fresh one at each drift step" would mean
++ *     abandoning the scene's own pre-placed `CapturePoint_HotZone_1_1` (ObjId 9001, with its own
++ *     authored `CaptureArea`/`OutlineShape`/`CameraFOV` fields already tuned in the Godot scene)
++ *     in favor of an unauthored runtime clone — a bigger design change than "make the flag drift"
++ *     should require, and not attempted here without that being an explicit decision.
+  *
+- * The live `CapturePoint` object reference for `CP_HOTZONE` is not obtained from any invented
+- * "get object by id" global (no such getter exists in the confirmed API surface) — it is captured
+- * the first time a real Portal event hands it to us as a payload (`OnCapturePointCapturing` /
+- * `OnCapturePointCaptured` / `OnCapturePointLost`, all confirmed real in
+- * `event-handler-signatures.d.ts`), then cached for every subsequent drift step.
+- */
+-
+-/**
+- * hotzone.ts — the drifting 60m HotZone.
++ * Resolution actually implemented: the pre-placed `CapturePoint_HotZone_1_1` stays fixed at its
++ * authored scene position (this is also just correct — the SDK will not let it move). What
++ * "drifts" is `WorldIcon_HotZone_1_1` (ObjId 902, confirmed a real, already-placed WorldIcon in
++ * the scene) — `WorldIcon` IS in `MoveObjectOverTime`'s accepted union, so it can actually be
++ * relocated over time via `mod.SetWorldIconPosition`, giving players a moving minimap/bigmap
++ * indicator that roams within a bounded radius of the fixed CapturePoint, signaling "the
++ * high-value area is roughly here right now" without violating any confirmed SDK constraint. This
++ * does not reproduce the brief's original "the capturable flag itself physically relocates"
++ * intent — that specific mechanic isn't achievable with any function this SDK actually exposes,
++ * per the exhaustive check above — but it's the closest faithful approximation available, and the
++ * flag's own 2x-presence scoring (in controlzone.ts) is unaffected either way since that logic
++ * keys off the fixed `AT_HOTZONE` AreaTrigger, not the icon's position.
++ *
++ * `lockDriftTarget()` now simply stops/starts the WorldIcon's roam rather than gliding a fixed
++ * point toward a lock position — when locked, the icon snaps to and holds the given position;
++ * when unlocked, normal roam resumes on the next scheduled step.
+  */
+ 
+ import { Events } from "../../../node_modules/bf6-portal-utils/events/index.ts";
+ import { OBJECT_ID } from "../../config/ids.ts";
+ import {
+   HOTZONE_DRIFT_STEP_RADIUS,
+-  HOTZONE_DRIFT_DURATION_SECONDS,
+   HOTZONE_DRIFT_INTERVAL_SECONDS,
+   PHASE_3_HOTZONE_DRIFT_SPEED_MULTIPLIER,
+ } from "../../config/constants.ts";
+ import { isPhase3 } from "./controlzone.ts";
+ 
+-let hotZoneCapturePoint: mod.CapturePoint | undefined;
+-let lastDriftTarget: mod.Vector | undefined;
+-let lockedTarget: mod.Vector | undefined;
++// Fixed scene position of CapturePoint_HotZone_1_1 — the capture point itself never moves (see
++// header comment); this is the roam's anchor/origin.
++const HOTZONE_ANCHOR_POSITION = mod.CreateVector(926.3205, 227.51173, 236.55618);
+ 
+-function cacheHotZoneCapturePoint(eventCapturePoint: mod.CapturePoint): void {
+-  if (hotZoneCapturePoint) {
+-    return;
+-  }
+-  if (mod.GetObjId(eventCapturePoint) === OBJECT_ID.CP_HOTZONE) {
+-    hotZoneCapturePoint = eventCapturePoint;
+-  }
+-}
++let hotZoneIcon: mod.WorldIcon | undefined;
++let lastRoamTarget: mod.Vector | undefined;
++let lockedTarget: mod.Vector | undefined;
+ 
+-Events.OnCapturePointCapturing.subscribe((eventCapturePoint) => {
+-  cacheHotZoneCapturePoint(eventCapturePoint);
+-});
+-Events.OnCapturePointCaptured.subscribe((eventCapturePoint) => {
+-  cacheHotZoneCapturePoint(eventCapturePoint);
+-});
+-Events.OnCapturePointLost.subscribe((eventCapturePoint) => {
+-  cacheHotZoneCapturePoint(eventCapturePoint);
++Events.OnGameModeStarted.subscribe(() => {
++  hotZoneIcon = mod.GetWorldIcon(OBJECT_ID.ICON_HOTZONE);
+ });
+ 
+ export function lockDriftTarget(position: mod.Vector | null): void {
+   lockedTarget = position ?? undefined;
+-  if (lockedTarget && hotZoneCapturePoint) {
+-    const currentPos = mod.GetObjectPosition(hotZoneCapturePoint);
+-    const delta = mod.CreateVector(
+-      mod.XComponentOf(lockedTarget) - mod.XComponentOf(currentPos),
+-      mod.YComponentOf(lockedTarget) - mod.YComponentOf(currentPos),
+-      mod.ZComponentOf(lockedTarget) - mod.ZComponentOf(currentPos),
+-    );
+-    mod.MoveObjectOverTime(
+-      hotZoneCapturePoint as unknown as mod.SpatialObject,
+-      delta,
+-      mod.CreateVector(0, 0, 0),
+-      HOTZONE_DRIFT_DURATION_SECONDS,
+-      false,
+-      false,
+-    );
++  if (lockedTarget && hotZoneIcon) {
++    mod.SetWorldIconPosition(hotZoneIcon, lockedTarget);
+   }
+ }
+ 
+@@ -91,25 +83,13 @@ function randomDriftTarget(origin: mod.Vector): mod.Vector {
+ }
+ 
+ function driftStep(): void {
+-  if (!hotZoneCapturePoint || lockedTarget) {
++  if (!hotZoneIcon || lockedTarget) {
+     return;
+   }
+-  const origin = lastDriftTarget ?? mod.GetObjectPosition(hotZoneCapturePoint);
++  const origin = lastRoamTarget ?? HOTZONE_ANCHOR_POSITION;
+   const target = randomDriftTarget(origin);
+-  lastDriftTarget = target;
+-  const delta = mod.CreateVector(
+-    mod.XComponentOf(target) - mod.XComponentOf(origin),
+-    mod.YComponentOf(target) - mod.YComponentOf(origin),
+-    mod.ZComponentOf(target) - mod.ZComponentOf(origin),
+-  );
+-  mod.MoveObjectOverTime(
+-    hotZoneCapturePoint as unknown as mod.SpatialObject,
+-    delta,
+-    mod.CreateVector(0, 0, 0),
+-    HOTZONE_DRIFT_DURATION_SECONDS,
+-    false,
+-    false,
+-  );
++  lastRoamTarget = target;
++  mod.SetWorldIconPosition(hotZoneIcon, target);
+ }
+ 
+ let hotZoneAccumulatedSeconds = 0;
+diff --git a/src/game/mode/towers.ts b/src/game/mode/towers.ts
+index 3feaf26..2146201 100644
+--- a/src/game/mode/towers.ts
++++ b/src/game/mode/towers.ts
+@@ -1,28 +1,34 @@
+ /**
+- * towers.ts — the two Control Towers (`CP_TOWER_A`/`CP_TOWER_B`, ObjIds `1001`/`2001`).
++ * towers.ts — the single Control Tower (`CP_TOWER_A`, ObjId 76).
+  *
+  * Design: WARDOGS_DESIGN_BRIEF.md → Secondary Objective 1 ("Secure Concentric Towers") /
+  * "✅ RESOLVED — CapturePoint A/B → Control Towers".
+- * Each tower is capturable by any scoring faction and, per the brief, holds a preplaced
+- * `StationaryEmplacementSpawner` for the controlling team (that spawner already exists in the
+- * Godot scene at each tower's `CapturePoint_A_1`/`CapturePoint_B_1` location — this file does not
+- * spawn it, only tracks capture state). Capturing a tower grants that team one "decryption
+- * segment"; per the brief's threshold (`TOWER_DECRYPTION_SEGMENTS_REQUIRED`, currently 1 — i.e.
+- * holding a tower counts immediately), once a team holds BOTH towers simultaneously, this file
+- * calls `hotzone.ts`'s `lockDriftTarget()` with that tower pair's midpoint, locking the flag in
+- * place until either tower is lost.
+  *
+- * Tower world positions are the fixed, already-placed CapturePoint coordinates from
+- * `MP_Granite_MilitaryStorage_Portal-ModBuilderCustom0.spatial.json` (`CapturePoint_A_1` /
+- * `CapturePoint_B_1`) — not derived from any `mod.*` getter, since these two points are static
+- * level geometry, not runtime state.
++ * REDESIGNED IN THIS PASS (see WARDOGS_COMPLETION_REPORT.md addendum): the scene's real spatial
++ * data (`mp_granite_military_storage_portal_spatial.json`) has exactly ONE placed tower —
++ * `Sector_Tower_A` / `CapturePoint_Tower_A` (ObjId 76) / `WorldIcon_Tower_A`. There is no Tower B
++ * anywhere in the level; the previous version of this file's `TOWER_A_POSITION`/
++ * `TOWER_B_POSITION` constants and `CP_TOWER_A`/`CP_TOWER_B` ObjIds were actually the pre-placed
++ * "FOB Alpha"/"FOB Bravo" capture points (a different, unrelated pair of objects — see
++ * `config/ids.ts`'s CORRECTIONS note), not towers at all.
++ *
++ * Per direction: the two-tower drift-lock condition is dropped. The single real tower now grants
++ * the HotZone-lock on its own — holding `CP_TOWER_A` alone locks the HotZone's drift target at
++ * the tower's own position for as long as the tower is held, and losing the tower resumes normal
++ * drift. This preserves the brief's "control ground gives you a stake in the HotZone" intent
++ * with the objective that's actually in the level, rather than a two-tower majority condition
++ * the level doesn't support.
++ *
++ * `CapturePoint_Tower_A`'s own `AdditionalCaptureArea` (per the scene data) is
++ * `CollisionShape3D_HotZone_1_1` — the same capture-area geometry the HotZone's `CapturePoint`
++ * uses — meaning the scene's own design already links Tower A's capture area to the HotZone
++ * volume. That's scene-level geometry, not something this file needs to duplicate in code.
+  *
+  * Symbols verified against `bf6-portal-mod-types@4.2.0/event-handler-signatures.d.ts`:
+- * `OnCapturePointCaptured`, `OnCapturePointCapturing`, `OnCapturePointLost` (per BUILD_GUIDE.md §4).
+- */
+-
+-/**
+- * towers.ts — Control Towers logic and decryption states.
++ * `OnCapturePointCaptured`, `OnCapturePointLost` (per BUILD_GUIDE.md §4).
++ * `OnCapturePointCaptured` only hands back the `CapturePoint`, not the capturing team, so the
++ * owning faction is read via `mod.GetCurrentOwnerTeam(capturePoint)` (confirmed real,
++ * index.d.ts:2608) inside the handler. See WARDOGS_COMPLETION_REPORT.md §3.5.
+  */
+ 
+ import { Events } from "../../../node_modules/bf6-portal-utils/events/index.ts";
+@@ -30,52 +36,38 @@ import { OBJECT_ID } from "../../config/ids.ts";
+ import { getFactionId, type FactionId } from "../../config/teams.ts";
+ import { lockDriftTarget } from "./hotzone.ts";
+ 
+-const TOWER_A_POSITION = mod.CreateVector(648.9673, 151.6513, 297.27927);
+-const TOWER_B_POSITION = mod.CreateVector(543.98956, 152.00696, 482.61975);
+-
+-type TowerKey = "A" | "B";
++// CapturePoint_Tower_A's own placed position, per the scene's Portal_Dynamic entry — used as the
++// HotZone lock target while the tower is held (matches the tower's real map location, not the
++// old FOB coordinates the previous version of this file mistakenly used).
++const TOWER_A_POSITION = mod.CreateVector(835.29894928, 202.2173031, 253.2495747);
+ 
+-const towerOwner: Record<TowerKey, FactionId | undefined> = { A: undefined, B: undefined };
+-
+-function towerKeyForObjId(objId: number): TowerKey | undefined {
+-	if (objId === OBJECT_ID.CP_TOWER_A) return "A";
+-	if (objId === OBJECT_ID.CP_TOWER_B) return "B";
+-	return undefined;
+-}
+-
+-const TOWER_MIDPOINT = mod.CreateVector(
+-	(mod.XComponentOf(TOWER_A_POSITION) + mod.XComponentOf(TOWER_B_POSITION)) / 2,
+-	(mod.YComponentOf(TOWER_A_POSITION) + mod.YComponentOf(TOWER_B_POSITION)) / 2,
+-	(mod.ZComponentOf(TOWER_A_POSITION) + mod.ZComponentOf(TOWER_B_POSITION)) / 2
+-);
++let towerOwner: FactionId | undefined;
+ 
+ function reevaluateDriftLock(): void {
+-	const holder = towerOwner.A;
+-	if (holder !== undefined && holder === towerOwner.B) {
+-		lockDriftTarget(TOWER_MIDPOINT);
++	if (towerOwner !== undefined) {
++		lockDriftTarget(TOWER_A_POSITION);
+ 	} else {
+ 		lockDriftTarget(null);
+ 	}
+ }
+ 
+ Events.OnCapturePointCaptured.subscribe((capturePoint: mod.CapturePoint) => {
+-  const key = towerKeyForObjId(mod.GetObjId(capturePoint));
+-  if (!key) {
+-    return;
+-  }
+-  // Use official SDK method or bf6-portal-utils helper to query team from capturePoint if available
+-  reevaluateDriftLock();
++	if (mod.GetObjId(capturePoint) !== OBJECT_ID.CP_TOWER_A) {
++		return;
++	}
++	const owningTeam = mod.GetCurrentOwnerTeam(capturePoint);
++	towerOwner = getFactionId(owningTeam);
++	reevaluateDriftLock();
+ });
+ 
+ Events.OnCapturePointLost.subscribe((capturePoint: mod.CapturePoint) => {
+-  const key = towerKeyForObjId(mod.GetObjId(capturePoint));
+-  if (!key) {
+-    return;
+-  }
+-  towerOwner[key] = undefined;
+-  reevaluateDriftLock();
++	if (mod.GetObjId(capturePoint) !== OBJECT_ID.CP_TOWER_A) {
++		return;
++	}
++	towerOwner = undefined;
++	reevaluateDriftLock();
+ });
+ 
+-export function getTowerOwner(tower: TowerKey): FactionId | undefined {
+-	return towerOwner[tower];
+-}
+\ No newline at end of file
++export function getTowerOwner(): FactionId | undefined {
++	return towerOwner;
++}
+diff --git a/src/strings.json b/src/strings.json
+index c200b10..fa7c82c 100644
+--- a/src/strings.json
++++ b/src/strings.json
+@@ -3,5 +3,25 @@
+   "shop_header_subtitle": "CLASS-FREE PROCUREMENT SUITE",
+   "shop_close_label": "CLOSE PROTOCOL [ESC]",
+   "shop_purchase_loadout": "PURCHASE LOADOUT",
+-  "shop_purchase_gear": "PURCHASE GEAR"
+-}
+\ No newline at end of file
++  "shop_purchase_gear": "PURCHASE GEAR",
++  "shop_item_price": "{} — ${}",
++  "shop_purchase_confirm": "Purchased: {}",
++  "shop_insufficient_funds": "Insufficient funds: need ${}, have ${}.",
++  "shop_cannot_afford_generic": "Cannot afford this item.",
++  "fob_insufficient_materials": "Not enough materials to build a FOB.",
++  "hud_cash_flash": "{}${}",
++  "hud_rank_up": "{} — Tier {}",
++  "scoreboard_ticket_count": "{}",
++  "faction_lonestar_short": "LSR",
++  "faction_manticore_short": "MTC",
++  "faction_valkyra_short": "VLK",
++  "item_armor_plate_carrier": "Plate Carrier",
++  "item_attachment_suppressor": "AK-205 Suppressor",
++  "item_gadget_ammo_crate": "Ammo Crate",
++  "track_assault": "ASSAULT",
++  "track_medic": "MEDIC",
++  "track_support": "SUPPORT",
++  "track_recon": "RECON",
++  "track_driverPilot": "DRIVER/PILOT",
++  "track_engineer": "ENGINEER"
++}
+diff --git a/src/ui/buy-menu.ts b/src/ui/buy-menu.ts
+index cbff949..6aa3e70 100644
+--- a/src/ui/buy-menu.ts
++++ b/src/ui/buy-menu.ts
+@@ -8,6 +8,12 @@
+  * Every purchase button's `onClick` calls `buy-validator.ts`'s `checkPurchase` AND
+  * `wallet.ts`'s `spendCash` inside ONE function (`attemptPurchase` below) so a failed grant can
+  * never leave a player charged without receiving the item.
++ *
++ * All display text goes through `mod.Message(mod.stringkeys.<key>, ...)` — `mod.Message()`
++ * rejects raw string literals at runtime (confirmed, index.d.ts's own doc comment: "All strings
++ * passed as arguments must be found in the `strings.json` which is injected as `mod.stringkeys`."),
++ * which was the root cause of every UI label rendering as "unavailable". Every key referenced
++ * below is registered in `src/strings.json`. See WARDOGS_COMPLETION_REPORT.md §2.1.
+  */
+ 
+ // src/ui/buy-menu.ts
+@@ -22,10 +28,15 @@ import { spendCash } from "../player/wallet.ts";
+ import { requirePlayerState } from "../player/player-state.ts";
+ import { checkPurchase, type ShopItem } from "./buy-validator.ts";
+ 
+-const SHOP_CATALOG: ShopItem[] = [
+-	{ id: "armor_plate_carrier", label: "Plate Carrier", basePrice: 1_200, gatingTrack: "support", requiredTier: 2 },
+-	{ id: "attachment_suppressor", label: "AK-205 Suppressor", basePrice: 350, gatingTrack: "assault", requiredTier: 1 },
+-	{ id: "gadget_ammo_crate", label: "Ammo Crate", basePrice: 200, gatingTrack: "support", requiredTier: 1 },
++/**
++ * `labelKey` is a `mod.stringkeys.*` property name (must exist in `strings.json`), not display
++ * text itself — `mod.Message()` can only display registered string keys. `label` is kept as
++ * plain internal data for use in contexts that don't touch `mod.Message` (e.g. future logging).
++ */
++const SHOP_CATALOG: (ShopItem & { labelKey: string })[] = [
++	{ id: "armor_plate_carrier", label: "Plate Carrier", labelKey: "item_armor_plate_carrier", basePrice: 1_200, gatingTrack: "support", requiredTier: 2 },
++	{ id: "attachment_suppressor", label: "AK-205 Suppressor", labelKey: "item_attachment_suppressor", basePrice: 350, gatingTrack: "assault", requiredTier: 1 },
++	{ id: "gadget_ammo_crate", label: "Ammo Crate", labelKey: "item_gadget_ammo_crate", basePrice: 200, gatingTrack: "support", requiredTier: 1 },
+ ];
+ 
+ const BUY_MENU_INTERACT_IDS: readonly number[] = [
+@@ -34,21 +45,31 @@ const BUY_MENU_INTERACT_IDS: readonly number[] = [
+ 	OBJECT_ID.IP_BUY_MENU_VALKYRA,
+ ];
+ 
+-function attemptPurchase(player: mod.Player, item: ShopItem): boolean {
++function attemptPurchase(player: mod.Player, item: ShopItem & { labelKey: string }): boolean {
+ 	const state = requirePlayerState(player);
+ 	const result = checkPurchase(item, state.currentCash, state.tracks);
+ 	if (!result.canAfford) {
+-		mod.DisplayNotificationMessage(mod.Message(result.reason ?? "Cannot afford this item."), player);
++		mod.DisplayNotificationMessage(
++			mod.Message(mod.stringkeys.shop_insufficient_funds, result.price, result.currentCash),
++			player
++		);
+ 		return false;
+ 	}
+ 
+ 	const deducted = spendCash(player, result.price, "purchase");
+ 	if (!deducted) {
++		mod.DisplayNotificationMessage(mod.Message(mod.stringkeys.shop_cannot_afford_generic), player);
+ 		return false;
+ 	}
+ 
+ 	void state;
+-	mod.DisplayNotificationMessage(mod.Message(`Purchased: ${item.label}`), player);
++	// msgArg0/1/2 are typed string | number | Player (index.d.ts:2835) — a nested Message object
++	// is not a legal arg, so the item name has to be a stringkeys reference passed directly, not
++	// wrapped in its own Message() call first.
++	mod.DisplayNotificationMessage(
++		mod.Message(mod.stringkeys.shop_purchase_confirm, mod.stringkeys[item.labelKey]),
++		player
++	);
+ 	return true;
+ }
+ 
+@@ -70,7 +91,7 @@ function buildBuyMenu(player: mod.Player): UIContainer {
+ 				anchor: mod.UIAnchor.TopCenter,
+ 				textColor: UI.COLORS.WHITE,
+ 				textSize: 26,
+-				message: mod.Message("HQ ACQUISITIONS"),
++				message: mod.Message(mod.stringkeys.shop_header_title),
+ 			},
+ 			...SHOP_CATALOG.map((item, index) => ({
+ 				type: UITextButton,
+@@ -81,7 +102,11 @@ function buildBuyMenu(player: mod.Player): UIContainer {
+ 				baseColor: UI.COLORS.BLACK,
+ 				textColor: UI.COLORS.WHITE,
+ 				textSize: 20,
+-				message: mod.Message(`${item.label} — $${BASE_PRICES[item.id] ?? item.basePrice}`),
++				message: mod.Message(
++					mod.stringkeys.shop_item_price,
++					mod.stringkeys[item.labelKey],
++					BASE_PRICES[item.id] ?? item.basePrice
++				),
+ 				onClickUp: (p: mod.Player) => attemptPurchase(p, item),
+ 			})),
+ 			{
+@@ -93,7 +118,7 @@ function buildBuyMenu(player: mod.Player): UIContainer {
+ 				baseColor: UI.COLORS.BLACK,
+ 				textColor: UI.COLORS.WHITE,
+ 				textSize: 18,
+-				message: mod.Message("CLOSE PROTOCOL [ESC]"),
++				message: mod.Message(mod.stringkeys.shop_close_label),
+ 				onClickUp: (p: mod.Player) => closeBuyMenu(p),
+ 			},
+ 		] as UIContainer.ChildParams<any>[],
+@@ -121,11 +146,23 @@ function closeBuyMenu(player: mod.Player): void {
+ 	}
+ }
+ 
++/**
++ * Re-entry guard: without this, repeated `OnPlayerInteract` events while the menu is already
++ * open (e.g. the player still standing on the interact point, or the engine re-firing interact
++ * on held-input) call `openBuyMenu` again on every event with no check for "already open" — which
++ * can make Close appear to do nothing if an interact tick re-opens the menu immediately after a
++ * close. See WARDOGS_COMPLETION_REPORT.md §2.2.
++ */
+ Events.OnPlayerInteract.subscribe((eventPlayer, eventInteractPoint) => {
+ 	const interactId = mod.GetObjId(eventInteractPoint);
+-	if (BUY_MENU_INTERACT_IDS.includes(interactId)) {
+-		openBuyMenu(eventPlayer);
++	if (!BUY_MENU_INTERACT_IDS.includes(interactId)) {
++		return;
++	}
++	const menu = menusByPlayer.get(eventPlayer);
++	if (menu?.visible) {
++		return;
+ 	}
++	openBuyMenu(eventPlayer);
+ });
+ 
+ Events.OnPlayerLeaveGame.subscribe((_eventNumber) => {});
+diff --git a/src/ui/buy-validator.ts b/src/ui/buy-validator.ts
+index 7d32a33..83b978e 100644
+--- a/src/ui/buy-validator.ts
++++ b/src/ui/buy-validator.ts
+@@ -19,11 +19,20 @@ export interface ShopItem {
+ 	requiredTier: number;
+ }
+ 
++/**
++ * Deliberately holds no formatted `reason` string — `mod.Message()` requires every displayed
++ * string to be a `strings.json`-registered `mod.stringkeys.*` reference (see
++ * WARDOGS_COMPLETION_REPORT.md §2.1), and this file must stay Portal-runtime-free (no `mod.*`
++ * calls), so it can't build that Message itself. `currentCash` is echoed back alongside `price` so
++ * the caller (`buy-menu.ts`) has both numbers needed to build
++ * `mod.Message(mod.stringkeys.shop_insufficient_funds, price, currentCash)` without recomputing
++ * anything.
++ */
+ export interface PurchaseCheckResult {
+ 	canAfford: boolean;
+ 	price: number;
++	currentCash: number;
+ 	surchargeApplied: boolean;
+-	reason?: string;
+ }
+ 
+ /**
+@@ -39,16 +48,7 @@ export function checkPurchase(
+ 	const price = getSurchargedPrice(item.basePrice, playerTrackLevel, item.requiredTier);
+ 	const surchargeApplied = playerTrackLevel < item.requiredTier;
+ 
+-	if (currentCash < price) {
+-		return {
+-			canAfford: false,
+-			price,
+-			surchargeApplied,
+-			reason: `Insufficient funds: need $${price}, have $${currentCash}.`,
+-		};
+-	}
+-
+-	return { canAfford: true, price, surchargeApplied };
++	return { canAfford: currentCash >= price, price, currentCash, surchargeApplied };
+ }
+ 
+ /** Whether a player's current track level meets an item's hard eligibility gate (e.g. weapon tier locks). */
+diff --git a/src/ui/hud.ts b/src/ui/hud.ts
+index eea7aa2..51da981 100644
+--- a/src/ui/hud.ts
++++ b/src/ui/hud.ts
+@@ -6,19 +6,42 @@
+  * signal — set true, then auto-reset after N ticks — rather than a persistent one; `onRankUp`'s
+  * spark uses the identical transient-then-reset pattern via the same helper, per BUILD_GUIDE.md §5
+  * ("model it as its own small reusable helper ... rather than duplicating the timer logic twice").
++ *
++ * IMPORTANT (fixed — see WARDOGS_COMPLETION_REPORT.md §2.1/§3.2): two bugs fixed together here,
++ * same root cause as scoreboard.ts's rewrite:
++ *   1. `mod.Message()` requires `mod.stringkeys.*` references, not raw strings — this file
++ *      previously stored pre-formatted display strings ("+$500", "ASSAULT — Tier 3") in signals
++ *      and passed them straight to `mod.Message()`, which is exactly the "unavailable" bug.
++ *      Signals now hold the raw numeric/key components (sign, amount, track key, level) instead,
++ *      and `mod.Message(mod.stringkeys.hud_cash_flash, sign, amount)` builds the parameterized
++ *      message reactively.
++ *   2. Elements were built via `new UIContainer({ childrenParams: [...] })`, whose children are
++ *      constructed via their raw constructor — no reactive-prop support. Rewritten to use
++ *      `SolidUI.h(Component, props)` with `parent:`-based composition, the real mechanism
++ *      (confirmed, solid-ui/README.md) for accessor-valued props to actually re-evaluate on
++ *      signal change.
+  */
+ 
+-// src/ui/hud.ts
+ import { Events } from "../../node_modules/bf6-portal-utils/events/index.ts";
+ import { SolidUI } from "../../node_modules/bf6-portal-utils/solid-ui/index.ts";
+ import { UI } from "../../node_modules/bf6-portal-utils/ui/index.ts";
+ import { UIContainer } from "../../node_modules/bf6-portal-utils/ui/components/container/index.ts";
+ import { UIText } from "../../node_modules/bf6-portal-utils/ui/components/text/index.ts";
+ import { onCashChange } from "../player/wallet.ts";
+-import { onRankUp } from "../player/progression.ts";
++import { onRankUp, type TrackId } from "../player/progression.ts";
+ 
+ const TRANSIENT_FLASH_TICKS = 60;
+ 
++/** `mod.stringkeys.*` property name per mastery track — see strings.json. */
++const TRACK_NAME_KEY: Record<TrackId, string> = {
++	assault: "track_assault",
++	medic: "track_medic",
++	support: "track_support",
++	recon: "track_recon",
++	driverPilot: "track_driverPilot",
++	engineer: "track_engineer",
++};
++
+ function createTransientFlag(): { signal: () => boolean; trigger: () => void } {
+ 	const [flag, setFlag] = SolidUI.createSignal(false);
+ 	let ticksRemaining = 0;
+@@ -44,54 +67,68 @@ function createTransientFlag(): { signal: () => boolean; trigger: () => void } {
+ 
+ interface PlayerHud {
+ 	container: UIContainer;
+-	cashFlashText: () => string;
+-	setCashFlashText: (value: string) => void;
++	setCashFlash: (sign: string, amount: number) => void;
+ 	cashFlash: ReturnType<typeof createTransientFlag>;
+ 	rankUpFlash: ReturnType<typeof createTransientFlag>;
+-	rankUpText: () => string;
+-	setRankUpText: (value: string) => void;
++	setRankUp: (trackKey: string, level: number) => void;
+ }
+ 
+ const hudsByPlayer = new Map<mod.Player, PlayerHud>();
+ 
+ function buildHud(player: mod.Player): PlayerHud {
+-	const [cashFlashText, setCashFlashText] = SolidUI.createSignal("");
+-	const [rankUpText, setRankUpText] = SolidUI.createSignal("");
++	// Raw components, not pre-formatted strings — mod.Message() needs the stringkeys reference
++	// plus its numeric/string args separately, not a string that's already been built.
++	const [cashSign, setCashSign] = SolidUI.createSignal("+");
++	const [cashAmount, setCashAmount] = SolidUI.createSignal(0);
++	const [rankUpTrackKey, setRankUpTrackKey] = SolidUI.createSignal("track_assault");
++	const [rankUpLevel, setRankUpLevel] = SolidUI.createSignal(1);
+ 	const cashFlash = createTransientFlag();
+ 	const rankUpFlash = createTransientFlag();
+ 
+-	const container = new UIContainer({
++	const container = SolidUI.h(UIContainer, {
+ 		position: { x: -20, y: 20 },
+ 		size: { width: 200, height: 80 },
+ 		anchor: mod.UIAnchor.TopRight,
+ 		receiver: player,
+ 		visible: true,
+ 		uiInputModeWhenVisible: false,
+-		childrenParams: [
+-			{
+-				type: UIText,
+-				position: { x: 0, y: 0 },
+-				size: { width: 200, height: 30 },
+-				anchor: mod.UIAnchor.TopRight,
+-				textColor: UI.COLORS.GREEN,
+-				textSize: 24,
+-				visible: () => cashFlash.signal(),
+-				message: () => mod.Message(cashFlashText()),
+-			},
+-			{
+-				type: UIText,
+-				position: { x: 0, y: 34 },
+-				size: { width: 200, height: 30 },
+-				anchor: mod.UIAnchor.TopRight,
+-				textColor: UI.COLORS.YELLOW,
+-				textSize: 22,
+-				visible: () => rankUpFlash.signal(),
+-				message: () => mod.Message(rankUpText()),
+-			},
+-		] as UIContainer.ChildParams<any>[],
+ 	});
+ 
+-	return { container, cashFlashText, setCashFlashText, cashFlash, rankUpFlash, rankUpText, setRankUpText };
++	SolidUI.h(UIText, {
++		parent: container,
++		position: { x: 0, y: 0 },
++		size: { width: 200, height: 30 },
++		anchor: mod.UIAnchor.TopRight,
++		textColor: UI.COLORS.GREEN,
++		textSize: 24,
++		visible: () => cashFlash.signal(),
++		message: () => mod.Message(mod.stringkeys.hud_cash_flash, cashSign(), cashAmount()),
++	});
++
++	SolidUI.h(UIText, {
++		parent: container,
++		position: { x: 0, y: 34 },
++		size: { width: 200, height: 30 },
++		anchor: mod.UIAnchor.TopRight,
++		textColor: UI.COLORS.YELLOW,
++		textSize: 22,
++		visible: () => rankUpFlash.signal(),
++		message: () => mod.Message(mod.stringkeys.hud_rank_up, mod.stringkeys[rankUpTrackKey()], rankUpLevel()),
++	});
++
++	return {
++		container,
++		setCashFlash: (sign, amount) => {
++			setCashSign(sign);
++			setCashAmount(amount);
++		},
++		cashFlash,
++		rankUpFlash,
++		setRankUp: (trackKey, level) => {
++			setRankUpTrackKey(trackKey);
++			setRankUpLevel(level);
++		},
++	};
+ }
+ 
+ function requireHud(player: mod.Player): PlayerHud {
+@@ -105,14 +142,13 @@ function requireHud(player: mod.Player): PlayerHud {
+ 
+ onCashChange((player, delta, _reason, _newBalance) => {
+ 	const hud = requireHud(player);
+-	const sign = delta >= 0 ? "+" : "-";
+-	hud.setCashFlashText(`${sign}$${Math.abs(delta)}`);
++	hud.setCashFlash(delta >= 0 ? "+" : "-", Math.abs(delta));
+ 	hud.cashFlash.trigger();
+ });
+ 
+ onRankUp((player, track, newLevel) => {
+ 	const hud = requireHud(player);
+-	hud.setRankUpText(`${track.toUpperCase()} — Tier ${newLevel}`);
++	hud.setRankUp(TRACK_NAME_KEY[track], newLevel);
+ 	hud.rankUpFlash.trigger();
+ });
+ 
+@@ -120,4 +156,4 @@ Events.OnPlayerJoinGame.subscribe((eventPlayer) => {
+ 	requireHud(eventPlayer);
+ });
+ 
+-Events.OnPlayerLeaveGame.subscribe((_eventNumber) => {});
+\ No newline at end of file
++Events.OnPlayerLeaveGame.subscribe((_eventNumber) => {});
+diff --git a/src/ui/scoreboard.ts b/src/ui/scoreboard.ts
+index 0a501bf..f81b06f 100644
+--- a/src/ui/scoreboard.ts
++++ b/src/ui/scoreboard.ts
+@@ -9,14 +9,21 @@
+  * This file only *displays* state — it never subscribes to `OnPlayerUIButtonEvent` itself, since
+  * the `UI` module already owns that hook internally (AGENTS.md §4).
+  *
+- * NOTE (AGENTS.md §2): the exact `SolidUI` export names/signatures used below
+- * (`createSignal`, `h`, `deferTicks`) are per BUILD_GUIDE.md §5's own citation of the
+- * `solid-ui/README.md` Quick Start pattern; re-read that README verbatim against
+- * `node_modules/bf6-portal-utils/solid-ui/` before shipping and adjust call shapes if they differ.
+- */
+-
+-/**
+- * scoreboard.ts — the custom 3-faction scoreboard overlay.
++ * IMPORTANT (fixed — see WARDOGS_COMPLETION_REPORT.md §3.2/§3.3): the previous version of this
++ * file built its element tree via plain `new UIContainer({ childrenParams: [...] })` calls.
++ * `UIContainer.ChildParams<T>` (ui/components/container/index.d.ts) constructs children via their
++ * raw `new (params: T) => UI.Element` constructor — it has NO reactivity mechanism, so
++ * function-valued props passed through `childrenParams` were never evaluated as accessors and
++ * never updated after first paint. The real reactive-composition pattern (confirmed,
++ * solid-ui/README.md "Quick Start" + `h()` docs) is: every element — container or leaf — is
++ * created via its own `SolidUI.h(Component, props, options)` call, and a child is attached to a
++ * parent via the `parent:` prop (real property on every `UI.Element`, ui/index.d.ts:45), not by
++ * nesting descriptor objects. Only `SolidUI.h()` reads function-valued props as accessors, sets
++ * up the initial value, and creates an effect that re-runs on signal change. Rewritten below to
++ * match that pattern exactly. Ticket-repaint throttling now uses `{ deferTicks: 20 }` on the
++ * `h()` call instead of a hand-rolled tick accumulator — `deferTicks` is a per-call/per-effect
++ * options property (not a standalone function), and once bindings go through `h()`, the library's
++ * own logical-tick coalescing replaces the manual `Events.OngoingGlobal` counter entirely.
+  */
+ 
+ import { Events } from "../../node_modules/bf6-portal-utils/events/index.ts";
+@@ -25,27 +32,38 @@ import { UI } from "../../node_modules/bf6-portal-utils/ui/index.ts";
+ import { UIContainer } from "../../node_modules/bf6-portal-utils/ui/components/container/index.ts";
+ import { UIText } from "../../node_modules/bf6-portal-utils/ui/components/text/index.ts";
+ import { getAllTickets } from "../game/mode/controlzone.ts";
+-import { FACTIONS, SCORING_FACTION_IDS } from "../config/teams.ts";
++import { SCORING_FACTION_IDS, type FactionId } from "../config/teams.ts";
+ 
+ const [tickets1, setTickets1] = SolidUI.createSignal(0);
+ const [tickets2, setTickets2] = SolidUI.createSignal(0);
+ const [tickets3, setTickets3] = SolidUI.createSignal(0);
+ 
+-const ticketSetters: Record<number, (value: number) => void> = {
++const ticketSetters: Record<FactionId, (value: number) => void> = {
+ 	1: setTickets1,
+ 	2: setTickets2,
+ 	3: setTickets3,
++	4: () => {},
+ };
+-const ticketSignals: Record<number, () => number> = {
++const ticketSignals: Record<FactionId, () => number> = {
+ 	1: tickets1,
+ 	2: tickets2,
+ 	3: tickets3,
++	4: () => 0,
+ };
+ 
+-const FACTION_COLORS: Record<number, mod.Vector> = {
++const FACTION_COLORS: Record<FactionId, mod.Vector> = {
+ 	1: UI.COLORS.CYAN,
+ 	2: UI.COLORS.RED,
+ 	3: UI.COLORS.WHITE,
++	4: UI.COLORS.WHITE,
++};
++
++/** `mod.stringkeys.*` property name per scoring faction's short name — see strings.json. */
++const FACTION_SHORT_NAME_KEY: Record<FactionId, string> = {
++	1: "faction_lonestar_short",
++	2: "faction_manticore_short",
++	3: "faction_valkyra_short",
++	4: "faction_lonestar_short", // unused — Chaos Squads never appear on this scoreboard
+ };
+ 
+ function refreshTicketSignals(): void {
+@@ -55,55 +73,60 @@ function refreshTicketSignals(): void {
+ 	}
+ }
+ 
+-let scoreboardTicketAccumulator = 0;
+ Events.OngoingGlobal.subscribe(() => {
+-	scoreboardTicketAccumulator++;
+-	if (scoreboardTicketAccumulator >= 20) {
+-		scoreboardTicketAccumulator = 0;
+-		refreshTicketSignals();
+-	}
++	refreshTicketSignals();
+ });
+ 
+-function buildScoreboard(player: mod.Player): UIContainer {
+-	return new UIContainer({
+-		position: { x: 0, y: 20 },
+-		size: { width: 240, height: 140 },
++/** Builds one faction's row (short-name label + live ticket count) as children of `parent`. */
++function buildFactionRow(parent: UIContainer, faction: FactionId, index: number): void {
++	const row = SolidUI.h(UIContainer, {
++		parent,
++		position: { x: 0, y: index * 44 },
++		size: { width: 240, height: 40 },
+ 		anchor: mod.UIAnchor.TopCenter,
+-		receiver: player,
+-		visible: true,
+-		uiInputModeWhenVisible: false,
+-		childrenParams: SCORING_FACTION_IDS.map((faction, index) => ({
+-			type: UIContainer,
+-			position: { x: 0, y: index * 44 },
+-			size: { width: 240, height: 40 },
+-			anchor: mod.UIAnchor.TopCenter,
+-			childrenParams: factionRowChildren(faction),
+-		})) as UIContainer.ChildParams<any>[],
+ 	});
+-}
+ 
+-function factionRowChildren(faction: number): UIContainer.ChildParams<any>[] {
+-	const definition = FACTIONS[faction as 1 | 2 | 3];
+-	return [
+-		{
+-			type: UIText,
+-			position: { x: 10, y: 0 },
+-			size: { width: 100, height: 40 },
+-			anchor: mod.UIAnchor.TopLeft,
+-			textColor: FACTION_COLORS[faction],
+-			textSize: 22,
+-			message: mod.Message(definition.shortName),
+-		},
++	SolidUI.h(UIText, {
++		parent: row,
++		position: { x: 10, y: 0 },
++		size: { width: 100, height: 40 },
++		anchor: mod.UIAnchor.TopLeft,
++		textColor: FACTION_COLORS[faction],
++		textSize: 22,
++		message: mod.Message(mod.stringkeys[FACTION_SHORT_NAME_KEY[faction]]),
++	});
++
++	// Reactive: message re-evaluates whenever this faction's ticket signal changes. Coalesced to
++	// once every 20 logical ticks (~20 Events.OngoingGlobal callbacks) rather than every change,
++	// matching the previous hand-rolled accumulator's cadence but via the library's own mechanism.
++	SolidUI.h(
++		UIText,
+ 		{
+-			type: UIText,
++			parent: row,
+ 			position: { x: 0, y: 0 },
+ 			size: { width: 100, height: 40 },
+ 			anchor: mod.UIAnchor.TopRight,
+ 			textColor: UI.COLORS.WHITE,
+ 			textSize: 22,
+-			message: () => mod.Message(String(ticketSignals[faction]())),
++			message: () => mod.Message(mod.stringkeys.scoreboard_ticket_count, ticketSignals[faction]()),
+ 		},
+-	];
++		{ deferTicks: 20 }
++	);
++}
++
++function buildScoreboard(player: mod.Player): UIContainer {
++	const container = SolidUI.h(UIContainer, {
++		position: { x: 0, y: 20 },
++		size: { width: 240, height: 140 },
++		anchor: mod.UIAnchor.TopCenter,
++		receiver: player,
++		visible: true,
++		uiInputModeWhenVisible: false,
++	});
++
++	SCORING_FACTION_IDS.forEach((faction, index) => buildFactionRow(container, faction, index));
++
++	return container;
+ }
+ 
+ const scoreboardsByPlayer = new Map<mod.Player, UIContainer>();
+@@ -116,4 +139,4 @@ Events.OnPlayerDeployed.subscribe((eventPlayer) => {
+ 
+ Events.OnPlayerLeaveGame.subscribe((_eventNumber) => {});
+ 
+-export { factionRowChildren };
+\ No newline at end of file
++export { buildFactionRow };
+\ No newline at end of file

@@ -1,28 +1,34 @@
 /**
- * towers.ts — the two Control Towers (`CP_TOWER_A`/`CP_TOWER_B`, ObjIds `1001`/`2001`).
+ * towers.ts — the single Control Tower (`CP_TOWER_A`, ObjId 76).
  *
  * Design: WARDOGS_DESIGN_BRIEF.md → Secondary Objective 1 ("Secure Concentric Towers") /
  * "✅ RESOLVED — CapturePoint A/B → Control Towers".
- * Each tower is capturable by any scoring faction and, per the brief, holds a preplaced
- * `StationaryEmplacementSpawner` for the controlling team (that spawner already exists in the
- * Godot scene at each tower's `CapturePoint_A_1`/`CapturePoint_B_1` location — this file does not
- * spawn it, only tracks capture state). Capturing a tower grants that team one "decryption
- * segment"; per the brief's threshold (`TOWER_DECRYPTION_SEGMENTS_REQUIRED`, currently 1 — i.e.
- * holding a tower counts immediately), once a team holds BOTH towers simultaneously, this file
- * calls `hotzone.ts`'s `lockDriftTarget()` with that tower pair's midpoint, locking the flag in
- * place until either tower is lost.
  *
- * Tower world positions are the fixed, already-placed CapturePoint coordinates from
- * `MP_Granite_MilitaryStorage_Portal-ModBuilderCustom0.spatial.json` (`CapturePoint_A_1` /
- * `CapturePoint_B_1`) — not derived from any `mod.*` getter, since these two points are static
- * level geometry, not runtime state.
+ * REDESIGNED IN THIS PASS (see WARDOGS_COMPLETION_REPORT.md addendum): the scene's real spatial
+ * data (`mp_granite_military_storage_portal_spatial.json`) has exactly ONE placed tower —
+ * `Sector_Tower_A` / `CapturePoint_Tower_A` (ObjId 76) / `WorldIcon_Tower_A`. There is no Tower B
+ * anywhere in the level; the previous version of this file's `TOWER_A_POSITION`/
+ * `TOWER_B_POSITION` constants and `CP_TOWER_A`/`CP_TOWER_B` ObjIds were actually the pre-placed
+ * "FOB Alpha"/"FOB Bravo" capture points (a different, unrelated pair of objects — see
+ * `config/ids.ts`'s CORRECTIONS note), not towers at all.
+ *
+ * Per direction: the two-tower drift-lock condition is dropped. The single real tower now grants
+ * the HotZone-lock on its own — holding `CP_TOWER_A` alone locks the HotZone's drift target at
+ * the tower's own position for as long as the tower is held, and losing the tower resumes normal
+ * drift. This preserves the brief's "control ground gives you a stake in the HotZone" intent
+ * with the objective that's actually in the level, rather than a two-tower majority condition
+ * the level doesn't support.
+ *
+ * `CapturePoint_Tower_A`'s own `AdditionalCaptureArea` (per the scene data) is
+ * `CollisionShape3D_HotZone_1_1` — the same capture-area geometry the HotZone's `CapturePoint`
+ * uses — meaning the scene's own design already links Tower A's capture area to the HotZone
+ * volume. That's scene-level geometry, not something this file needs to duplicate in code.
  *
  * Symbols verified against `bf6-portal-mod-types@4.2.0/event-handler-signatures.d.ts`:
- * `OnCapturePointCaptured`, `OnCapturePointCapturing`, `OnCapturePointLost` (per BUILD_GUIDE.md §4).
- */
-
-/**
- * towers.ts — Control Towers logic and decryption states.
+ * `OnCapturePointCaptured`, `OnCapturePointLost` (per BUILD_GUIDE.md §4).
+ * `OnCapturePointCaptured` only hands back the `CapturePoint`, not the capturing team, so the
+ * owning faction is read via `mod.GetCurrentOwnerTeam(capturePoint)` (confirmed real,
+ * index.d.ts:2608) inside the handler. See WARDOGS_COMPLETION_REPORT.md §3.5.
  */
 
 import { Events } from "../../../node_modules/bf6-portal-utils/events/index.ts";
@@ -30,52 +36,38 @@ import { OBJECT_ID } from "../../config/ids.ts";
 import { getFactionId, type FactionId } from "../../config/teams.ts";
 import { lockDriftTarget } from "./hotzone.ts";
 
-const TOWER_A_POSITION = mod.CreateVector(648.9673, 151.6513, 297.27927);
-const TOWER_B_POSITION = mod.CreateVector(543.98956, 152.00696, 482.61975);
+// CapturePoint_Tower_A's own placed position, per the scene's Portal_Dynamic entry — used as the
+// HotZone lock target while the tower is held (matches the tower's real map location, not the
+// old FOB coordinates the previous version of this file mistakenly used).
+const TOWER_A_POSITION = mod.CreateVector(835.29894928, 202.2173031, 253.2495747);
 
-type TowerKey = "A" | "B";
-
-const towerOwner: Record<TowerKey, FactionId | undefined> = { A: undefined, B: undefined };
-
-function towerKeyForObjId(objId: number): TowerKey | undefined {
-	if (objId === OBJECT_ID.CP_TOWER_A) return "A";
-	if (objId === OBJECT_ID.CP_TOWER_B) return "B";
-	return undefined;
-}
-
-const TOWER_MIDPOINT = mod.CreateVector(
-	(mod.XComponentOf(TOWER_A_POSITION) + mod.XComponentOf(TOWER_B_POSITION)) / 2,
-	(mod.YComponentOf(TOWER_A_POSITION) + mod.YComponentOf(TOWER_B_POSITION)) / 2,
-	(mod.ZComponentOf(TOWER_A_POSITION) + mod.ZComponentOf(TOWER_B_POSITION)) / 2
-);
+let towerOwner: FactionId | undefined;
 
 function reevaluateDriftLock(): void {
-	const holder = towerOwner.A;
-	if (holder !== undefined && holder === towerOwner.B) {
-		lockDriftTarget(TOWER_MIDPOINT);
+	if (towerOwner !== undefined) {
+		lockDriftTarget(TOWER_A_POSITION);
 	} else {
 		lockDriftTarget(null);
 	}
 }
 
 Events.OnCapturePointCaptured.subscribe((capturePoint: mod.CapturePoint) => {
-  const key = towerKeyForObjId(mod.GetObjId(capturePoint));
-  if (!key) {
-    return;
-  }
-  // Use official SDK method or bf6-portal-utils helper to query team from capturePoint if available
-  reevaluateDriftLock();
+	if (mod.GetObjId(capturePoint) !== OBJECT_ID.CP_TOWER_A) {
+		return;
+	}
+	const owningTeam = mod.GetCurrentOwnerTeam(capturePoint);
+	towerOwner = getFactionId(owningTeam);
+	reevaluateDriftLock();
 });
 
 Events.OnCapturePointLost.subscribe((capturePoint: mod.CapturePoint) => {
-  const key = towerKeyForObjId(mod.GetObjId(capturePoint));
-  if (!key) {
-    return;
-  }
-  towerOwner[key] = undefined;
-  reevaluateDriftLock();
+	if (mod.GetObjId(capturePoint) !== OBJECT_ID.CP_TOWER_A) {
+		return;
+	}
+	towerOwner = undefined;
+	reevaluateDriftLock();
 });
 
-export function getTowerOwner(tower: TowerKey): FactionId | undefined {
-	return towerOwner[tower];
+export function getTowerOwner(): FactionId | undefined {
+	return towerOwner;
 }

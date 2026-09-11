@@ -157,6 +157,32 @@ Events.OnGameModeStarted.subscribe(() => {
   for (const faction of SCORING_FACTION_IDS) {
     mod.SetGameModeInitialScore(mod.GetTeam(faction), 0);
   }
+
+  // Objectives (CapturePoint/HQ/Sector/MCOM) and AreaTriggers are inert — no capture ring, no
+  // minimap/bigmap icon — until explicitly enabled. HQs are enabled by default in Portal's base
+  // template, which is why only the HQs were visible before this fix; the custom WARDOGS
+  // objectives below need it done manually. Confirmed real:
+  // `EnableGameModeObjective`/`SetObjectiveUIEnabled` (index.d.ts:1006/1358),
+  // `EnableAreaTrigger` (index.d.ts:857). See WARDOGS_COMPLETION_REPORT.md §2.3.
+  //
+  // ObjIds reconciled against the real scene (mp_granite_military_storage_portal_spatial.json):
+  // only ONE tower exists (CP_TOWER_A / ObjId 76) — no Tower B. `Sector_HotZone`'s own ObjId
+  // (333) collides with IP_BUY_MENU_VALKYRA's InteractPoint in the scene (see config/ids.ts's
+  // KNOWN SCENE BUG note), so the HotZone's Sector is deliberately NOT enabled here by ObjId —
+  // only its CapturePoint/AreaTrigger, which don't collide with anything.
+  const controlZoneSector = mod.GetSector(OBJECT_ID.SECTOR_CONTROLZONE);
+  const towerASector = mod.GetSector(OBJECT_ID.SECTOR_TOWER_A);
+  const controlZoneCp = mod.GetCapturePoint(OBJECT_ID.CP_CONTROLZONE);
+  const hotZoneCp = mod.GetCapturePoint(OBJECT_ID.CP_HOTZONE);
+  const towerACp = mod.GetCapturePoint(OBJECT_ID.CP_TOWER_A);
+
+  for (const objective of [controlZoneSector, towerASector, controlZoneCp, hotZoneCp, towerACp]) {
+    mod.EnableGameModeObjective(objective, true);
+    mod.SetObjectiveUIEnabled(objective, true);
+  }
+
+  mod.EnableAreaTrigger(mod.GetAreaTrigger(OBJECT_ID.AT_CONTROLZONE), true);
+  mod.EnableAreaTrigger(mod.GetAreaTrigger(OBJECT_ID.AT_HOTZONE), true);
 });
 
 export { setTickets };

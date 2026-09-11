@@ -10,11 +10,16 @@
  *     `OnAIWaypointIdleFailed/Running/Succeeded`, `OnAIParachuteRunning/Succeeded` — all confirmed
  *     real in `event-handler-signatures.d.ts`.
  *
- * NOTE (AGENTS.md §2): `mod.SpawnAIFromAISpawner`'s exact overload used below
- * (`(spawner, team)` — spawner + Team4, no explicit class/loadout) is the simplest of its seven
- * overloads; confirm this specific overload compiles against the real `.d.ts` before shipping —
- * if Team4 requires an explicit AI class parameter in the real signature, add it here rather than
- * guessing a default.
+ * `(spawner, team: Team)` overload confirmed real against index.d.ts (one of seven overloads);
+ * spawns onto `mod.GetTeam(4)` (Chaos Squads per config/teams.ts's FACTIONS table — NOT
+ * `GetTeam(1)`, which was an earlier draft bug that put Chaos bots on Team1/Lonestar).
+ *
+ * Bot-count tracking uses `Events.OnSpawnerSpawned(eventPlayer, eventSpawner)` — confirmed real,
+ * event-handler-signatures.d.ts, doc comment: "This will trigger when an AISpawner spawns an AI
+ * Soldier." `SpawnAIFromAISpawner` itself returns `void` (no direct handle), so this event is the
+ * only real hook that hands back the spawned bot's `mod.Player`; filtered to `chaosSpawner` via
+ * `mod.Equals` in case other AI spawners exist elsewhere on the map. See
+ * WARDOGS_COMPLETION_REPORT.md §3.4.
  *
  * Team 4 must never appear in `controlzone.ts`'s majority-hold tallying (already enforced there
  * via `isScoringFaction`) or `ui/scoreboard.ts`'s ticket display (enforced by that file only
@@ -47,20 +52,35 @@ function spawnOneBot(): void {
   if (!chaosSpawner) {
     return;
   }
-  mod.SpawnAIFromAISpawner(chaosSpawner, mod.GetTeam(1));
+  // Team4 = Chaos Squads (config/teams.ts's FACTIONS table). liveBots is populated by
+  // Events.OnSpawnerSpawned below once the engine confirms the spawn, not here — this call
+  // itself returns void.
+  mod.SpawnAIFromAISpawner(chaosSpawner, mod.GetTeam(4));
 }
 
+/**
+ * Requests up to `CHAOS_AI_TOTAL_BOTS` worth of spawns. Each call to `spawnOneBot()` is a
+ * fire-and-forget request; `liveBots` only grows once `Events.OnSpawnerSpawned` confirms a bot
+ * actually came into existence, so this loop intentionally requests the full remaining deficit
+ * up front rather than spawning one-at-a-time and re-checking `liveBots.size` mid-loop (that
+ * size won't change synchronously within this function).
+ */
 function topUpBots(): void {
-  while (liveBots.size < CHAOS_AI_TOTAL_BOTS) {
+  if (!chaosSpawner) {
+    return;
+  }
+  const deficit = CHAOS_AI_TOTAL_BOTS - liveBots.size;
+  for (let i = 0; i < deficit; i++) {
     spawnOneBot();
-    if (!chaosSpawner) {
-      break;
-    }
-    if (liveBots.size === 0) {
-      break;
-    }
   }
 }
+
+Events.OnSpawnerSpawned.subscribe((eventPlayer: mod.Player, eventSpawner: mod.Spawner) => {
+  if (!chaosSpawner || !mod.Equals(eventSpawner, chaosSpawner)) {
+    return; // Not our Chaos spawner — ignore (defense in depth if other AI spawners exist).
+  }
+  liveBots.add(eventPlayer);
+});
 
 Events.OnPlayerDied.subscribe((eventPlayer: mod.Player) => {
   if (liveBots.has(eventPlayer)) {
