@@ -1,0 +1,13 @@
+ src/config/ids.ts            |  58 ++++--
+ src/config/teams.ts          |  15 +-
+ src/game/mode/chaos-ai.ts    |  88 ++++++---
+ src/game/mode/controlzone.ts |  25 +++
+ src/game/mode/fob.ts         |   6 +-
+ src/game/mode/hotzone.ts     | 195 ++++++++++++-------
+ src/game/mode/towers.ts      | 154 ++++++++++-----
+ src/strings.json             |  48 ++++-
+ src/ui/buy-menu.ts           | 273 +++++++++++++++++++-------
+ src/ui/buy-validator.ts      |  27 +--
+ src/ui/hud.ts                | 447 ++++++++++++++++++++++++++++++++++++++-----
+ src/ui/scoreboard.ts         | 179 +++++++++++------
+ 12 files changed, 1169 insertions(+), 346 deletions(-)

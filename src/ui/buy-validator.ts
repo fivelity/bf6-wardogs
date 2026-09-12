@@ -4,6 +4,17 @@
  * Design: BUILD_GUIDE.md §5. This file must stay importable and unit-testable with zero Portal
  * runtime — every function here takes plain data and returns a plain boolean/result object. If a
  * function needs `mod.*` or `SolidUI.*`, that logic belongs in `buy-menu.ts` instead.
+ *
+ * FIXED IN THIS PASS: `PurchaseCheckResult` previously carried a pre-formatted `reason` string
+ * (e.g. `` `Insufficient funds: need $${price}, have $${currentCash}.` ``) that `buy-menu.ts`
+ * then passed straight into `mod.Message()`. That's the exact "unavailable" bug —
+ * `mod.Message()` requires every displayed string to be a `strings.json`-registered
+ * `mod.stringkeys.*` reference (confirmed, `index.d.ts`'s own doc comment on `Message()`), not an
+ * arbitrary string built in application code. This file has no business building display text at
+ * all — it stays pure data, and `currentCash` is now echoed back on the result so the caller
+ * (`buy-menu.ts`) has both numbers needed to build
+ * `mod.Message(mod.stringkeys.shop_insufficient_funds, price, currentCash)` without recomputing
+ * anything or needing a `reason` string in the first place.
  */
 
 import { getSurchargedPrice } from "../player/wallet.ts";
@@ -19,15 +30,6 @@ export interface ShopItem {
 	requiredTier: number;
 }
 
-/**
- * Deliberately holds no formatted `reason` string — `mod.Message()` requires every displayed
- * string to be a `strings.json`-registered `mod.stringkeys.*` reference (see
- * WARDOGS_COMPLETION_REPORT.md §2.1), and this file must stay Portal-runtime-free (no `mod.*`
- * calls), so it can't build that Message itself. `currentCash` is echoed back alongside `price` so
- * the caller (`buy-menu.ts`) has both numbers needed to build
- * `mod.Message(mod.stringkeys.shop_insufficient_funds, price, currentCash)` without recomputing
- * anything.
- */
 export interface PurchaseCheckResult {
 	canAfford: boolean;
 	price: number;
@@ -37,7 +39,8 @@ export interface PurchaseCheckResult {
 
 /**
  * Computes the surcharged price for `item` given the player's current level in the item's gating
- * track, and whether `currentCash` covers it. Pure — no side effects, no player mutation.
+ * track, and whether `currentCash` covers it. Pure — no side effects, no player mutation, no
+ * display-text construction.
  */
 export function checkPurchase(
 	item: ShopItem,

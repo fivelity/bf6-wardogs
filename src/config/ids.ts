@@ -2,35 +2,31 @@
  * OBJECT_ID — single source of truth for every ObjId referenced from code.
  *
  * Rule (AGENTS.md §7): no numeric ObjId literal appears anywhere else in `src/`.
- * Reconciled directly against the real level's spatial scene data
- * (`mp_granite_military_storage_portal_spatial.json`, `Portal_Dynamic` block) — every ObjId
- * below is copied verbatim from a `Portal_Dynamic` entry's own `"ObjId"` field, not
- * reconstructed or guessed. Re-run this reconciliation any time the scene is edited.
+ * Reconciled directly against the real, currently-checked-in scene data
+ * (`levels/mp_granite_military_storage_portal.spatial.json`, `Portal_Dynamic` block) — every
+ * ObjId below is copied verbatim from that file's own `"ObjId"` field, not reconstructed or
+ * guessed. Re-run this reconciliation any time the scene is edited.
  *
- * CORRECTIONS MADE IN THIS PASS (see WARDOGS_COMPLETION_REPORT.md addendum): the previous
- * version of this file had `CP_TOWER_A: 1001` / `CP_TOWER_B: 2001` — those are actually the
- * ObjIds of `CapturePoint_FOB_A_1` / `CapturePoint_FOB_B_1` (a pair of pre-placed "FOB
- * Alpha"/"FOB Bravo" capture points that are NOT the same thing as `game/mode/fob.ts`'s
- * freely-player-placed FOBs). The scene has exactly ONE placed tower
- * (`CapturePoint_Tower_A`, ObjId 76) — there is no Tower B. `game/mode/towers.ts` has been
- * redesigned around a single tower accordingly. `game/mode/fob.ts` keeps its existing
- * free-placement design unchanged and does not reference any OBJECT_ID entry — the pre-placed
- * FOB Alpha/Bravo capture points (`SECTOR_FOB_A`/`SECTOR_FOB_B` etc. below) are unused scene
- * dressing as far as `src/` is concerned; kept here only so a future pass can reconcile them
- * deliberately if desired.
+ * CORRECTIONS MADE IN THIS PASS: the previous version of this file had `CP_TOWER_A: 1001` /
+ * `CP_TOWER_B: 2001` — those are actually the ObjIds of `CapturePoint_FOB_A_1` /
+ * `CapturePoint_FOB_B_1` (a pair of pre-placed "FOB Alpha"/"FOB Bravo" capture points that are
+ * NOT the same thing as `game/mode/fob.ts`'s freely-player-placed FOBs). The scene has exactly
+ * ONE placed tower (`CapturePoint_Tower_A`, ObjId `76`) — there is no Tower B.
+ * `game/mode/towers.ts` is redesigned around this single tower. `game/mode/fob.ts` keeps its
+ * existing free-placement design unchanged and does not reference any OBJECT_ID entry here — the
+ * pre-placed FOB Alpha/Bravo capture points (`SECTOR_FOB_A`/`SECTOR_FOB_B` etc. below) are unused
+ * scene dressing as far as `src/` is concerned.
  *
  * KNOWN SCENE BUG — flagged, not fixed here (this file can't change the scene): `Sector_HotZone`
- * (ObjId 333) collides with `IP_BUY_MENU_VALKYRA`'s `InteractPoint _BS_310` (also ObjId 333).
- * Two different Portal_Dynamic objects sharing one ObjId means only one is addressable by
- * `mod.GetSector(333)` / `mod.GetInteractPoint(333)` — this needs a unique ObjId assigned to
- * one of them in the Godot/spatial-JSON scene before Valkyra's buy menu and the HotZone sector
- * can both be reliably referenced by ID. `game/mode/hotzone.ts` currently only reads
- * `AT_HOTZONE`/`CP_HOTZONE`/`ICON_HOTZONE` (900/9001/902 respectively — none of which collide),
- * so this mod doesn't currently reference the colliding `Sector_HotZone` ObjId anywhere, but the
- * collision remains a scene defect to fix before anything needs `mod.GetSector` for the HotZone.
+ * (ObjId 333) collides with `IP_BUY_MENU_VALKYRA`'s `InteractPoint _BS_310` (also ObjId 333). Two
+ * different `Portal_Dynamic` objects sharing one ObjId means only one is addressable by
+ * `mod.GetSector(333)` / `mod.GetInteractPoint(333)`. Nothing in `src/` currently references the
+ * colliding `Sector_HotZone` ObjId (HotZone logic reads `AT_HOTZONE`/`CP_HOTZONE`/`ICON_HOTZONE`
+ * instead, none of which collide), so this is safe today but needs a unique ObjId in Godot before
+ * anything needs `mod.GetSector` for the HotZone.
  *
- * KNOWN ISSUE (unchanged from previous pass): the scene has FIVE VehicleSpawner objects sharing
- * ObjId 104 (VehicleSpawner_Bike_104, _0_2, _0_3, _0_4, _0_5). Only one is addressable by
+ * KNOWN ISSUE (scene defect, not fixed here): FIVE separate `VehicleSpawner` objects share ObjId
+ * 104 (`VehicleSpawner_Bike_104`, `_0_2`, `_0_3`, `_0_4`, `_0_5`). Only one is addressable via
  * `mod.GetVehicleSpawner(104)` — fix in Godot (assign unique ObjIds) before any code depends on
  * the others individually.
  */

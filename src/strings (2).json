@@ -1,0 +1,53 @@
+{
+  "shop_header_title": "HQ ACQUISITIONS",
+  "shop_header_subtitle": "CLASS-FREE PROCUREMENT SUITE",
+  "shop_close_label": "CLOSE PROTOCOL [ESC]",
+  "shop_purchase_loadout": "PURCHASE LOADOUT",
+  "shop_purchase_gear": "PURCHASE GEAR",
+
+  "shop_item_price": "{} — ${}",
+  "shop_item_price_surcharged": "{} — ${} (surcharged)",
+  "shop_purchase_confirm": "Purchased: {}",
+  "shop_insufficient_funds": "Insufficient funds: need ${}, have ${}.",
+  "shop_cannot_afford_generic": "Cannot afford this item.",
+  "shop_required_tier": "Requires {} Tier {}",
+  "shop_wallet_balance": "BALANCE: ${}",
+
+  "fob_insufficient_materials": "Not enough materials to build a FOB.",
+
+  "hud_cash_flash": "{}${}",
+  "hud_rank_up": "{} — Tier {}",
+  "hud_materials_label": "MATERIALS: {}",
+  "hud_track_progress": "{}: {} / {} XP",
+
+  "scoreboard_ticket_count": "{}",
+  "scoreboard_ticket_target": "FIRST TO {}",
+
+  "faction_lonestar_short": "LSR",
+  "faction_manticore_short": "MTC",
+  "faction_valkyra_short": "VLK",
+  "faction_chaos_short": "CHS",
+
+  "item_armor_plate_carrier": "Plate Carrier",
+  "item_attachment_suppressor": "AK-205 Suppressor",
+  "item_gadget_ammo_crate": "Ammo Crate",
+
+  "track_assault": "ASSAULT",
+  "track_medic": "MEDIC",
+  "track_support": "SUPPORT",
+  "track_recon": "RECON",
+  "track_driverPilot": "LOGISTICS",
+  "track_engineer": "ENGINEER",
+
+  "objective_controlzone": "CONTROL ZONE",
+  "objective_hotzone": "HOTZONE [2X]",
+  "objective_tower": "RADIO TOWER",
+  "objective_owner_neutral": "NEUTRAL",
+  "objective_owner_contested": "CONTESTED",
+  "objective_status_line": "{}: {}",
+  "objective_progress_pct": "{}%",
+  "objective_hotzone_locked": "HOTZONE LOCKED",
+
+  "phase_3_banner": "ENDGAME: HOTZONE ACCELERATED",
+  "chaos_squads_active": "CHAOS SQUADS: {} ACTIVE"
+}

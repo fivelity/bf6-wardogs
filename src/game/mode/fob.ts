@@ -89,6 +89,10 @@ function tryPlaceFob(
 ): ActiveFob | undefined {
 	const afforded = spendMaterials(player, FOB_MATERIAL_COST, "fobPlacement");
 	if (!afforded) {
+		// Fixed alongside the buy-menu/HUD/scoreboard UI pass — this was a raw string literal
+		// passed to mod.Message(), the exact "unavailable"-text bug documented in
+		// ui/buy-menu.ts's header comment. Registered as fob_insufficient_materials in
+		// strings.json.
 		mod.DisplayNotificationMessage(mod.Message(mod.stringkeys.fob_insufficient_materials), player);
 		return undefined;
 	}

@@ -2,32 +2,43 @@
  * chaos-ai.ts — Team 4 (Chaos Squads), the unlisted, unjoinable, non-scoring AI-only faction.
  *
  * Design: WARDOGS_DESIGN_BRIEF.md → "Players & Teams" table / "Terminate Rogue AI Elements".
- * (`controlzone.ts`'s `isPhase3()`), per `CHAOS_AI_PHASE_3_RESPAWN_MULTIPLIER`.
+ * Respawn cadence accelerates in Phase 3 (`controlzone.ts`'s `isPhase3()`), per
+ * `CHAOS_AI_PHASE_3_RESPAWN_MULTIPLIER`.
  *
- * Symbols verified against `bf6-portal-mod-types@4.2.0` per BUILD_GUIDE.md §4:
- *   - `mod.SpawnAIFromAISpawner` — index.d.ts:151-205, heavily overloaded for class/name/team.
- *   - AI behavior events — `OnAIMoveToFailed/Running/Succeeded`,
- *     `OnAIWaypointIdleFailed/Running/Succeeded`, `OnAIParachuteRunning/Succeeded` — all confirmed
- *     real in `event-handler-signatures.d.ts`.
+ * FIXED IN THIS PASS — two independent bugs found by direct inspection of the live behavior:
  *
- * `(spawner, team: Team)` overload confirmed real against index.d.ts (one of seven overloads);
- * spawns onto `mod.GetTeam(4)` (Chaos Squads per config/teams.ts's FACTIONS table — NOT
- * `GetTeam(1)`, which was an earlier draft bug that put Chaos bots on Team1/Lonestar).
+ * 1. **Wrong team.** The previous version called
+ *    `mod.SpawnAIFromAISpawner(chaosSpawner, mod.GetTeam(1))` — Team1 is Lonestar (per
+ *    `config/teams.ts`'s `FACTIONS` table), not Chaos Squads. Every AI bot was spawning as a
+ *    Lonestar teammate instead of a hostile neutral faction. Fixed to `mod.GetTeam(4)`.
  *
- * Bot-count tracking uses `Events.OnSpawnerSpawned(eventPlayer, eventSpawner)` — confirmed real,
- * event-handler-signatures.d.ts, doc comment: "This will trigger when an AISpawner spawns an AI
- * Soldier." `SpawnAIFromAISpawner` itself returns `void` (no direct handle), so this event is the
- * only real hook that hands back the spawned bot's `mod.Player`; filtered to `chaosSpawner` via
- * `mod.Equals` in case other AI spawners exist elsewhere on the map. See
- * WARDOGS_COMPLETION_REPORT.md §3.4.
+ * 2. **Bot count never tracked.** The previous `topUpBots()` looped
+ *    `while (liveBots.size < CHAOS_AI_TOTAL_BOTS)`, but nothing ever called `liveBots.add(...)` —
+ *    `mod.SpawnAIFromAISpawner` returns `void` (confirmed, all seven overloads,
+ *    `bf6-portal-mod-types@4.2.0/index.d.ts`), so the previous code had no handle to track. The
+ *    loop's own `if (liveBots.size === 0) break;` guard fired immediately after the very first
+ *    spawn every time, so across a whole match exactly one bot ever existed instead of the 12
+ *    (4 squads of 3) the brief specifies.
+ *
+ *    Fixed via `Events.OnSpawnerSpawned(eventPlayer, eventSpawner)` — confirmed real,
+ *    `event-handler-signatures.d.ts`, doc comment: "This will trigger when an AISpawner spawns an
+ *    AI Soldier." This is the only real hook that hands back the spawned bot's `mod.Player`;
+ *    filtered to `chaosSpawner` via `mod.Equals` (confirmed real, index.d.ts:2394) in case other
+ *    AI spawners exist elsewhere on the map. `topUpBots()` now requests the full remaining
+ *    deficit up front (each `spawnOneBot()` call is fire-and-forget) rather than spawning
+ *    one-at-a-time and re-checking `liveBots.size` mid-loop, since that size cannot change
+ *    synchronously within this function — it only grows once `OnSpawnerSpawned` confirms a bot
+ *    actually came into existence.
+ *
+ * Symbols verified against `bf6-portal-mod-types@4.2.0`:
+ *   - `mod.SpawnAIFromAISpawner` — heavily overloaded for class/name/team; the `(spawner, team)`
+ *     overload used below is one of the seven.
+ *   - `mod.GetSpawner`, `mod.Equals` — index.d.ts:2303/2394.
+ *   - `Events.OnSpawnerSpawned`, `Events.OnPlayerDied` — event-handler-signatures.d.ts.
  *
  * Team 4 must never appear in `controlzone.ts`'s majority-hold tallying (already enforced there
  * via `isScoringFaction`) or `ui/scoreboard.ts`'s ticket display (enforced by that file only
  * iterating `SCORING_FACTION_IDS`).
- */
-
-/**
- * chaos-ai.ts — Team 4 (Chaos Squads), the unlisted, unjoinable, non-scoring AI-only faction.
  */
 
 import { Events } from "../../../node_modules/bf6-portal-utils/events/index.ts";
@@ -43,9 +54,7 @@ let chaosSpawner: mod.Spawner | undefined;
 const liveBots = new Set<mod.Player>();
 
 Events.OnGameModeStarted.subscribe(() => {
-  chaosSpawner = mod.GetSpawner(
-    OBJECT_ID.AI_SPAWNER_CHAOS,
-  ) as unknown as mod.Spawner;
+  chaosSpawner = mod.GetSpawner(OBJECT_ID.AI_SPAWNER_CHAOS);
 });
 
 function spawnOneBot(): void {
@@ -104,3 +113,8 @@ Events.OngoingGlobal.subscribe(() => {
   chaosAccumulatedSeconds = 0;
   topUpBots();
 });
+
+/** Live Chaos Squads bot count, for HUD/objective display. */
+export function getChaosLiveBotCount(): number {
+  return liveBots.size;
+}

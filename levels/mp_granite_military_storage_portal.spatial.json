@@ -729,8 +729,8 @@
             "id": "TEAM_3_HQ/HQ_Team3_BuyStation"
         },
         {
-            "name": "InteractPoint _BS_310",
-            "ObjId": 333,
+            "name": "InteractPoint_BS_310",
+            "ObjId": 310,
             "metadata/InteractText": null,
             "type": "InteractPoint",
             "right": {
@@ -753,7 +753,7 @@
                 "y": 129.187881776,
                 "z": 523.2979818887603
             },
-            "id": "TEAM_3_HQ/HQ_Team3_BuyStation/InteractPoint _BS_310"
+            "id": "TEAM_3_HQ/HQ_Team3_BuyStation/InteractPoint_BS_310"
         },
         {
             "name": "CombatArea",
@@ -943,38 +943,37 @@
             ]
         },
         {
-            "name": "CapturePoint_ControlZone_1_1",
-            "FlagPoleSize": "High",
-            "ObjId": 9000,
-            "OutlineHeightMultiplier": 5,
-            "OutlineAbove16Points": true,
-            "TacticalAdviceAirVehicleFriendly": true,
-            "CaptureArea": "PolygonVolume_ControlZone_1_1",
-            "type": "CapturePoint",
-            "right": {
-                "x": 1,
-                "y": 0,
-                "z": 0
-            },
-            "up": {
-                "x": 0,
-                "y": 1,
-                "z": 0
-            },
-            "front": {
-                "x": 0,
-                "y": 0,
-                "z": 1
-            },
-            "position": {
-                "x": 922.669,
-                "y": 234.29414,
-                "z": 209.71988
-            },
-            "id": "CapturePoint_ControlZone_1_1",
-            "linked": [
-                "CaptureArea"
-            ]
+          "name": "CapturePoint_ControlZone_1_1",
+          "FlagPoleSize": "High",
+          "ObjId": 9000,
+          "OutlineHeightMultiplier": 5,
+          "OutlineAbove16Points": true,
+          "TacticalAdviceAirVehicleFriendly": true,
+          "OutlineShape": "Circle",
+          "CaptureArea": "PolygonVolume_ControlZone_1_1",
+          "type": "CapturePoint",
+          "right": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "up": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "front": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          },
+          "position": {
+            "x": 922.669,
+            "y": 234.29414,
+            "z": 209.71988
+          },
+          "id": "CapturePoint_ControlZone_1_1",
+          "linked": ["CaptureArea"]
         },
         {
             "name": "WorldIcon_ControlZone_1_1",
@@ -1737,35 +1736,34 @@
             "id": "Sector_FOB_A/VEH_Stationary_GDF010"
         },
         {
-            "name": "CapturePoint_FOB_A_1",
-            "FlagPoleSize": "High",
-            "ObjId": 1001,
-            "CaptureArea": "Sector_FOB_A/PolygonVolume_CapturePoint_A_1",
-            "type": "CapturePoint",
-            "right": {
-                "x": 1,
-                "y": 0,
-                "z": 0
-            },
-            "up": {
-                "x": 0,
-                "y": 1,
-                "z": 0
-            },
-            "front": {
-                "x": 0,
-                "y": 0,
-                "z": 1
-            },
-            "position": {
-                "x": 648.9672808,
-                "y": 151.6513037,
-                "z": 297.2792562
-            },
-            "id": "Sector_FOB_A/CapturePoint_FOB_A_1",
-            "linked": [
-                "CaptureArea"
-            ]
+          "name": "CapturePoint_FOB_A_1",
+          "FlagPoleSize": "High",
+          "ObjId": 1001,
+          "OutlineShape": "Circle",
+          "CaptureArea": "Sector_FOB_A/PolygonVolume_CapturePoint_A_1",
+          "type": "CapturePoint",
+          "right": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "up": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "front": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          },
+          "position": {
+            "x": 648.9672808,
+            "y": 151.6513037,
+            "z": 297.2792562
+          },
+          "id": "Sector_FOB_A/CapturePoint_FOB_A_1",
+          "linked": ["CaptureArea"]
         },
         {
             "name": "PolygonVolume_CapturePoint_A_1",
@@ -1896,34 +1894,33 @@
             "id": "Sector_FOB_B/VEH_Stationary_GDF009"
         },
         {
-            "name": "CapturePoint_FOB_B_1",
-            "ObjId": 2001,
-            "CaptureArea": "Sector_FOB_B/PolygonVolume_CapturePoint_FOB_B_1",
-            "type": "CapturePoint",
-            "right": {
-                "x": 1,
-                "y": 0,
-                "z": 0
-            },
-            "up": {
-                "x": 0,
-                "y": 1,
-                "z": 0
-            },
-            "front": {
-                "x": 0,
-                "y": 0,
-                "z": 1
-            },
-            "position": {
-                "x": 543.9895638,
-                "y": 152.006956,
-                "z": 482.6197508
-            },
-            "id": "Sector_FOB_B/CapturePoint_FOB_B_1",
-            "linked": [
-                "CaptureArea"
-            ]
+          "name": "CapturePoint_FOB_B_1",
+          "ObjId": 2001,
+          "OutlineShape": "Circle",
+          "CaptureArea": "Sector_FOB_B/PolygonVolume_CapturePoint_FOB_B_1",
+          "type": "CapturePoint",
+          "right": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "up": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "front": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          },
+          "position": {
+            "x": 543.9895638,
+            "y": 152.006956,
+            "z": 482.6197508
+          },
+          "id": "Sector_FOB_B/CapturePoint_FOB_B_1",
+          "linked": ["CaptureArea"]
         },
         {
             "name": "PolygonVolume_CapturePoint_FOB_B_1",
