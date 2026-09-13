@@ -167,7 +167,7 @@
             "id": "TEAM_1_HQ/SpawnPoint_1_4"
         },
         {
-            "name": "VehicleSpawner_1_1",
+            "name": "VehicleSpawner_110",
             "MatchingTeam": "Team1",
             "ObjId": 110,
             "VehicleType": "AH64",
@@ -195,14 +195,10 @@
                 "y": 151.9462262,
                 "z": 84.0022548
             },
-            "id": "TEAM_1_HQ/VehicleSpawner_1_1"
+            "id": "TEAM_1_HQ/VehicleSpawner_110"
         },
         {
-            "name": "BuyStation_1_1",
-            "Enabled": false,
-            "ObjId": 111,
-            "TacticalAdviceAirVehicleFriendly": true,
-            "StartingOwnerTeamID": "Team1",
+            "name": "HQ_BuyStation_111",
             "type": "MCOM",
             "right": {
                 "x": -4.371139e-08,
@@ -224,10 +220,11 @@
                 "y": 151.00726136,
                 "z": 93.709744
             },
-            "id": "TEAM_1_HQ/BuyStation_1_1"
+            "id": "TEAM_1_HQ/HQ_BuyStation_111",
+            "ObjId": 0
         },
         {
-            "name": "InteractPoint_Vehicle_Menu_1_1",
+            "name": "InteractPoint_112",
             "ObjId": 112,
             "type": "InteractPoint",
             "right": {
@@ -250,7 +247,7 @@
                 "y": 152.31191836,
                 "z": 93.7115292711286
             },
-            "id": "TEAM_1_HQ/BuyStation_1_1/InteractPoint_Vehicle_Menu_1_1"
+            "id": "TEAM_1_HQ/HQ_BuyStation_111/InteractPoint_112"
         },
         {
             "name": "TEAM_2_HQ",
@@ -420,9 +417,9 @@
             "id": "TEAM_2_HQ/SpawnPoint_2_4"
         },
         {
-            "name": "VehicleSpawner_2_1",
+            "name": "VehicleSpawner_210",
             "MatchingTeam": "Team2",
-            "ObjId": 220,
+            "ObjId": 210,
             "VehicleType": "AH64",
             "P_TimeUntilAbandon": 100,
             "P_KeepAliveAbandonRadius": 100,
@@ -448,12 +445,10 @@
                 "y": 144.21238706,
                 "z": 689.841567
             },
-            "id": "TEAM_2_HQ/VehicleSpawner_2_1"
+            "id": "TEAM_2_HQ/VehicleSpawner_210"
         },
         {
-            "name": "BuyStation_2_1",
-            "ObjId": 221,
-            "TacticalAdviceAirVehicleFriendly": true,
+            "name": "HQ_BuyStation_211",
             "type": "MCOM",
             "right": {
                 "x": -4.371139e-08,
@@ -475,11 +470,12 @@
                 "y": 143.67817685,
                 "z": 693.415236
             },
-            "id": "TEAM_2_HQ/BuyStation_2_1"
+            "id": "TEAM_2_HQ/HQ_BuyStation_211",
+            "ObjId": 0
         },
         {
-            "name": "InteractPoint_2_1",
-            "ObjId": 222,
+            "name": "InteractPoint_212",
+            "ObjId": 212,
             "type": "InteractPoint",
             "right": {
                 "x": 1.000000000000002,
@@ -501,7 +497,7 @@
                 "y": 144.66705319,
                 "z": 693.4149918482341
             },
-            "id": "TEAM_2_HQ/BuyStation_2_1/InteractPoint_2_1"
+            "id": "TEAM_2_HQ/HQ_BuyStation_211/InteractPoint_212"
         },
         {
             "name": "TEAM_3_HQ",
@@ -671,9 +667,9 @@
             "id": "TEAM_3_HQ/SpawnPoint_3_4"
         },
         {
-            "name": "VehicleSpawner_3_1",
+            "name": "VehicleSpawner_310",
             "MatchingTeam": "Team3",
-            "ObjId": 330,
+            "ObjId": 310,
             "VehicleType": "AH64",
             "metadata/Chopper": "CryptoKey_vify2",
             "type": "VehicleSpawner",
@@ -697,14 +693,10 @@
                 "y": 128.78829986,
                 "z": 522.4347
             },
-            "id": "TEAM_3_HQ/VehicleSpawner_3_1"
+            "id": "TEAM_3_HQ/VehicleSpawner_310"
         },
         {
-            "name": "HQ_Team3_BuyStation",
-            "Enabled": false,
-            "ObjId": 331,
-            "TacticalAdviceAirVehicleFriendly": true,
-            "StartingOwnerTeamID": "Team3",
+            "name": "HQ_BuyStation_311",
             "type": "MCOM",
             "right": {
                 "x": 0.6280309,
@@ -726,11 +718,12 @@
                 "y": 128.192749326,
                 "z": 523.161385
             },
-            "id": "TEAM_3_HQ/HQ_Team3_BuyStation"
+            "id": "TEAM_3_HQ/HQ_BuyStation_311",
+            "ObjId": 0
         },
         {
-            "name": "InteractPoint_BS_310",
-            "ObjId": 310,
+            "name": "InteractPoint_312",
+            "ObjId": 312,
             "metadata/InteractText": null,
             "type": "InteractPoint",
             "right": {
@@ -753,7 +746,7 @@
                 "y": 129.187881776,
                 "z": 523.2979818887603
             },
-            "id": "TEAM_3_HQ/HQ_Team3_BuyStation/InteractPoint_BS_310"
+            "id": "TEAM_3_HQ/HQ_BuyStation_311/InteractPoint_312"
         },
         {
             "name": "CombatArea",
@@ -879,12 +872,9 @@
             "ObjId": 0
         },
         {
-            "name": "Sector_ControlZone",
+            "name": "ControlZone_555",
             "ObjId": 555,
-            "CapturePoints": [
-                "CapturePoint_ControlZone_1_1"
-            ],
-            "SectorArea": "PolygonVolume_ControlZone_1_1",
+            "SectorArea": "PolygonVolume_CZ",
             "type": "Sector",
             "right": {
                 "x": 1,
@@ -906,16 +896,15 @@
                 "y": 234.18211,
                 "z": 185.39885
             },
-            "id": "Sector_ControlZone",
+            "id": "ControlZone_555",
             "linked": [
-                "SectorArea",
-                "CapturePoints"
+                "SectorArea"
             ]
         },
         {
-            "name": "AreaTrigger_ControlZone_1_1",
+            "name": "AreaTrigger_CZ_556",
             "ObjId": 900,
-            "Area": "PolygonVolume_ControlZone_1_1",
+            "Area": "PolygonVolume_CZ",
             "type": "AreaTrigger",
             "right": {
                 "x": 1,
@@ -937,48 +926,50 @@
                 "y": 228.33812,
                 "z": 203.79422
             },
-            "id": "AreaTrigger_ControlZone_1_1",
+            "id": "AreaTrigger_CZ_556",
             "linked": [
                 "Area"
             ]
         },
         {
-          "name": "CapturePoint_ControlZone_1_1",
-          "FlagPoleSize": "High",
-          "ObjId": 9000,
-          "OutlineHeightMultiplier": 5,
-          "OutlineAbove16Points": true,
-          "TacticalAdviceAirVehicleFriendly": true,
-          "OutlineShape": "Circle",
-          "CaptureArea": "PolygonVolume_ControlZone_1_1",
-          "type": "CapturePoint",
-          "right": {
-            "x": 1,
-            "y": 0,
-            "z": 0
-          },
-          "up": {
-            "x": 0,
-            "y": 1,
-            "z": 0
-          },
-          "front": {
-            "x": 0,
-            "y": 0,
-            "z": 1
-          },
-          "position": {
-            "x": 922.669,
-            "y": 234.29414,
-            "z": 209.71988
-          },
-          "id": "CapturePoint_ControlZone_1_1",
-          "linked": ["CaptureArea"]
+            "name": "CapturePoint_CZ_557",
+            "FlagPoleSize": "High",
+            "ObjId": 9000,
+            "OutlineHeightMultiplier": 5,
+            "OutlineAbove16Points": true,
+            "CameraLookAtPosition": false,
+            "TacticalAdviceAirVehicleFriendly": true,
+            "CaptureArea": "PolygonVolume_CZ",
+            "type": "CapturePoint",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 922.669,
+                "y": 234.29414,
+                "z": 209.71988
+            },
+            "id": "CapturePoint_CZ_557",
+            "linked": [
+                "CaptureArea"
+            ]
         },
         {
-            "name": "WorldIcon_ControlZone_1_1",
-            "ObjId": 903,
-            "IconStringKey": "ControlZone",
+            "name": "WorldIcon_CZ_558",
+            "ObjId": 558,
+            "IconStringKey": "CONTROLZONE",
             "iconTextVisible": true,
             "iconImagePicker": "Flag",
             "iconImageVisible": true,
@@ -1003,12 +994,12 @@
                 "y": 231.49461,
                 "z": 203.71312
             },
-            "id": "WorldIcon_ControlZone_1_1"
+            "id": "WorldIcon_CZ_558"
         },
         {
-            "name": "PolygonVolume_ControlZone_1_1",
+            "name": "PolygonVolume_CZ",
             "type": "PolygonVolume",
-            "id": "PolygonVolume_ControlZone_1_1",
+            "id": "PolygonVolume_CZ",
             "height": 50,
             "points": [
                 {
@@ -1101,10 +1092,7 @@
         {
             "name": "Sector_HotZone",
             "ObjId": 333,
-            "CapturePoints": [
-                "CapturePoint_HotZone_1_1"
-            ],
-            "SectorArea": "CollisionShape3D_HotZone_1_1",
+            "SectorArea": "CollisionShape3D_HotZone",
             "type": "Sector",
             "right": {
                 "x": 1,
@@ -1128,14 +1116,13 @@
             },
             "id": "Sector_HotZone",
             "linked": [
-                "SectorArea",
-                "CapturePoints"
+                "SectorArea"
             ]
         },
         {
-            "name": "AreaTrigger_HotZone_1_1",
+            "name": "AreaTrigger_HotZone",
             "ObjId": 901,
-            "Area": "PolygonVolume_HotZone_1_1",
+            "Area": "PolygonVolume_HotZone",
             "type": "AreaTrigger",
             "right": {
                 "x": 1,
@@ -1157,13 +1144,13 @@
                 "y": 224.99324,
                 "z": 236.66345
             },
-            "id": "AreaTrigger_HotZone_1_1",
+            "id": "AreaTrigger_HotZone",
             "linked": [
                 "Area"
             ]
         },
         {
-            "name": "CapturePoint_HotZone_1_1",
+            "name": "CapturePoint_HotZone",
             "FlagPoleSize": "Interior",
             "ObjId": 9001,
             "OutlineHeightMultiplier": 5,
@@ -1171,7 +1158,7 @@
             "CameraFOV": 80,
             "TacticalAdviceAirVehicleFriendly": true,
             "OutlineShape": "Circle",
-            "CaptureArea": "CollisionShape3D_HotZone_1_1",
+            "CaptureArea": "CollisionShape3D_HotZone",
             "type": "CapturePoint",
             "right": {
                 "x": 1,
@@ -1193,13 +1180,13 @@
                 "y": 227.51173,
                 "z": 236.55618
             },
-            "id": "CapturePoint_HotZone_1_1",
+            "id": "CapturePoint_HotZone",
             "linked": [
                 "CaptureArea"
             ]
         },
         {
-            "name": "WorldIcon_HotZone_1_1",
+            "name": "WorldIcon_HotZone",
             "ObjId": 902,
             "IconStringKey": "HotZone",
             "iconTextVisible": true,
@@ -1226,12 +1213,12 @@
                 "y": 228.10168,
                 "z": 236.85188
             },
-            "id": "WorldIcon_HotZone_1_1"
+            "id": "WorldIcon_HotZone"
         },
         {
-            "name": "PolygonVolume_HotZone_1_1",
+            "name": "PolygonVolume_HotZone",
             "type": "PolygonVolume",
-            "id": "PolygonVolume_HotZone_1_1",
+            "id": "PolygonVolume_HotZone",
             "height": 50,
             "points": [
                 {
@@ -1262,7 +1249,7 @@
             ]
         },
         {
-            "name": "CollisionShape3D_HotZone_1_1",
+            "name": "CollisionShape3D_HotZone",
             "type": "PolygonVolume",
             "color": [
                 0,
@@ -1270,7 +1257,7 @@
                 0.7,
                 0.42
             ],
-            "id": "CollisionShape3D_HotZone_1_1",
+            "id": "CollisionShape3D_HotZone",
             "height": 0,
             "points": [
                 {
@@ -1298,9 +1285,6 @@
         {
             "name": "Sector_Tower_A",
             "ObjId": 3001,
-            "CapturePoints": [
-                "Sector_Tower_A/CapturePoint_Tower_A"
-            ],
             "SectorArea": "Sector_Tower_A/PolygonVolume_Tower_A_1",
             "type": "Sector",
             "right": {
@@ -1325,8 +1309,7 @@
             },
             "id": "Sector_Tower_A",
             "linked": [
-                "SectorArea",
-                "CapturePoints"
+                "SectorArea"
             ]
         },
         {
@@ -1569,7 +1552,7 @@
             "TacticalAdviceAirVehicleFriendly": true,
             "OutlineShape": "Circle",
             "CaptureArea": "Sector_Tower_A/PolygonVolume_Tower_A_1",
-            "AdditionalCaptureArea": "CollisionShape3D_HotZone_1_1",
+            "AdditionalCaptureArea": "CollisionShape3D_HotZone",
             "type": "CapturePoint",
             "right": {
                 "x": 1,
@@ -1678,9 +1661,6 @@
         {
             "name": "Sector_FOB_A",
             "ObjId": 999,
-            "CapturePoints": [
-                "Sector_FOB_A/CapturePoint_FOB_A_1"
-            ],
             "SectorArea": "Sector_FOB_A/PolygonVolume_CapturePoint_A_1",
             "type": "Sector",
             "right": {
@@ -1705,8 +1685,7 @@
             },
             "id": "Sector_FOB_A",
             "linked": [
-                "SectorArea",
-                "CapturePoints"
+                "SectorArea"
             ]
         },
         {
@@ -1736,34 +1715,35 @@
             "id": "Sector_FOB_A/VEH_Stationary_GDF010"
         },
         {
-          "name": "CapturePoint_FOB_A_1",
-          "FlagPoleSize": "High",
-          "ObjId": 1001,
-          "OutlineShape": "Circle",
-          "CaptureArea": "Sector_FOB_A/PolygonVolume_CapturePoint_A_1",
-          "type": "CapturePoint",
-          "right": {
-            "x": 1,
-            "y": 0,
-            "z": 0
-          },
-          "up": {
-            "x": 0,
-            "y": 1,
-            "z": 0
-          },
-          "front": {
-            "x": 0,
-            "y": 0,
-            "z": 1
-          },
-          "position": {
-            "x": 648.9672808,
-            "y": 151.6513037,
-            "z": 297.2792562
-          },
-          "id": "Sector_FOB_A/CapturePoint_FOB_A_1",
-          "linked": ["CaptureArea"]
+            "name": "CapturePoint_FOB_A_1",
+            "FlagPoleSize": "High",
+            "ObjId": 1001,
+            "CaptureArea": "Sector_FOB_A/PolygonVolume_CapturePoint_A_1",
+            "type": "CapturePoint",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 648.9672808,
+                "y": 151.6513037,
+                "z": 297.2792562
+            },
+            "id": "Sector_FOB_A/CapturePoint_FOB_A_1",
+            "linked": [
+                "CaptureArea"
+            ]
         },
         {
             "name": "PolygonVolume_CapturePoint_A_1",
@@ -1836,9 +1816,6 @@
         {
             "name": "Sector_FOB_B",
             "ObjId": 2222,
-            "CapturePoints": [
-                "Sector_FOB_B/CapturePoint_FOB_B_1"
-            ],
             "SectorArea": "Sector_FOB_B/PolygonVolume_CapturePoint_FOB_B_1",
             "type": "Sector",
             "right": {
@@ -1863,8 +1840,7 @@
             },
             "id": "Sector_FOB_B",
             "linked": [
-                "SectorArea",
-                "CapturePoints"
+                "SectorArea"
             ]
         },
         {
@@ -1894,33 +1870,34 @@
             "id": "Sector_FOB_B/VEH_Stationary_GDF009"
         },
         {
-          "name": "CapturePoint_FOB_B_1",
-          "ObjId": 2001,
-          "OutlineShape": "Circle",
-          "CaptureArea": "Sector_FOB_B/PolygonVolume_CapturePoint_FOB_B_1",
-          "type": "CapturePoint",
-          "right": {
-            "x": 1,
-            "y": 0,
-            "z": 0
-          },
-          "up": {
-            "x": 0,
-            "y": 1,
-            "z": 0
-          },
-          "front": {
-            "x": 0,
-            "y": 0,
-            "z": 1
-          },
-          "position": {
-            "x": 543.9895638,
-            "y": 152.006956,
-            "z": 482.6197508
-          },
-          "id": "Sector_FOB_B/CapturePoint_FOB_B_1",
-          "linked": ["CaptureArea"]
+            "name": "CapturePoint_FOB_B_1",
+            "ObjId": 2001,
+            "CaptureArea": "Sector_FOB_B/PolygonVolume_CapturePoint_FOB_B_1",
+            "type": "CapturePoint",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 543.9895638,
+                "y": 152.006956,
+                "z": 482.6197508
+            },
+            "id": "Sector_FOB_B/CapturePoint_FOB_B_1",
+            "linked": [
+                "CaptureArea"
+            ]
         },
         {
             "name": "PolygonVolume_CapturePoint_FOB_B_1",
@@ -1984,6 +1961,7 @@
             "name": "VehicleSpawner_AH64_101",
             "ObjId": 101,
             "VehicleType": "AH64",
+            "P_AutoSpawnEnabled": true,
             "P_ApplyDamageToAbandonVehicle": false,
             "P_TimeUntilAbandon": 100,
             "P_KeepAliveAbandonRadius": 100,
