@@ -5,12 +5,20 @@
  * Every caller must go through `addCash` / `spendCash` (never mutate `JsPlayer.currentCash`
  * directly) so the transaction-flash hook below stays the single source `ui/hud.ts` listens on,
  * per BUILD_GUIDE.md §2.
+ *
+ * `addKillReward` is a small convenience added in this pass: both a human kill (via
+ * `game/mode/win-condition.ts`-adjacent combat handling) and a Chaos Squads AI kill
+ * (`game/mode/chaos-ai.ts`) pay identical-shaped rewards (cash + assault-track XP), just with
+ * different amounts — see `config/teams.ts`'s header note on why Chaos kills still pay out even
+ * though Chaos isn't a scoring team. Centralizing this avoids the cash and XP awards drifting out
+ * of sync between the two call sites.
  */
 
 import { requirePlayerState } from "./player-state.ts";
 import { SURCHARGE_MAX_MULTIPLIER, SURCHARGE_MIN_MULTIPLIER, MAX_TRACK_LEVEL } from "../config/economy.ts";
+import { addXp, type TrackId } from "./progression.ts";
 
-export type CashReason = "kill" | "revive" | "cargoDelivery" | "buildHit" | "salvagePickup" | "purchase";
+export type CashReason = "kill" | "assist" | "revive" | "cargoDelivery" | "buildHit" | "salvagePickup" | "purchase" | "chaosKill" | "chaosAssist";
 export type MaterialsReason = "cargoDelivery" | "fobPlacement" | "buildHit";
 
 type CashListener = (player: mod.Player, delta: number, reason: CashReason, newBalance: number) => void;
@@ -90,6 +98,23 @@ export function spendMaterials(player: mod.Player, amount: number, _reason: Mate
 
 export function getMaterials(player: mod.Player): number {
 	return requirePlayerState(player).materials;
+}
+
+/**
+ * Grants a combined cash + mastery-track-XP reward for a kill, regardless of whether the victim
+ * was a human player or a Chaos Squads AI bot. `reason` distinguishes the two in the cash-flash
+ * listener stream (`"kill"` vs `"chaosKill"`) purely for UI/analytics purposes — both still
+ * increment the same wallet and the same `track`'s XP.
+ */
+export function addKillReward(
+	player: mod.Player,
+	cashAmount: number,
+	xpAmount: number,
+	track: TrackId,
+	reason: Extract<CashReason, "kill" | "assist" | "chaosKill" | "chaosAssist">
+): void {
+	addCash(player, cashAmount, reason);
+	addXp(player, track, xpAmount);
 }
 
 /**

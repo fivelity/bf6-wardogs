@@ -4,27 +4,17 @@
  * Design: WARDOGS_DESIGN_BRIEF.md → Secondary Objective 1 ("Secure Concentric Towers") /
  * "✅ RESOLVED — CapturePoint A/B → Control Towers".
  *
- * REDESIGNED IN THIS PASS: the scene's real spatial data
- * (`levels/mp_granite_military_storage_portal.spatial.json`) has exactly ONE placed tower —
- * `Sector_Tower_A` / `CapturePoint_Tower_A` (ObjId 76) / `WorldIcon_Tower_A`. There is no Tower B
- * anywhere in the level; the previous version of this file's `CP_TOWER_A: 1001` /
- * `CP_TOWER_B: 2001` ObjIds were actually the pre-placed "FOB Alpha"/"FOB Bravo" capture points
- * (a different, unrelated pair of objects — see `config/ids.ts`'s CORRECTIONS note), not towers
- * at all.
+ * The scene's real spatial data (`levels/mp_granite_military_storage_portal.spatial.json`) has
+ * exactly ONE placed tower — `Sector_Tower_A` / `CapturePoint_Tower_A` (ObjId 76) /
+ * `WorldIcon_Tower_A`. There is no Tower B anywhere in the level. Holding `CP_TOWER_A` alone
+ * locks the HotZone's drift target at the tower's own position for as long as the tower is held;
+ * losing the tower resumes normal drift.
  *
- * Per direction: the two-tower drift-lock condition is dropped. The single real tower now grants
- * the HotZone-lock on its own — holding `CP_TOWER_A` alone locks the HotZone's drift target at
- * the tower's own position for as long as the tower is held; losing the tower resumes normal
- * drift. This preserves the brief's "control ground gives you a stake in the HotZone" intent
- * with the objective that's actually in the level.
+ * `OnCapturePointCaptured` only hands back the `CapturePoint`, not the capturing team, so a real
+ * `mod.GetCurrentOwnerTeam(capturePoint)` call (confirmed real, index.d.ts:2608) is required
+ * inside the handler to learn who owns it.
  *
- * Also fixed here: the previous version never actually recorded which faction captured the
- * tower — `OnCapturePointCaptured` only hands back the `CapturePoint`, not the capturing team, so
- * a real `mod.GetCurrentOwnerTeam(capturePoint)` call (confirmed real, index.d.ts:2608) is
- * required inside the handler to learn who owns it. Without that call the drift-lock condition
- * could never fire regardless of play.
- *
- * `getTowerStatus()` is new — exposes live faction ownership AND capture progress
+ * `getTowerStatus()` exposes live faction ownership AND capture progress
  * (`mod.GetCaptureProgress`, confirmed real, index.d.ts:2605, returns 0..1) so `ui/hud.ts` can
  * render a real objective progress bar instead of a static label.
  *

@@ -9,37 +9,23 @@
  * `spendCash` inside ONE function (`attemptPurchase` below) so a failed grant can never leave a
  * player charged without receiving the item.
  *
- * FIXED IN THIS PASS — this file previously had two independent, mod-wide-visible bugs:
+ * Every displayed string goes through `mod.Message(mod.stringkeys.<key>, ...)`, with every key
+ * registered in `src/strings.json` — `mod.Message()`'s own doc comment (`index.d.ts`) requires
+ * every argument to be a `strings.json`-registered `stringkeys` reference, never a raw literal.
+ * `msgArg0`/`msgArg1`/`msgArg2` accept `string | number | Player` directly (confirmed, same doc
+ * block, max 3 placeholder args across all 4 overloads) — item names are passed as
+ * `mod.stringkeys[item.labelKey]` (itself a valid `msgArg`), not wrapped in a nested `Message()`
+ * call, and numbers are passed as raw numbers, not `String(...)`-ified first.
  *
- * 1. **Every displayed string was a raw literal.** `mod.Message("HQ ACQUISITIONS")`,
- *    `` mod.Message(`${item.label} — $${BASE_PRICES[item.id] ?? item.basePrice}`) ``, etc.
- *    `mod.Message()`'s own doc comment (`index.d.ts`) is explicit: "All strings passed as
- *    arguments must be found in the `strings.json` which is injected as `mod.stringkeys`." A raw
- *    string literal isn't a `stringkeys` reference, so the engine can't resolve it and falls back
- *    to an "unavailable"-style placeholder — this was the root cause of the whole buy menu (and
- *    every other UI surface) reading as broken. Every label below now goes through
- *    `mod.Message(mod.stringkeys.<key>, ...)`, with every key registered in `src/strings.json`.
- *    `msgArg0`/`msgArg1`/`msgArg2` accept `string | number | Player` directly (confirmed, same
- *    doc block, max 3 placeholder args across all 4 overloads) — so item names are passed as
- *    `mod.stringkeys[item.labelKey]` (itself a valid `msgArg`), not wrapped in a nested
- *    `Message()` call, and numbers are passed as raw numbers, not `String(...)`-ified first.
+ * The whole tree is built via `SolidUI.h(Component, props)` with `parent:`-based composition
+ * (the confirmed real pattern, `solid-ui/README.md`), matching `hud.ts`/`scoreboard.ts`. Purchase
+ * rows use `UIContainerButton` (confirmed real, `ui/components/container-button/index.d.ts`) so
+ * each row can show an item name AND its price as two independently-styled text children inside
+ * one clickable surface, via its `innerContainer` attach point.
  *
- * 2. **No reactivity, and no re-entry guard.** The whole tree was built via
- *    `new UIContainer({ childrenParams: [...] })`. `UIContainer.ChildParams<T>`
- *    (`ui/components/container/index.d.ts`) constructs children via their raw
- *    `new (params: T) => UI.Element` constructor — that path has no reactivity mechanism at all,
- *    so if this menu ever needed a live-updating field (e.g. a wallet balance shown inside the
- *    menu) it would silently never update. Rewritten to build every element via
- *    `SolidUI.h(Component, props)` with `parent:`-based composition (the confirmed real pattern,
- *    `solid-ui/README.md`), matching `hud.ts`/`scoreboard.ts`. Purchase rows use
- *    `UIContainerButton` (confirmed real, `ui/components/container-button/index.d.ts`) so each
- *    row can show an item name AND its price as two independently-styled text children inside one
- *    clickable surface, via its `innerContainer` attach point.
- *    Separately: `Events.OnPlayerInteract` previously called `openBuyMenu` unconditionally on
- *    every interact event, with no check for "menu already open" — if the engine re-fires
- *    interact while the player is still standing on the point (or on held input), this can make
- *    the Close button appear to do nothing, since the very next interact tick reopens the menu
- *    right after a close. Fixed with an explicit open-state guard below.
+ * `Events.OnPlayerInteract` is guarded with an explicit open-state check — without it, the engine
+ * re-firing interact while the player is still standing on the point (or on held input) would
+ * reopen the menu on the very next tick after a Close click, making Close appear to do nothing.
  */
 
 import { Events } from "../../node_modules/bf6-portal-utils/events/index.ts";
@@ -201,8 +187,6 @@ function buildBuyMenu(player: mod.Player): PlayerBuyMenu {
 	});
 
 	// Live wallet balance shown inside the menu — reactive, kept in sync by onCashChange below.
-	// This is exactly the kind of field the previous plain-constructor version could never have
-	// supported correctly (see header comment).
 	SolidUI.h(UIText, {
 		parent: container,
 		position: { x: 0, y: 30 },

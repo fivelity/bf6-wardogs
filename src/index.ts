@@ -1,5 +1,5 @@
 /**
- * WARDOGS entrypoint (bf6.config.ts → entrypoint: "src/index.ts").
+ * WARDOGS entrypoint (ts-bf6-portal.config.json → bundle.entry: "src/index.ts").
  *
  * Per AGENTS.md §4: this file NEVER exports raw Portal event handlers
  * (no `export function OnPlayerDied`, `export function OngoingGlobal`, etc.).
@@ -28,15 +28,13 @@ import "./player/progression.ts";
 // calls, so it is intentionally not imported here — it has nothing to register at load time. Any
 // file that needs it (fob.ts, and future core primitives) imports it directly.
 
-// WARDOGS mode-specific rules (FOB, ControlZone, HotZone, Towers, Salvage, Chaos AI). Order
-// matters here: hotzone.ts and chaos-ai.ts both import controlzone.ts's isPhase3(), and
-// towers.ts imports hotzone.ts's lockDriftTarget() — game/mode/index.ts's own import order
-// already respects this, so a single barrel import is sufficient and correct.
+// WARDOGS mode-specific rules (FOB, ControlZone, HotZone, Towers, Salvage, Chaos AI,
+// Combat Rewards). Order matters here: hotzone.ts and chaos-ai.ts both import controlzone.ts's
+// isPhase3(), and towers.ts imports hotzone.ts's lockDriftTarget() — game/mode/index.ts's own
+// import order already respects this, so a single barrel import is sufficient and correct.
 import "./game/mode/index.ts";
 
 // UI (SolidUI-composed: scoreboard, HUD, buy menu)
 import "./ui/scoreboard.ts";
 import "./ui/hud.ts";
 import "./ui/buy-menu.ts";
-
-

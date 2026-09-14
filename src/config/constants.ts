@@ -6,8 +6,12 @@
 /** WARDOGS_DESIGN_BRIEF.md → "Core Rules" #1: every player is issued exactly this once. */
 export const STARTING_CASH = 10_000;
 
-/** WARDOGS_DESIGN_BRIEF.md → "Point System": Control Zone majority-hold tick cadence. */
-export const CONTROL_ZONE_TICK_SECONDS = 4.0;
+/**
+ * WARDOGS_DESIGN_BRIEF.md → "Point System": Control Zone majority-hold tick cadence.
+ * UPDATED per current direction: every 10 seconds, the team with the most weighted presence
+ * across the Control Zone + HotZone earns 1 ticket (was previously 4.0s).
+ */
+export const CONTROL_ZONE_TICK_SECONDS = 10.0;
 
 /** WARDOGS_DESIGN_BRIEF.md → "Point System": +1 ticket per faction per tick while holding majority. */
 export const CONTROL_ZONE_TICKET_REWARD = 1;
@@ -38,8 +42,9 @@ export const VICTORY_TICKET_TARGET = 100;
 export const UNDEPLOY_TICKET_PENALTY = 1;
 
 /**
- * WARDOGS_DESIGN_BRIEF.md → "Match Duration". Not currently enforced in code (no timer-expiry
- * handler wired yet) — kept here so the value exists in one place once that handler is built.
+ * WARDOGS_DESIGN_BRIEF.md → "Match Duration". Enforced via a dedicated timer in
+ * `game/mode/win-condition.ts` (`startMatchTimer`), which calls the same tiebreak-and-end path
+ * used by the ticket-target win check if no faction reaches `VICTORY_TICKET_TARGET` in time.
  */
 export const MATCH_DURATION_SECONDS = 30 * 60;
 
@@ -70,3 +75,16 @@ export const CHAOS_AI_TOTAL_BOTS = 12;
 export const CHAOS_AI_RESPAWN_INTERVAL_SECONDS = 30;
 /** Phase 3 multiplier applied to Chaos AI respawn cadence (smaller = faster). */
 export const CHAOS_AI_PHASE_3_RESPAWN_MULTIPLIER = 0.5;
+
+/**
+ * WARDOGS_DESIGN_BRIEF.md → "Terminate Rogue AI Elements": cash/XP awarded for killing (or
+ * assisting on a kill against) a Chaos Squads bot. Deliberately smaller than a human kill's
+ * reward (`economy.ts`'s `CASH_REWARDS.kill` / `XP_REWARDS.kill`) since Chaos bots are meant as
+ * map pressure, not an equally-valuable kill target — but per current direction, killing them
+ * must still pay out cash and XP, just as a human kill does.
+ */
+export const CHAOS_KILL_CASH_REWARD = 200;
+export const CHAOS_KILL_XP_REWARD = 75;
+/** Assist reward for a human player credited with assisting on a Chaos Squads bot kill. */
+export const CHAOS_ASSIST_CASH_REWARD = 60;
+export const CHAOS_ASSIST_XP_REWARD = 30;

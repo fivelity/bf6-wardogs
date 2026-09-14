@@ -14,10 +14,6 @@
  * All three are torn down together via `mod.UnspawnObject` when the FOB is destroyed/abandoned.
  */
 
-/**
- * fob.ts — freely-placeable Forward Operating Bases.
- */
-
 import { Events } from "../../../node_modules/bf6-portal-utils/events/index.ts";
 import { PortalGadget } from "../../../node_modules/bf6-portal-utils/portal-gadget/index.ts";
 import { TransitionState } from "../core/transition-state.ts";
@@ -89,10 +85,6 @@ function tryPlaceFob(
 ): ActiveFob | undefined {
 	const afforded = spendMaterials(player, FOB_MATERIAL_COST, "fobPlacement");
 	if (!afforded) {
-		// Fixed alongside the buy-menu/HUD/scoreboard UI pass — this was a raw string literal
-		// passed to mod.Message(), the exact "unavailable"-text bug documented in
-		// ui/buy-menu.ts's header comment. Registered as fob_insufficient_materials in
-		// strings.json.
 		mod.DisplayNotificationMessage(mod.Message(mod.stringkeys.fob_insufficient_materials), player);
 		return undefined;
 	}

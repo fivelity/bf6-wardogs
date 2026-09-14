@@ -12,6 +12,7 @@ import type { TrackId } from "../player/progression.ts";
 /** WARDOGS_DESIGN_BRIEF.md → "Point System": cash + XP rewards per action. */
 export const CASH_REWARDS = {
 	kill: 500,
+	assist: 150,
 	revive: 300,
 	cargoDelivery: 800,
 	buildHit: 100,
@@ -19,6 +20,7 @@ export const CASH_REWARDS = {
 
 export const XP_REWARDS = {
 	kill: 150,
+	assist: 60,
 	revive: 200,
 	cargoDelivery: 300,
 	buildHit: 120,
@@ -57,9 +59,11 @@ export const MAX_TRACK_LEVEL = 5;
 export const SURCHARGE_MAX_MULTIPLIER = 2.0; // +200%
 export const SURCHARGE_MIN_MULTIPLIER = 0; // +0%
 
-/** Base (no-surcharge) price table stub — populate as buy-menu.ts items are finalized. */
+/** Base (no-surcharge) price table, keyed by `ShopItem.id`. Populated to match `buy-menu.ts`'s catalog. */
 export const BASE_PRICES: Readonly<Record<string, number>> = {
-	// e.g. AK205_Suppressor: 350,
+	armor_plate_carrier: 1_200,
+	attachment_suppressor: 350,
+	gadget_ammo_crate: 200,
 } as const;
 
 export type TrackXpRewardKey = keyof typeof XP_REWARDS;
@@ -67,6 +71,7 @@ export type TrackXpRewardKey = keyof typeof XP_REWARDS;
 /** Placeholder mapping from a reward action to which mastery track earns the XP for it. */
 export const XP_REWARD_TRACK: Readonly<Record<TrackXpRewardKey, TrackId>> = {
 	kill: "assault",
+	assist: "assault",
 	revive: "medic",
 	cargoDelivery: "driverPilot",
 	buildHit: "support",

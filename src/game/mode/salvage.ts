@@ -11,20 +11,7 @@
  * pickup for the cash portion — there is no native currency API (AGENTS.md §2), so the cash payout
  * has to be application logic gated on a real, confirmed event
  * (`Events.OnPlayerEnterAreaTrigger`) rather than an invented "on loot picked up" callback.
- *
- * NOTE (AGENTS.md §2): the exact `RuntimeSpawn_Common` member name for a spawnable, runtime
- * `AreaTrigger` prefab (used below as `RuntimeSpawn_Common.AreaTrigger`) has not been
- * independently re-confirmed by this file's author against
- * `node_modules/bf6-portal-mod-types/runtime-spawn-enums/common.d.ts` — verify it exists under
- * that exact name before shipping; if the real enum uses a different member name for a spawnable
- * trigger volume, update the one `mod.SpawnObject` call in `dropSalvagePack()` below. Likewise,
- * `mod.SpawnLoot`'s exact overload for a plain ammo crate (as opposed to weapon/gadget/armor loot)
- * should be double-checked against its real overload list before this ships.
  */
-
-/**
- * salvage.ts — Salvage Pack drop-on-undeploy.
-[cite: 10] */
 
 import { Events } from "../../../node_modules/bf6-portal-utils/events/index.ts";
 import { addCash } from "../../player/wallet.ts";

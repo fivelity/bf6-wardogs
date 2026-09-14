@@ -6,39 +6,23 @@
  * flash, active track progress bar, objective status). Same `SolidUI.h()` pattern as
  * `scoreboard.ts`.
  *
- * FIXED IN THIS PASS — this file previously had the same two bugs as `buy-menu.ts`:
+ * ── Team colors (per current direction) ──
+ * Lonestar = BLUE, Manticore = GREEN, Valkyra = RED — sourced from `config/teams.ts`'s
+ * `FACTION_COLOR_RGB`, the single source of truth shared with `ui/scoreboard.ts`, rather than a
+ * locally hard-coded table.
  *
- * 1. **Raw strings passed to `mod.Message()`.** The previous version stored pre-formatted
- *    display strings ("+$500", "ASSAULT — Tier 3") in signals and passed them straight to
- *    `mod.Message()`, which is exactly the "unavailable" bug (see `buy-menu.ts`'s header comment
- *    for the full citation). Signals now hold the raw numeric/key components (sign, amount,
- *    track key, level) instead, and `mod.Message(mod.stringkeys.hud_cash_flash, sign, amount)`
- *    builds the parameterized message reactively.
- * 2. **No reactivity.** Elements were built via `new UIContainer({ childrenParams: [...] })`,
- *    whose children are constructed via their raw constructor — no reactive-prop support (see
- *    `ui/components/container/index.d.ts`'s `ChildParams<T>`, which is a plain, non-reactive
- *    parameter bag). Rewritten to use `SolidUI.h(Component, props)` with `parent:`-based
- *    composition, the real mechanism (confirmed, `solid-ui/README.md`) for accessor-valued props
- *    to actually re-evaluate on signal change.
- *
- * NEW in this pass — the brief's HUD spec ("reactive 3-faction ticket bars", "active track
- * progress bar", "construction socket ghost overlays") was previously entirely unbuilt beyond the
- * two flash elements. This file now also renders:
+ * This file renders:
  *   - A team/objective status panel: live ControlZone/HotZone/Tower ownership and capture
  *     progress, sourced from `controlzone.ts::getAllTickets`, `hotzone.ts::getHotZoneStatus`, and
- *     `towers.ts::getTowerStatus` (the latter two are new exports added in this pass — see their
- *     header comments; `mod.GetCaptureProgress`, confirmed real, index.d.ts:2605, backs the
- *     progress bars).
+ *     `towers.ts::getTowerStatus` (`mod.GetCaptureProgress`, confirmed real, index.d.ts:2605,
+ *     backs the progress bars).
  *   - A materials readout (`wallet.ts::getMaterials`), since FOB placement (`fob.ts`) spends
- *     materials but nothing surfaced the running total to the player before now.
+ *     materials but nothing else surfaces the running total to the player.
  *   - An active-track XP progress bar. The design brief specifies "active track progress bar"
  *     but does not define how the active track is chosen — no existing code tracks a player's
- *     "current class/role" as a first-class concept (`addXp` is not yet called from anywhere).
- *     Judgment call made here: the panel shows whichever track the player most recently ranked
- *     up in (via `onRankUp`), falling back to their highest-XP track at HUD-build time. This is
- *     the only reactive signal available without inventing new cross-cutting player state; if a
- *     future pass adds an explicit "equipped role" concept, swap the selection logic here for
- *     that instead of guessing again.
+ *     "current class/role" as a first-class concept. Judgment call: the panel shows whichever
+ *     track the player most recently ranked up in (via `onRankUp`), falling back to their
+ *     highest-XP track at HUD-build time.
  *
  * Progress bars are built from a background `UIContainer` (bgFill: Solid, dim color) plus a
  * foreground `UIContainer` whose reactive `width` is driven by a 0..1 signal — there is no
@@ -46,6 +30,10 @@
  * `UIImageType` only has `CrownOutline/CrownSolid/None/QuestionMark/RifleAmmo/SelfHeal/
  * SpawnBeacon/TEMP_PortalIcon`), so a width-driven container is the correct primitive here, not
  * `UIImage`.
+ *
+ * All display strings route through `mod.Message(mod.stringkeys.<key>, ...)` — signals hold raw
+ * numeric/key components (sign, amount, track key, level), never pre-formatted strings, since
+ * `mod.Message()` can only resolve registered `stringkeys` references, not arbitrary literals.
  */
 
 import { Events } from "../../node_modules/bf6-portal-utils/events/index.ts";
@@ -56,9 +44,10 @@ import { UIText } from "../../node_modules/bf6-portal-utils/ui/components/text/i
 import { onCashChange, getMaterials } from "../player/wallet.ts";
 import { onRankUp, getTrackState, TRACK_IDS, type TrackId } from "../player/progression.ts";
 import { TRACK_XP_THRESHOLDS, MAX_TRACK_LEVEL } from "../config/economy.ts";
+import { MATCH_DURATION_SECONDS } from "../config/constants.ts";
 import { getHotZoneStatus } from "../game/mode/hotzone.ts";
 import { getTowerStatus } from "../game/mode/towers.ts";
-import { getFactionDefinition, FACTIONS, type FactionId } from "../config/teams.ts";
+import { getFactionDefinition, FACTIONS, FACTION_COLOR_RGB, type FactionId } from "../config/teams.ts";
 import { getChaosLiveBotCount } from "../game/mode/chaos-ai.ts";
 import { isPhase3 } from "../game/mode/controlzone.ts";
 
@@ -80,7 +69,7 @@ const TRACK_NAME_KEY: Record<TrackId, string> = {
 /**
  * `mod.stringkeys.*` property name per scoring faction's short name — see strings.json.
  * Chaos Squads (Team4) is deliberately NOT a member of this table — see note on
- * `CHAOS_PRESSURE_KEY` below.
+ * `CHAOS_PRESSURE` below.
  */
 const FACTION_SHORT_NAME_KEY: Record<FactionId, string> = {
 	1: "faction_lonestar_short",
@@ -92,19 +81,19 @@ const FACTION_SHORT_NAME_KEY: Record<FactionId, string> = {
 /**
  * Chaos Squads are AI-only HotZone pressure, not a 4th playable faction — WARDOGS_DESIGN_BRIEF.md
  * lists Team4 as "unlisted, unjoinable AI-only faction with no score participation," and per
- * clarified direction they should read on the HUD as a hazard/pressure indicator (similar to a
- * roaming threat meter), never alongside Lonestar/Manticore/Valkyra as if they were a fourth
- * roster entry. `config/teams.ts` still models them as `FACTIONS[4]` because Portal requires some
- * team bucket for `mod.SpawnAIFromAISpawner` to target — that's a technical necessity, not a
- * design statement, and this file is careful not to surface it as one: the HUD line below is
- * phrased as a threat count ("CHAOS SQUADS: N ACTIVE"), not a faction status row, and Chaos never
- * appears in `FACTION_BAR_COLORS` or any per-faction loop below.
+ * clarified direction they read on the HUD as a hazard/pressure indicator (similar to a roaming
+ * threat meter), never alongside Lonestar/Manticore/Valkyra as if they were a fourth roster
+ * entry. The HUD line below is phrased as a threat count ("CHAOS SQUADS: N ACTIVE"), not a
+ * faction status row, and Chaos never appears in `FACTION_BAR_COLORS` or any per-faction loop
+ * below. Killing a Chaos bot DOES still pay cash + XP (see `game/mode/chaos-ai.ts`) — that
+ * reward path is independent of this faction ever appearing as a scored roster entry.
  */
 
+/** Per-faction `mod.Vector` color, built once from `config/teams.ts`'s RGB source of truth. */
 const FACTION_BAR_COLORS: Record<Extract<FactionId, 1 | 2 | 3>, mod.Vector> = {
-	1: UI.COLORS.CYAN,
-	2: mod.CreateVector(1, 0.55, 0.15), // Manticore's orange — not in UI.COLORS, synthesized here.
-	3: UI.COLORS.WHITE,
+	1: mod.CreateVector(...FACTION_COLOR_RGB[1]),
+	2: mod.CreateVector(...FACTION_COLOR_RGB[2]),
+	3: mod.CreateVector(...FACTION_COLOR_RGB[3]),
 };
 
 /** Faction color for HotZone/Tower ownership display — undefined (neutral) falls back to `fallback`. */
@@ -148,8 +137,8 @@ function createTransientFlag(): { signal: () => boolean; trigger: () => void } {
 
 /**
  * A horizontal 0..1 progress bar: a dim background track plus a foreground fill whose width is
- * driven reactively by `progress`. `trackColor` tints the fill (e.g. the owning faction's color,
- * or green/yellow for a generic objective).
+ * driven reactively by `progress`. `fillColor` tints the fill (e.g. the owning faction's color,
+ * or a neutral color for a generic objective).
  */
 function buildProgressBar(
 	parent: UIContainer,
@@ -210,7 +199,7 @@ function buildObjectivePanel(container: UIContainer, player: mod.Player): void {
 	const panel = SolidUI.h(UIContainer, {
 		parent: container,
 		position: { x: 20, y: 20 },
-		size: { width: 260, height: 118 },
+		size: { width: 260, height: 138 },
 		anchor: mod.UIAnchor.TopLeft,
 		bgColor: UI.COLORS.BLACK,
 		bgAlpha: 0.55,
@@ -223,6 +212,7 @@ function buildObjectivePanel(container: UIContainer, player: mod.Player): void {
 	const [towerOwner, setTowerOwner] = SolidUI.createSignal<FactionId | undefined>(undefined);
 	const [chaosBotCount, setChaosBotCount] = SolidUI.createSignal(0);
 	const [phase3, setPhase3] = SolidUI.createSignal(false);
+	const [matchSecondsRemaining, setMatchSecondsRemaining] = SolidUI.createSignal(MATCH_DURATION_SECONDS);
 
 	let refreshAccumulated = 0;
 	Events.OngoingGlobal.subscribe(() => {
@@ -231,6 +221,10 @@ function buildObjectivePanel(container: UIContainer, player: mod.Player): void {
 			return;
 		}
 		refreshAccumulated = 0;
+
+		// Real native match clock (mod.GetMatchTimeRemaining, confirmed no-argument getter) —
+		// authoritative and driftless, unlike a hand-rolled Events.OngoingGlobal accumulator.
+		setMatchSecondsRemaining(Math.max(0, Math.round(mod.GetMatchTimeRemaining())));
 
 		const hotZone = getHotZoneStatus();
 		setHotZoneProgress(hotZone.progress);
@@ -244,10 +238,26 @@ function buildObjectivePanel(container: UIContainer, player: mod.Player): void {
 		setPhase3(isPhase3());
 	});
 
-	// HotZone row
+	// Match clock — mm:ss countdown for WARDOGS_DESIGN_BRIEF.md's 30-minute match duration.
 	SolidUI.h(UIText, {
 		parent: panel,
 		position: { x: 10, y: 6 },
+		size: { width: 240, height: 16 },
+		anchor: mod.UIAnchor.TopLeft,
+		textColor: UI.COLORS.GREY_75,
+		textSize: 13,
+		message: () => {
+			const remaining = matchSecondsRemaining();
+			const minutes = Math.floor(remaining / 60);
+			const seconds = remaining % 60;
+			return mod.Message(mod.stringkeys.match_time_remaining, minutes, seconds);
+		},
+	});
+
+	// HotZone row
+	SolidUI.h(UIText, {
+		parent: panel,
+		position: { x: 10, y: 24 },
 		size: { width: 240, height: 18 },
 		anchor: mod.UIAnchor.TopLeft,
 		textColor: UI.COLORS.YELLOW,
@@ -259,12 +269,12 @@ function buildObjectivePanel(container: UIContainer, player: mod.Player): void {
 				mod.stringkeys[ownerShortNameKey(hotZoneOwner())]
 			),
 	});
-	buildProgressBar(panel, 10, 26, 240, 10, hotZoneProgress, () => ownerBarColor(hotZoneOwner(), UI.COLORS.YELLOW));
+	buildProgressBar(panel, 10, 44, 240, 10, hotZoneProgress, () => ownerBarColor(hotZoneOwner(), UI.COLORS.YELLOW));
 
 	// Tower row
 	SolidUI.h(UIText, {
 		parent: panel,
-		position: { x: 10, y: 44 },
+		position: { x: 10, y: 62 },
 		size: { width: 240, height: 18 },
 		anchor: mod.UIAnchor.TopLeft,
 		textColor: UI.COLORS.CYAN,
@@ -276,14 +286,14 @@ function buildObjectivePanel(container: UIContainer, player: mod.Player): void {
 				mod.stringkeys[ownerShortNameKey(towerOwner())]
 			),
 	});
-	buildProgressBar(panel, 10, 64, 240, 10, towerProgress, () => ownerBarColor(towerOwner(), UI.COLORS.CYAN));
+	buildProgressBar(panel, 10, 82, 240, 10, towerProgress, () => ownerBarColor(towerOwner(), UI.COLORS.CYAN));
 
 	// Chaos Squads pressure indicator — a hazard readout, not a faction status row (see note on
 	// FACTION_SHORT_NAME_KEY above). Deliberately uses a distinct alert color/format from the
 	// ownership rows above it so it doesn't visually read as "a 4th team's score."
 	SolidUI.h(UIText, {
 		parent: panel,
-		position: { x: 10, y: 84 },
+		position: { x: 10, y: 102 },
 		size: { width: 240, height: 16 },
 		anchor: mod.UIAnchor.TopLeft,
 		textColor: UI.COLORS.RED,
@@ -292,7 +302,7 @@ function buildObjectivePanel(container: UIContainer, player: mod.Player): void {
 	});
 	SolidUI.h(UIText, {
 		parent: panel,
-		position: { x: 10, y: 100 },
+		position: { x: 10, y: 118 },
 		size: { width: 240, height: 16 },
 		anchor: mod.UIAnchor.TopLeft,
 		textColor: UI.COLORS.YELLOW,

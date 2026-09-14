@@ -5,16 +5,11 @@
  * runtime — every function here takes plain data and returns a plain boolean/result object. If a
  * function needs `mod.*` or `SolidUI.*`, that logic belongs in `buy-menu.ts` instead.
  *
- * FIXED IN THIS PASS: `PurchaseCheckResult` previously carried a pre-formatted `reason` string
- * (e.g. `` `Insufficient funds: need $${price}, have $${currentCash}.` ``) that `buy-menu.ts`
- * then passed straight into `mod.Message()`. That's the exact "unavailable" bug —
+ * `PurchaseCheckResult` echoes `currentCash` back on the result so the caller (`buy-menu.ts`) has
+ * both numbers needed to build `mod.Message(mod.stringkeys.shop_insufficient_funds, price,
+ * currentCash)` without recomputing anything — this file never builds display text itself, since
  * `mod.Message()` requires every displayed string to be a `strings.json`-registered
- * `mod.stringkeys.*` reference (confirmed, `index.d.ts`'s own doc comment on `Message()`), not an
- * arbitrary string built in application code. This file has no business building display text at
- * all — it stays pure data, and `currentCash` is now echoed back on the result so the caller
- * (`buy-menu.ts`) has both numbers needed to build
- * `mod.Message(mod.stringkeys.shop_insufficient_funds, price, currentCash)` without recomputing
- * anything or needing a `reason` string in the first place.
+ * `mod.stringkeys.*` reference (confirmed, `index.d.ts`'s own doc comment on `Message()`).
  */
 
 import { getSurchargedPrice } from "../player/wallet.ts";
