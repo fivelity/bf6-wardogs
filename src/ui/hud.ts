@@ -71,7 +71,7 @@ const TRACK_NAME_KEY: Record<TrackId, string> = {
  * Chaos Squads (Team4) is deliberately NOT a member of this table — see note on
  * `CHAOS_PRESSURE` below.
  */
-const FACTION_SHORT_NAME_KEY: Record<FactionId, string> = {
+const HUD_FACTION_SHORT_NAME_KEY: Record<FactionId, string> = {
 	1: "faction_lonestar_short",
 	2: "faction_manticore_short",
 	3: "faction_valkyra_short",
@@ -109,7 +109,7 @@ function ownerShortNameKey(owner: FactionId | undefined): string {
 	if (owner === undefined || owner === 4) {
 		return "objective_owner_neutral";
 	}
-	return FACTION_SHORT_NAME_KEY[owner];
+	return HUD_FACTION_SHORT_NAME_KEY[owner];
 }
 
 function createTransientFlag(): { signal: () => boolean; trigger: () => void } {
@@ -480,5 +480,3 @@ Events.OnPlayerJoinGame.subscribe((eventPlayer) => {
 });
 
 Events.OnPlayerLeaveGame.subscribe((_eventNumber) => {});
-
-export { FACTIONS, getFactionDefinition };

@@ -61,7 +61,7 @@ function isHotZoneCapturePoint(capturePoint: mod.CapturePoint): boolean {
  * neutral/contested point can legitimately report a team outside 1-4 mid-capture, so every read
  * here is deliberately defensive rather than letting it crash the handler.
  */
-function tryGetFactionId(team: mod.Team): FactionId | undefined {
+function tryGetHotZoneFactionId(team: mod.Team): FactionId | undefined {
 	try {
 		return getFactionId(team);
 	} catch {
@@ -75,7 +75,7 @@ Events.OnCapturePointCapturing.subscribe((capturePoint: mod.CapturePoint) => {
 	}
 	hotZoneCapturePoint = capturePoint;
 	hotZoneContested = true;
-	hotZoneCapturingFaction = tryGetFactionId(mod.GetOwnerProgressTeam(capturePoint));
+	hotZoneCapturingFaction = tryGetHotZoneFactionId(mod.GetOwnerProgressTeam(capturePoint));
 });
 
 Events.OnCapturePointCaptured.subscribe((capturePoint: mod.CapturePoint) => {
@@ -161,7 +161,7 @@ function readHotZoneOwner(): FactionId | undefined {
 	if (!hotZoneCapturePoint) {
 		return undefined;
 	}
-	return tryGetFactionId(mod.GetCurrentOwnerTeam(hotZoneCapturePoint));
+	return tryGetHotZoneFactionId(mod.GetCurrentOwnerTeam(hotZoneCapturePoint));
 }
 
 /** Live HotZone status for HUD/objective display. Safe to call every tick — cheap reads only. */

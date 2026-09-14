@@ -50,7 +50,7 @@ function isTowerCapturePoint(capturePoint: mod.CapturePoint): boolean {
  * neutral/contested point can legitimately report a team outside 1-4 mid-capture, so every read
  * here is deliberately defensive rather than letting it crash the handler.
  */
-function tryGetFactionId(team: mod.Team): FactionId | undefined {
+function tryGetTowerFactionId(team: mod.Team): FactionId | undefined {
 	try {
 		return getFactionId(team);
 	} catch {
@@ -72,7 +72,7 @@ Events.OnCapturePointCapturing.subscribe((capturePoint: mod.CapturePoint) => {
 	}
 	towerCapturePoint = capturePoint;
 	towerContested = true;
-	towerCapturingFaction = tryGetFactionId(mod.GetOwnerProgressTeam(capturePoint));
+	towerCapturingFaction = tryGetTowerFactionId(mod.GetOwnerProgressTeam(capturePoint));
 });
 
 Events.OnCapturePointCaptured.subscribe((capturePoint: mod.CapturePoint) => {
@@ -82,7 +82,7 @@ Events.OnCapturePointCaptured.subscribe((capturePoint: mod.CapturePoint) => {
 	towerCapturePoint = capturePoint;
 	towerContested = false;
 	towerCapturingFaction = undefined;
-	towerOwner = tryGetFactionId(mod.GetCurrentOwnerTeam(capturePoint));
+	towerOwner = tryGetTowerFactionId(mod.GetCurrentOwnerTeam(capturePoint));
 	reevaluateDriftLock();
 });
 

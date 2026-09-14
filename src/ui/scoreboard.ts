@@ -82,7 +82,7 @@ const FACTION_COLORS: Record<Extract<FactionId, 1 | 2 | 3>, mod.Vector> = {
 };
 
 /** `mod.stringkeys.*` property name per scoring faction's short name — see strings.json. */
-const FACTION_SHORT_NAME_KEY: Record<Extract<FactionId, 1 | 2 | 3>, string> = {
+const SCOREBOARD_FACTION_SHORT_NAME_KEY: Record<Extract<FactionId, 1 | 2 | 3>, string> = {
 	1: "faction_lonestar_short",
 	2: "faction_manticore_short",
 	3: "faction_valkyra_short",
@@ -118,7 +118,7 @@ function buildFactionRow(parent: UIContainer, faction: Extract<FactionId, 1 | 2 
 		anchor: mod.UIAnchor.TopLeft,
 		textColor: FACTION_COLORS[faction],
 		textSize: 22,
-		message: mod.Message(mod.stringkeys[FACTION_SHORT_NAME_KEY[faction]]),
+		message: mod.Message(mod.stringkeys[SCOREBOARD_FACTION_SHORT_NAME_KEY[faction]]),
 	});
 
 	// Live player-in-zone count — reactive, coalesced to once every 20 logical ticks via the
