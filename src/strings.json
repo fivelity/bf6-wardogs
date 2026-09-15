@@ -14,6 +14,9 @@
   "shop_wallet_balance": "BALANCE: ${}",
 
   "fob_insufficient_materials": "Not enough materials to build a FOB.",
+  "fob_max_per_team_reached": "FOB limit reached for your faction. Destroy an existing FOB to build another.",
+  "fob_build_hit_progress": "FOB CONSTRUCTION: {}% complete",
+  "fob_deploy_queue_joined": "Queued for next deployment wave",
 
   "hud_cash_flash": "{}${}",
   "hud_rank_up": "{} — Tier {}",
