@@ -1,3 +1,4 @@
+import tailwindcss
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -178,11 +179,12 @@
             <!-- Library Module Callout -->
             <div class="bg-slate-800/60 border-l-4 border-amber-500 rounded-r-xl p-5">
                 <h4 class="text-md font-bold text-slate-100 flex items-center gap-2">
-                    <span>⚠️</span> CRITICAL SDK INTEGRATION MANDATE: Non-Barrel Imports
+                    <span>⚠️</span> CRITICAL SDK INTEGRATION USAGE NOTE FOR WARDOGS PROJECT
                 </h4>
                 <p class="text-sm text-slate-300 mt-1">
-                    The community library <code class="bg-slate-950 px-1.5 py-0.5 rounded text-amber-300 font-mono">bf6-portal-utils</code> does <span class="font-bold underline text-amber-400">not</span> provide a barrel export file. Every utility module must be imported strictly from its explicit direct file path. Additionally, `ts-bf6-portal` bundler only accepts relative import paths. each helper contains its own dedicated <code class="bg-slate-950 px-1.5 py-0.5 rounded text-sky-300 font-mono">README.md</code> detailing critical usage insights.
-                </p>
+                    The community library <code class="bg-neutral-950 px-1.5 py-0.5 rounded text-amber-300 font-mono">bf6-portal-utils</code> does <span class="font-bold underline text-amber-400">not</span> provide a barrel export file. Every utility module each helper contains its own dedicated <code class="bg-neutral-950 px-1.5 py-0.5 rounded text-sky-300 font-mono">README.md</code> detailing critical usage insights and each must be imported strictly from its explicit direct file path. Additionally, <code class="bg-slate-950 px-1.5 py-0.5 rounded text-green-300 font-mono">ts-bf6-portal</code> bundler only accepts relative import paths. 
+                </p><br>
+            <h5 class="text-sm font-bold text-slate-300">Example Usage</h5>
                 <div class="mt-3 bg-slate-950 p-3 rounded-lg font-mono text-xs text-slate-300 overflow-x-auto">
                     <span class="text-emerald-400">// Correct Relative Direct Path Imports</span><br>
                     import { CountDownClock } from "../../node_modules/bf6-portal-utils/CountDownClock/index.ts";<br>
@@ -372,7 +374,7 @@
             <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-3">
                 <button onclick="selectCodeFile('workflow')" id="code-btn-workflow" class="code-tab-btn px-3 py-1.5 rounded text-xs font-mono font-semibold bg-amber-500 text-slate-950">bf6_fob_complete_workflow.ts</button>
                 <button onclick="selectCodeFile('integration')" id="code-btn-integration" class="code-tab-btn px-3 py-1.5 rounded text-xs font-mono font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">bf6_fob_portal_utils_integration.ts</button>
-                <button onclick="selectCodeFile('waves')" id="code-btn-waves" class="code-tab-btn px-3 py-1.5 rounded text-xs font-mono font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">bf6_fob_deployment_waves.ts</button>
+                <button onclick="selectCodeFile('spawnwaves')" id="code-btn-waves" class="code-tab-btn px-3 py-1.5 rounded text-xs font-mono font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">bf6_fob_deployment_waves.ts</button>
                 <button onclick="selectCodeFile('advanced')" id="code-btn-advanced" class="code-tab-btn px-3 py-1.5 rounded text-xs font-mono font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">bf6_fob_advanced_logic.ts</button>
             </div>
 
@@ -540,10 +542,10 @@
 
         // ================= CODE SNIPPETS STORAGE =================
         const codeFiles = {
-            workflow: `import { CountDownClock } from "../../node_modules/bf6-portal-utils/CountDownClock";
-import { Logger } from "../../node_modules/bf6-portal-utils/Logger";
-import { Events } from "../../node_modules/bf6-portal-utils/Events";
-import { ModExtensions } from "../../node_modules/bf6-portal-utils/ModExtensions";
+            workflow: `import { CountDownClock } from "../../node_modules/bf6-portal-utils/CountDownClock/index.ts";
+import { Logger } from "../../node_modules/bf6-portal-utils/Logger/index.ts";
+import { Events } from "../../node_modules/bf6-portal-utils/Events/index.ts";
+import { ModExtensions } from "../../node_modules/bf6-portal-utils/ModExtensions/index.ts";
 
 const logger = new Logger({ prefix: "FOB_WORKFLOW", level: "DEBUG" });
 
@@ -585,9 +587,9 @@ Events.subscribe("OnPlayerWeaponChanged", (player: mod.Player, newWeapon: any) =
     playerBuildStates.set(pid, state);
 });`,
 
-            integration: `import { CountDownClock } from "../../node_modules/bf6-portal-utils/CountDownClock";
-import { Events } from "../../node_modules/bf6-portal-utils/Events";
-import { Logger } from "../../node_modules/bf6-portal-utils/Logger";
+            integration: `import { CountDownClock } from "../../node_modules/bf6-portal-utils/CountDownClock/index.ts";
+import { Events } from "../../node_modules/bf6-portal-utils/Events/index.ts";
+import { Logger } from "../../node_modules/bf6-portal-utils/Logger/index.ts";
 
 const debugLogger = new Logger({ visible: true, position: [10, 10] });
 
@@ -607,8 +609,8 @@ export function HandleFOBPlacementRequest(player: mod.Player, targetPos: mod.Vec
     activationClock.start();
 }`,
 
-            waves: `import { CountDownClock } from "../../node_modules/bf6-portal-utils/CountDownClock";
-import { Events } from "../../node_modules/bf6-portal-utils/Events";
+            waves: `import { CountDownClock } from "../../node_modules/bf6-portal-utils/CountDownClock/index.ts";
+import { Events } from "../../node_modules/bf6-portal-utils/Events/index.ts";
 
 export function StartFOBWaveClock(fobObjId: number, waveSeconds: number = 15): void {
     const clock = new CountDownClock({
@@ -626,8 +628,8 @@ export function StartFOBWaveClock(fobObjId: number, waveSeconds: number = 15): v
     clock.start();
 }`,
 
-            advanced: `import { Logger } from "../../node_modules/bf6-portal-utils/Logger";
-import { Events } from "../../node_modules/bf6-portal-utils/Events";
+            advanced: `import { Logger } from "../../node_modules/bf6-portal-utils/Logger/index.ts";
+import { Events } from "../../node_modules/bf6-portal-utils/Events/index.ts";
 
 export function ValidatePlacement(player: mod.Player, targetPos: mod.Vector): boolean {
     const rayStart = { x: targetPos.x, y: targetPos.y + 10, z: targetPos.z };
@@ -677,10 +679,10 @@ export function ValidatePlacement(player: mod.Player, targetPos: mod.Vector): bo
             document.getElementById(`code-btn-${fileKey}`).classList.add('bg-amber-500', 'text-slate-950');
 
             const filenames = {
-                workflow: 'src/workflow/bf6_fob_complete_workflow.ts',
-                integration: 'src/integration/bf6_fob_portal_utils_integration.ts',
-                waves: 'src/waves/bf6_fob_deployment_waves.ts',
-                advanced: 'src/math/bf6_fob_advanced_logic.ts'
+                workflow: 'bf6_wardogs_fob_complete_workflow.ts',
+                integration: 'bf6_wardogs_fob_portal_utils_integration.ts',
+                spawnwaves: 'bf6_wardogs_fob_deployment_queue.ts',
+                advanced: 'bf6_wardogs_fob_advanced_logic.ts'
             };
 
             document.getElementById('code-filename').innerText = filenames[fileKey];
