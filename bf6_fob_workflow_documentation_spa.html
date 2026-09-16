@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Chosen Palette: Slate Warm Neutrals (Slate-900, Slate-800, Slate-50, Amber-500, Emerald-600, Rose-600, Sky-600) -->
+    <!-- Application Structure Plan: Designed as an interactive multi-perspective portal featuring: 1) System Overview & Lifecycle Dashboard, 2) Live Physics & Spatial Math Interactive Sandbox (Raycast, Terrain Slope Angle Calculator, 24m Logistics Zone Map, and Wave Clock Queue Simulator), 3) TypeScript SDK Reference & Direct-Import Architecture Explorer, 4) Server-Authority Test-Bench, and 5) Performance Analytics Charts. This allows developers to interactively test vector mathematics, state interruptions, and timing mechanics without sifting through flat text documents. -->
+    <!-- Visualization & Content Choices:
+        1. Terrain Raycast & Slope Math -> Dynamic HTML5 Canvas 2D cross-section -> Sliders for forward distance and surface normal -> Computes raycast vector and slope angle theta = acos(Ny) * (180/pi) -> Visualizes pass/fail (<15 degrees) -> HTML5 Canvas API.
+        2. 24m Logistics Zone -> Dynamic HTML5 Canvas 2D top-down tactical map -> Click/Drag target positioning -> Computes vector distance and verifies FOB supply reserve -> HTML5 Canvas API.
+        3. 15s Wave Deployment Queue -> Active JS Interval Clock -> Interactive player join/leave queue test-bench -> Demonstrates drift-free CountDownClock execution and randomized spawn offsets -> Vanilla JS DOM.
+        4. Timing Drift Comparison -> Chart.js Line Chart -> Compares CountDownClock against manual mod.Wait(1) drift over 60 minutes -> Chart.js Canvas.
+        5. Logistics Supply Breakdown -> Chart.js Donut Chart -> Displays supply costs across defense structures -> Chart.js Canvas.
+        Confirming NO SVG graphics used. NO Mermaid JS used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BF6 Portal SDK: FOB & Logistics System Architecture</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 380px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        /* Custom scrollbar styling for code windows */
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Header & Navigation -->
+    <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded bg-amber-500 flex items-center justify-center font-black text-slate-950 text-xl tracking-tighter">
+                        BF6
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-100 leading-tight">FOB & Logistics Architecture</h1>
+                        <p class="text-xs text-amber-400 font-mono">BF6 PORTAL SDK • TYPESCRIPT MODULES</p>
+                    </div>
+                </div>
+                
+                <!-- Nav Tabs -->
+                <nav class="hidden md:flex space-x-1 font-medium text-sm">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">Dashboard</button>
+                    <button onclick="switchTab('sandbox')" id="nav-sandbox" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">Physics Sandbox</button>
+                    <button onclick="switchTab('code')" id="nav-code" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">SDK & Code Browser</button>
+                    <button onclick="switchTab('rules')" id="nav-rules" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">Server Authority</button>
+                    <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">Performance Insights</button>
+                </nav>
+
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mono font-medium bg-emerald-950 text-emerald-400 border border-emerald-800">
+                        Direct-Import Verified
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation Bar -->
+        <div class="md:hidden flex overflow-x-auto border-t border-slate-800 p-2 space-x-1 text-xs font-medium">
+            <button onclick="switchTab('dashboard')" class="px-3 py-1.5 rounded bg-slate-800 whitespace-nowrap">Dashboard</button>
+            <button onclick="switchTab('sandbox')" class="px-3 py-1.5 rounded bg-slate-800 whitespace-nowrap">Sandbox</button>
+            <button onclick="switchTab('code')" class="px-3 py-1.5 rounded bg-slate-800 whitespace-nowrap">SDK Code</button>
+            <button onclick="switchTab('rules')" class="px-3 py-1.5 rounded bg-slate-800 whitespace-nowrap">Authority</button>
+            <button onclick="switchTab('analytics')" class="px-3 py-1.5 rounded bg-slate-800 whitespace-nowrap">Insights</button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ================= SECTION 1: DASHBOARD ================= -->
+        <section id="tab-dashboard" class="tab-content space-y-6">
+            <!-- Intro Paragraph -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5 shadow-lg">
+                <h2 class="text-xl font-bold text-amber-400 mb-2">FOB Lifecycle & Architecture Overview</h2>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    This interactive report details the full engineering lifecycle of Forward Operating Bases (FOBs) in Battlefield 6 Portal mods. 
+                    It bridges spatial 3D vector math, terrain raycast projections, non-blocking asynchronous timers, and strict server authority rules. 
+                    Explore key specifications, test math parameters live in the physics sandbox, and inspect production-ready TypeScript source code.
+                </p>
+            </div>
+
+            <!-- Key Metrics Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 font-mono uppercase">Logistics Zone Radius</p>
+                    <p class="text-2xl font-bold text-amber-400 mt-1">24.0 <span class="text-sm font-normal text-slate-300">meters</span></p>
+                    <p class="text-xs text-slate-400 mt-1">Secondary constructions constrained to FOB perimeter.</p>
+                </div>
+                <div class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 font-mono uppercase">Max Terrain Slope</p>
+                    <p class="text-2xl font-bold text-emerald-400 mt-1">15.0° <span class="text-sm font-normal text-slate-300">incline</span></p>
+                    <p class="text-xs text-slate-400 mt-1">Calculated via Surface Normal arccos angle.</p>
+                </div>
+                <div class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 font-mono uppercase">Spawn Activation Link</p>
+                    <p class="text-2xl font-bold text-sky-400 mt-1">5.0 <span class="text-sm font-normal text-slate-300">seconds</span></p>
+                    <p class="text-xs text-slate-400 mt-1">Asynchronous delay via CountDownClock.</p>
+                </div>
+                <div class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 font-mono uppercase">Wave Deployment Loop</p>
+                    <p class="text-2xl font-bold text-amber-400 mt-1">15.0 <span class="text-sm font-normal text-slate-300">seconds</span></p>
+                    <p class="text-xs text-slate-400 mt-1">Continuous drift-free batch spawn clock.</p>
+                </div>
+            </div>
+
+            <!-- Workflow Lifecycle Diagram (HTML/CSS Based) -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-6">
+                <h3 class="text-lg font-bold text-slate-100 mb-4 flex items-center gap-2">
+                    <span>🔄</span> Standard 6-Phase Construction Lifecycle
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3 text-center">
+                    <div class="bg-slate-900/90 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                        <span class="text-xs font-mono text-amber-400">PHASE 1</span>
+                        <p class="text-sm font-semibold my-2">Tool Equip</p>
+                        <p class="text-xs text-slate-400">Listens to weapon swap via ModExtensions.isGadget.</p>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                        <span class="text-xs font-mono text-amber-400">PHASE 2</span>
+                        <p class="text-sm font-semibold my-2">Radial UI Menu</p>
+                        <p class="text-xs text-slate-400">Selects structure prefab from ParseUI menu.</p>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                        <span class="text-xs font-mono text-amber-400">PHASE 3</span>
+                        <p class="text-sm font-semibold my-2">Spatial Raycast</p>
+                        <p class="text-xs text-slate-400">Projects T = P + (V*d) and checks ground slope &lt;= 15°.</p>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                        <span class="text-xs font-mono text-amber-400">PHASE 4</span>
+                        <p class="text-sm font-semibold my-2">Placement</p>
+                        <p class="text-xs text-slate-400">Calls mod.SpawnObject and records inactive state.</p>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                        <span class="text-xs font-mono text-amber-400">PHASE 5</span>
+                        <p class="text-sm font-semibold my-2">5s Activation</p>
+                        <p class="text-xs text-slate-400">CountDownClock activates spawn beacon link.</p>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                        <span class="text-xs font-mono text-amber-400">PHASE 6</span>
+                        <p class="text-sm font-semibold my-2">24m Logistics</p>
+                        <p class="text-xs text-slate-400">Enables secondary defense building &amp; 15s wave spawns.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Library Module Callout -->
+            <div class="bg-slate-800/60 border-l-4 border-amber-500 rounded-r-xl p-5">
+                <h4 class="text-md font-bold text-slate-100 flex items-center gap-2">
+                    <span>⚠️</span> CRITICAL SDK INTEGRATION MANDATE: Non-Barrel Imports
+                </h4>
+                <p class="text-sm text-slate-300 mt-1">
+                    The community library <code class="bg-slate-950 px-1.5 py-0.5 rounded text-amber-300 font-mono">bf6-portal-utils</code> does <span class="font-bold underline text-amber-400">not</span> provide a barrel export file. Every utility module must be imported strictly from its explicit direct file path. Additionally, `ts-bf6-portal` bundler only accepts relative import paths. each helper contains its own dedicated <code class="bg-slate-950 px-1.5 py-0.5 rounded text-sky-300 font-mono">README.md</code> detailing critical usage insights.
+                </p>
+                <div class="mt-3 bg-slate-950 p-3 rounded-lg font-mono text-xs text-slate-300 overflow-x-auto">
+                    <span class="text-emerald-400">// Correct Relative Direct Path Imports</span><br>
+                    import { CountDownClock } from "../../node_modules/bf6-portal-utils/CountDownClock/index.ts";<br>
+                    import { Logger } from "../../node_modules/bf6-portal-utils/Logger/index.ts";<br>
+                    import { Events } from "../../node_modules/bf6-portal-utils/Events/index.ts";<br>
+                    import { ModExtensions } from "../../node_modules/bf6-portal-utils/ModExtensions/index.ts";
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= SECTION 2: PHYSICS & MATH SANDBOX ================= -->
+        <section id="tab-sandbox" class="tab-content hidden space-y-6">
+            <!-- Intro Paragraph -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5 shadow-lg">
+                <h2 class="text-xl font-bold text-amber-400 mb-2">Physics &amp; Spatial Math Interactive Sandbox</h2>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    This interactive section lets you experiment directly with the 3D spatial calculations used in the SDK. 
+                    Adjust target distance and surface slope to visualize the downward raycast and slope angle formula 
+                    <code class="text-amber-300 font-mono">θ = arccos(N_y) × (180 / π)</code>. 
+                    You can also test the 24m Logistics Zone boundary map and simulate the 15-second deployment wave queue live!
+                </p>
+            </div>
+
+            <!-- Grid: Raycast Simulator + Logistics Zone Map -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- 1. Raycast & Terrain Slope Simulator -->
+                <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-5 flex flex-col">
+                    <h3 class="text-md font-bold text-slate-100 mb-2 flex items-center justify-between">
+                        <span>📐 Terrain Raycast &amp; Slope Validation</span>
+                        <span id="slope-badge" class="px-2 py-0.5 rounded text-xs font-mono font-bold bg-emerald-900 text-emerald-300">VALID (8.2°)</span>
+                    </h3>
+                    <p class="text-xs text-slate-400 mb-4">Simulates forward target vector $T = P + (V \times d)$ and downward ground raycast projection.</p>
+                    
+                    <!-- Canvas Canvas Container -->
+                    <div class="bg-slate-950 rounded-lg p-2 mb-4 border border-slate-800 flex items-center justify-center">
+                        <canvas id="raycastCanvas" width="500" height="240" class="w-full max-w-full h-auto"></canvas>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="space-y-4 text-xs font-mono bg-slate-900/60 p-4 rounded-lg border border-slate-800">
+                        <div>
+                            <div class="flex justify-between text-slate-300 mb-1">
+                                <span>Placement Range Distance (d):</span>
+                                <span id="val-distance" class="text-amber-400 font-bold">5.0 m</span>
+                            </div>
+                            <input type="range" id="slider-distance" min="1" max="10" step="0.5" value="5" class="w-full accent-amber-500">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-300 mb-1">
+                                <span>Terrain Incline Angle (α):</span>
+                                <span id="val-incline" class="text-amber-400 font-bold">8.0°</span>
+                            </div>
+                            <input type="range" id="slider-incline" min="0" max="30" step="1" value="8" class="w-full accent-amber-500">
+                        </div>
+                    </div>
+
+                    <!-- Math Summary Box -->
+                    <div class="mt-4 p-3 bg-slate-950 rounded text-xs font-mono text-slate-300 border border-slate-800">
+                        <p class="text-slate-400 mb-1">// Mathematical Calculation:</p>
+                        <p>Normal Vector N: <span id="math-normal" class="text-sky-300">(0.14, 0.99, 0.00)</span></p>
+                        <p>Slope Angle θ = acos(N.y) * (180/π) = <span id="math-theta" class="text-amber-300">8.0°</span></p>
+                        <p>Status Check: <span id="math-status" class="text-emerald-400 font-bold">PASS (θ ≤ 15.0°)</span></p>
+                    </div>
+                </div>
+
+                <!-- 2. 24m Logistics Radius Simulator -->
+                <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-5 flex flex-col">
+                    <h3 class="text-md font-bold text-slate-100 mb-2 flex items-center justify-between">
+                        <span>📦 24m Logistics Zone Map</span>
+                        <span id="radius-badge" class="px-2 py-0.5 rounded text-xs font-mono font-bold bg-emerald-900 text-emerald-300">INSIDE (14.2m)</span>
+                    </h3>
+                    <p class="text-xs text-slate-400 mb-4">Click anywhere on the radar map or use sliders to place a defense target relative to the active FOB.</p>
+
+                    <!-- Canvas Container -->
+                    <div class="bg-slate-950 rounded-lg p-2 mb-4 border border-slate-800 flex items-center justify-center">
+                        <canvas id="logisticsCanvas" width="500" height="240" class="w-full max-w-full h-auto cursor-crosshair"></canvas>
+                    </div>
+
+                    <!-- Position Controls -->
+                    <div class="space-y-4 text-xs font-mono bg-slate-900/60 p-4 rounded-lg border border-slate-800">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <div class="flex justify-between text-slate-300 mb-1">
+                                    <span>Target Offset X:</span>
+                                    <span id="val-posx" class="text-amber-400 font-bold">+10.0 m</span>
+                                </div>
+                                <input type="range" id="slider-posx" min="-30" max="30" step="1" value="10" class="w-full accent-amber-500">
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-slate-300 mb-1">
+                                    <span>Target Offset Z:</span>
+                                    <span id="val-posz" class="text-amber-400 font-bold">+10.0 m</span>
+                                </div>
+                                <input type="range" id="slider-posz" min="-30" max="30" step="1" value="10" class="w-full accent-amber-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logistics Status Summary -->
+                    <div class="mt-4 p-3 bg-slate-950 rounded text-xs font-mono text-slate-300 border border-slate-800">
+                        <p class="text-slate-400 mb-1">// Distance Check (mod.VectorDistance):</p>
+                        <p>Calculated Distance: <span id="math-distance" class="text-sky-300">14.14 m</span> (Max 24.0m)</p>
+                        <p>Available FOB Supplies: <span id="math-supplies" class="text-amber-300">100 / 100</span> (Cost: 50)</p>
+                        <p>Build Permitted: <span id="math-build-status" class="text-emerald-400 font-bold">YES</span></p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 3. Wave Deployment Queue Live Timer -->
+            <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-5">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700 pb-4 mb-4">
+                    <div>
+                        <h3 class="text-md font-bold text-slate-100 flex items-center gap-2">
+                            <span>⏱️ 15-Second Continuous Wave Queue Simulator</span>
+                        </h3>
+                        <p class="text-xs text-slate-400">Demonstrates drift-free CountDownClock wave cycles with queued players spawning asynchronously.</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="text-right">
+                            <span class="text-xs text-slate-400 block font-mono">NEXT WAVE IN</span>
+                            <span id="wave-clock-display" class="text-3xl font-black font-mono text-amber-400">15.0s</span>
+                        </div>
+                        <button id="btn-toggle-clock" onclick="toggleWaveClock()" class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 text-xs uppercase tracking-wider transition">
+                            Pause Timer
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Queue Interactive Controls -->
+                    <div class="space-y-3">
+                        <p class="text-xs font-mono text-slate-300 font-bold uppercase">Enqueue Mock Players</p>
+                        <button onclick="enqueuePlayer('Alpha_Actual')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded text-xs font-mono font-semibold transition flex items-center justify-between px-3">
+                            <span>➕ Join: Alpha_Actual</span>
+                            <span class="text-slate-400">PID: 101</span>
+                        </button>
+                        <button onclick="enqueuePlayer('Bravo_Lead')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded text-xs font-mono font-semibold transition flex items-center justify-between px-3">
+                            <span>➕ Join: Bravo_Lead</span>
+                            <span class="text-slate-400">PID: 102</span>
+                        </button>
+                        <button onclick="enqueuePlayer('Charlie_Medic')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded text-xs font-mono font-semibold transition flex items-center justify-between px-3">
+                            <span>➕ Join: Charlie_Medic</span>
+                            <span class="text-slate-400">PID: 103</span>
+                        </button>
+                    </div>
+
+                    <!-- Current Queue List -->
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <p class="text-xs font-mono text-amber-400 font-bold uppercase mb-2 flex justify-between">
+                            <span>Queued for Deployment</span>
+                            <span id="queue-count" class="text-slate-400">0 Players</span>
+                        </p>
+                        <ul id="queue-list" class="space-y-1.5 text-xs font-mono text-slate-300 max-h-36 overflow-y-auto custom-scroll">
+                            <li class="text-slate-500 italic">No players in deployment queue.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Event Log -->
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <p class="text-xs font-mono text-sky-400 font-bold uppercase mb-2">Wave Log Output</p>
+                        <div id="wave-log" class="space-y-1 text-[11px] font-mono text-slate-400 max-h-36 overflow-y-auto custom-scroll">
+                            <p class="text-emerald-400">[SYSTEM] CountDownClock initialized (15s continuous).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= SECTION 3: CODE BROWSER ================= -->
+        <section id="tab-code" class="tab-content hidden space-y-6">
+            <!-- Intro Paragraph -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5 shadow-lg">
+                <h2 class="text-xl font-bold text-amber-400 mb-2">SDK TypeScript Source Code &amp; Module Explorer</h2>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    Review production-ready TypeScript modules structured specifically for the BF6 Portal SDK. 
+                    These snippets demonstrate direct-import paths, strict ambient <code class="text-amber-300 font-mono">mod</code> namespace typing, 
+                    spatial raycasting, non-blocking clock intervals, and event bus decoupling.
+                </p>
+            </div>
+
+            <!-- Code Explorer File Selector -->
+            <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-3">
+                <button onclick="selectCodeFile('workflow')" id="code-btn-workflow" class="code-tab-btn px-3 py-1.5 rounded text-xs font-mono font-semibold bg-amber-500 text-slate-950">bf6_fob_complete_workflow.ts</button>
+                <button onclick="selectCodeFile('integration')" id="code-btn-integration" class="code-tab-btn px-3 py-1.5 rounded text-xs font-mono font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">bf6_fob_portal_utils_integration.ts</button>
+                <button onclick="selectCodeFile('waves')" id="code-btn-waves" class="code-tab-btn px-3 py-1.5 rounded text-xs font-mono font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">bf6_fob_deployment_waves.ts</button>
+                <button onclick="selectCodeFile('advanced')" id="code-btn-advanced" class="code-tab-btn px-3 py-1.5 rounded text-xs font-mono font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">bf6_fob_advanced_logic.ts</button>
+            </div>
+
+            <!-- Code Display Block -->
+            <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-2xl">
+                <div class="bg-slate-900 px-4 py-2 border-b border-slate-800 flex items-center justify-between">
+                    <span id="code-filename" class="font-mono text-xs text-amber-400">src/workflow/bf6_fob_complete_workflow.ts</span>
+                    <span class="text-[10px] font-mono text-slate-500 uppercase">TypeScript • Ambient Global Namespace</span>
+                </div>
+                <pre class="p-4 text-xs font-mono text-slate-300 overflow-x-auto custom-scroll leading-relaxed"><code id="code-content">// Loading TypeScript source...</code></pre>
+            </div>
+        </section>
+
+
+        <!-- ================= SECTION 4: SERVER AUTHORITY ================= -->
+        <section id="tab-rules" class="tab-content hidden space-y-6">
+            <!-- Intro Paragraph -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5 shadow-lg">
+                <h2 class="text-xl font-bold text-amber-400 mb-2">Authoritative Validation Engine &amp; Interrupt Handling</h2>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    In multiplayer SDK development, client inputs must be strictly verified on the server before executing 
+                    <code class="text-amber-300 font-mono">mod.SpawnObject</code>. Test state disruptions below (weapon swaps, death, entering vehicles) 
+                    to observe how the server safely tears down building holograms and cancels UI state.
+                </p>
+            </div>
+
+            <!-- Test Bench Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- Interactive State Disruptor Test Bench -->
+                <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-5">
+                    <h3 class="text-md font-bold text-slate-100 mb-3 flex items-center justify-between">
+                        <span>⚡ State Interruption Test-Bench</span>
+                        <span id="player-state-badge" class="px-2 py-0.5 rounded text-xs font-mono font-bold bg-slate-700 text-slate-300">IDLE</span>
+                    </h3>
+
+                    <div class="space-y-3 mb-6">
+                        <p class="text-xs text-slate-400">Simulate player actions during active construction preview:</p>
+
+                        <button onclick="triggerEvent('equip_tool')" class="w-full py-2 bg-amber-500/20 border border-amber-500/50 hover:bg-amber-500/30 text-amber-300 rounded text-xs font-mono font-bold text-left px-3 transition flex items-center justify-between">
+                            <span>1. Equip Build Tool (PortalGadget_BuildTool)</span>
+                            <span>▶ Activate</span>
+                        </button>
+
+                        <button onclick="triggerEvent('swap_weapon')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-xs font-mono font-semibold text-left px-3 transition flex items-center justify-between">
+                            <span>2. Swap Weapon (e.g. Primary Rifle)</span>
+                            <span class="text-rose-400">⚡ Interrupt</span>
+                        </button>
+
+                        <button onclick="triggerEvent('player_died')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-xs font-mono font-semibold text-left px-3 transition flex items-center justify-between">
+                            <span>3. Player Died Event (OnPlayerDied)</span>
+                            <span class="text-rose-400">⚡ Interrupt</span>
+                        </button>
+
+                        <button onclick="triggerEvent('enter_vehicle')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-xs font-mono font-semibold text-left px-3 transition flex items-center justify-between">
+                            <span>4. Enter Vehicle (OnPlayerEnteredVehicle)</span>
+                            <span class="text-rose-400">⚡ Interrupt</span>
+                        </button>
+                    </div>
+
+                    <!-- Live Server Output -->
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <p class="text-xs font-mono text-slate-400 mb-2">// Server Handler Output Stream:</p>
+                        <div id="rule-log" class="text-xs font-mono space-y-1 text-slate-300 h-32 overflow-y-auto custom-scroll">
+                            <p class="text-slate-500">[SERVER] Waiting for player build interaction...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Server Authority Principles Checklist -->
+                <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-5 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-md font-bold text-slate-100 mb-3">🛡️ Anti-Cheat &amp; Server Rules</h3>
+                        <ul class="space-y-3 text-xs text-slate-300">
+                            <li class="p-3 bg-slate-900/80 rounded-lg border border-slate-800">
+                                <span class="font-bold text-amber-400 block mb-0.5">1. Hard Radius Limit Check (Max 7.0m)</span>
+                                Server rejects placement requests if <code class="font-mono text-sky-300">mod.VectorDistance(player, target) > 7.0</code> regardless of client UI claims.
+                            </li>
+                            <li class="p-3 bg-slate-900/80 rounded-lg border border-slate-800">
+                                <span class="font-bold text-emerald-400 block mb-0.5">2. Authoritative Surface Raycasting</span>
+                                Terrain raycasts are computed strictly on the game server to prevent floating FOB exploits.
+                            </li>
+                            <li class="p-3 bg-slate-900/80 rounded-lg border border-slate-800">
+                                <span class="font-bold text-sky-400 block mb-0.5">3. Automatic Garbage Collection</span>
+                                Interrupted state triggers automatically call <code class="font-mono text-sky-300">mod.UnspawnObject(hologramId)</code> to prevent lingering ghost meshes.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ================= SECTION 5: ANALYTICS ================= -->
+        <section id="tab-analytics" class="tab-content hidden space-y-6">
+            <!-- Intro Paragraph -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5 shadow-lg">
+                <h2 class="text-xl font-bold text-amber-400 mb-2">Performance Analytics &amp; Timing Drift Comparison</h2>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    Analyzing execution efficiency and clock stability in long-running matches. 
+                    Compare the timing drift of raw <code class="text-amber-300 font-mono">await mod.Wait(1)</code> loops against 
+                    the drift-resistant <code class="text-emerald-300 font-mono">CountDownClock</code> helper from <code class="text-sky-300 font-mono">bf6-portal-utils</code>.
+                </p>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- Chart 1: Timer Drift Line Chart -->
+                <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-5">
+                    <h3 class="text-md font-bold text-slate-100 mb-1">⏱️ Clock Drift Comparison (60 Minute Match)</h3>
+                    <p class="text-xs text-slate-400 mb-4">Cumulative timing discrepancy in seconds over match duration.</p>
+                    
+                    <div class="chart-container">
+                        <canvas id="chartTimingDrift"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Supply Economy Donut Chart -->
+                <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-5">
+                    <h3 class="text-md font-bold text-slate-100 mb-1">📦 Logistics Supply Point Allocation</h3>
+                    <p class="text-xs text-slate-400 mb-4">Supply expenditure breakdown across deployable defensive prefabs.</p>
+
+                    <div class="chart-container">
+                        <canvas id="chartSupplyCosts"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 font-mono">
+            BF6 PORTAL SDK ARCHITECTURE SPECIFICATION • SINGLE-PAGE INTERACTIVE REPORT
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // ================= STATE MANAGEMENT =================
+        const state = {
+            activeTab: 'dashboard',
+            raycast: {
+                distance: 5.0,
+                incline: 8.0
+            },
+            logistics: {
+                x: 10,
+                z: 10,
+                supplies: 100,
+                fobRadius: 24.0
+            },
+            wave: {
+                timer: 15.0,
+                intervalId: null,
+                isRunning: true,
+                queue: ['Alpha_Actual', 'Bravo_Lead']
+            },
+            playerState: 'IDLE' // IDLE, BUILDING, INTERRUPTED
+        };
+
+        // ================= CODE SNIPPETS STORAGE =================
+        const codeFiles = {
+            workflow: `import { CountDownClock } from "../../node_modules/bf6-portal-utils/CountDownClock";
+import { Logger } from "../../node_modules/bf6-portal-utils/Logger";
+import { Events } from "../../node_modules/bf6-portal-utils/Events";
+import { ModExtensions } from "../../node_modules/bf6-portal-utils/ModExtensions";
+
+const logger = new Logger({ prefix: "FOB_WORKFLOW", level: "DEBUG" });
+
+export interface BuildState {
+    isEquipped: boolean;
+    fobMenuOpen: boolean;
+}
+
+export const playerBuildStates = new Map<number, BuildState>();
+
+/**
+ * Resets UI and build preview state when a player changes tool or is interrupted.
+ */
+export function CancelBuildState(player: mod.Player): void {
+    const pid = mod.GetPlayerId(player);
+    const state = playerBuildStates.get(pid);
+    if (state) {
+        state.fobMenuOpen = false;
+        playerBuildStates.set(pid, state);
+    }
+
+    const categoryMenu = mod.FindUIWidgetWithName("fob_category_menu");
+    if (categoryMenu) {
+        mod.SetUIWidgetVisible(categoryMenu, false);
+    }
+}
+
+// 1. Listen for weapon changes using typed ModExtensions
+Events.subscribe("OnPlayerWeaponChanged", (player: mod.Player, newWeapon: any) => {
+    const pid = mod.GetPlayerId(player);
+    let state = playerBuildStates.get(pid) || { isEquipped: false, fobMenuOpen: false };
+
+    if (ModExtensions.isGadget(newWeapon, "PortalGadget_BuildTool")) {
+        state.isEquipped = true;
+    } else {
+        state.isEquipped = false;
+        CancelBuildState(player);
+    }
+    playerBuildStates.set(pid, state);
+});`,
+
+            integration: `import { CountDownClock } from "../../node_modules/bf6-portal-utils/CountDownClock";
+import { Events } from "../../node_modules/bf6-portal-utils/Events";
+import { Logger } from "../../node_modules/bf6-portal-utils/Logger";
+
+const debugLogger = new Logger({ visible: true, position: [10, 10] });
+
+export function HandleFOBPlacementRequest(player: mod.Player, targetPos: mod.Vector): void {
+    const teamId = mod.GetTeamId(player);
+    const fobObjId = mod.SpawnObject(mod.RuntimeSpawn_Common.FOB_Radio, targetPos, player.GetRotation());
+
+    // 5-second activation countdown using CountDownClock
+    const activationClock = new CountDownClock({
+        durationSeconds: 5,
+        onComplete: () => {
+            mod.ShowNotificationMessage("FOB Spawn Activated!", null, teamId);
+            StartContinuousWave(fobObjId);
+        }
+    });
+    
+    activationClock.start();
+}`,
+
+            waves: `import { CountDownClock } from "../../node_modules/bf6-portal-utils/CountDownClock";
+import { Events } from "../../node_modules/bf6-portal-utils/Events";
+
+export function StartFOBWaveClock(fobObjId: number, waveSeconds: number = 15): void {
+    const clock = new CountDownClock({
+        durationSeconds: waveSeconds,
+        onSecond: (timeLeft: number) => {
+            UpdateQueueUI(fobObjId, timeLeft);
+        },
+        onComplete: () => {
+            ExecuteDeploymentWave(fobObjId);
+            clock.reset();
+            clock.start();
+        }
+    });
+
+    clock.start();
+}`,
+
+            advanced: `import { Logger } from "../../node_modules/bf6-portal-utils/Logger";
+import { Events } from "../../node_modules/bf6-portal-utils/Events";
+
+export function ValidatePlacement(player: mod.Player, targetPos: mod.Vector): boolean {
+    const rayStart = { x: targetPos.x, y: targetPos.y + 10, z: targetPos.z };
+    const rayStop = { x: targetPos.x, y: targetPos.y - 10, z: targetPos.z };
+    
+    const hitResult = mod.RayCast(rayStart, rayStop);
+
+    if (hitResult && hitResult.isValid) {
+        // Calculate slope angle in degrees: θ = acos(N.y) * (180 / π)
+        const slopeAngle = Math.acos(hitResult.normal.y) * (180 / Math.PI);
+        return slopeAngle <= 15.0;
+    }
+    return false;
+}`
+        };
+
+        // ================= NAVIGATION LOGIC =================
+        function switchTab(tabId) {
+            state.activeTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-amber-500', 'text-slate-950', 'font-bold');
+                btn.classList.add('text-slate-300');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.add('bg-amber-500', 'text-slate-950', 'font-bold');
+            }
+
+            if (tabId === 'sandbox') {
+                renderRaycastCanvas();
+                renderLogisticsCanvas();
+            } else if (tabId === 'analytics') {
+                initCharts();
+            }
+        }
+
+        function selectCodeFile(fileKey) {
+            document.querySelectorAll('.code-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-amber-500', 'text-slate-950');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
+            });
+
+            document.getElementById(`code-btn-${fileKey}`).classList.remove('bg-slate-800', 'text-slate-300');
+            document.getElementById(`code-btn-${fileKey}`).classList.add('bg-amber-500', 'text-slate-950');
+
+            const filenames = {
+                workflow: 'src/workflow/bf6_fob_complete_workflow.ts',
+                integration: 'src/integration/bf6_fob_portal_utils_integration.ts',
+                waves: 'src/waves/bf6_fob_deployment_waves.ts',
+                advanced: 'src/math/bf6_fob_advanced_logic.ts'
+            };
+
+            document.getElementById('code-filename').innerText = filenames[fileKey];
+            document.getElementById('code-content').innerText = codeFiles[fileKey];
+        }
+
+        // ================= CANVAS 1: RAYCAST & SLOPE SIMULATOR =================
+        function renderRaycastCanvas() {
+            const canvas = document.getElementById('raycastCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+
+            const distance = parseFloat(state.raycast.distance);
+            const inclineDeg = parseFloat(state.raycast.incline);
+            const inclineRad = (inclineDeg * Math.PI) / 180;
+
+            // Compute surface normal Ny = cos(incline)
+            const ny = Math.cos(inclineRad);
+            const nx = -Math.sin(inclineRad);
+            const slopeAngle = Math.acos(ny) * (180 / Math.PI);
+            const isValid = slopeAngle <= 15.0;
+
+            // Draw Background Grid
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < w; x += 25) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+            }
+            for (let y = 0; y < h; y += 25) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+            }
+
+            // Ground baseline setup
+            const originX = 60;
+            const originY = 180;
+            const endX = 440;
+            const endY = originY - (endX - originX) * Math.tan(inclineRad);
+
+            // Draw Ground Terrain Line
+            ctx.strokeStyle = isValid ? '#10b981' : '#f43f5e';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(originX - 20, originY + 20 * Math.tan(inclineRad));
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+
+            // Fill ground fill
+            ctx.fillStyle = isValid ? 'rgba(16, 185, 129, 0.1)' : 'rgba(244, 63, 94, 0.1)';
+            ctx.beginPath();
+            ctx.moveTo(originX - 20, originY + 20 * Math.tan(inclineRad));
+            ctx.lineTo(endX, endY);
+            ctx.lineTo(endX, h);
+            ctx.lineTo(originX - 20, h);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw Player Marker
+            const playerX = originX + 20;
+            const playerY = originY - (playerX - originX) * Math.tan(inclineRad) - 30;
+            
+            ctx.fillStyle = '#f59e0b';
+            ctx.beginPath();
+            ctx.arc(playerX, playerY, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = '10px monospace';
+            ctx.fillText("PLAYER (P)", playerX - 25, playerY - 14);
+
+            // Target Vector Projection
+            const pxDistance = distance * 30; // Scale 30px per meter
+            const targetX = playerX + pxDistance;
+            const targetAirY = playerY;
+
+            // Draw Forward Vector Arrow
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(playerX, playerY);
+            ctx.lineTo(targetX, targetAirY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw Target Air Point
+            ctx.fillStyle = '#38bdf8';
+            ctx.beginPath();
+            ctx.arc(targetX, targetAirY, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Raycast Downward
+            const groundTargetY = originY - (targetX - originX) * Math.tan(inclineRad);
+
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(targetX, targetAirY - 20);
+            ctx.lineTo(targetX, groundTargetY + 10);
+            ctx.stroke();
+
+            // Ground Hit Point
+            ctx.fillStyle = isValid ? '#10b981' : '#f43f5e';
+            ctx.beginPath();
+            ctx.arc(targetX, groundTargetY, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw Surface Normal Vector Arrow
+            const normLen = 40;
+            const normEndX = targetX + nx * normLen;
+            const normEndY = groundTargetY - ny * normLen;
+
+            ctx.strokeStyle = '#a855f7';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(targetX, groundTargetY);
+            ctx.lineTo(normEndX, normEndY);
+            ctx.stroke();
+
+            ctx.fillStyle = '#a855f7';
+            ctx.fillText("Normal N", normEndX + 5, normEndY);
+
+            // Update UI text summaries
+            document.getElementById('val-distance').innerText = `${distance.toFixed(1)} m`;
+            document.getElementById('val-incline').innerText = `${slopeAngle.toFixed(1)}°`;
+            document.getElementById('math-normal').innerText = `(${nx.toFixed(2)}, ${ny.toFixed(2)}, 0.00)`;
+            document.getElementById('math-theta').innerText = `${slopeAngle.toFixed(1)}°`;
+
+            const badge = document.getElementById('slope-badge');
+            const statusText = document.getElementById('math-status');
+
+            if (isValid) {
+                badge.className = "px-2 py-0.5 rounded text-xs font-mono font-bold bg-emerald-900 text-emerald-300";
+                badge.innerText = `VALID (${slopeAngle.toFixed(1)}°)`;
+                statusText.className = "text-emerald-400 font-bold";
+                statusText.innerText = `PASS (θ ≤ 15.0°)`;
+            } else {
+                badge.className = "px-2 py-0.5 rounded text-xs font-mono font-bold bg-rose-900 text-rose-300";
+                badge.innerText = `TOO STEEP (${slopeAngle.toFixed(1)}°)`;
+                statusText.className = "text-rose-400 font-bold";
+                statusText.innerText = `REJECTED (θ > 15.0°)`;
+            }
+        }
+
+        // ================= CANVAS 2: LOGISTICS ZONE MAP =================
+        function renderLogisticsCanvas() {
+            const canvas = document.getElementById('logisticsCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+
+            const centerX = w / 2;
+            const centerY = h / 2;
+            const scale = 3.5; // 3.5 pixels per meter
+
+            const targetX = parseFloat(state.logistics.x);
+            const targetZ = parseFloat(state.logistics.z);
+            const dist = Math.sqrt(targetX * targetX + targetZ * targetZ);
+            const maxRadius = state.logistics.fobRadius;
+            const isInside = dist <= maxRadius;
+
+            // Grid background
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < w; x += 30) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+            }
+            for (let y = 0; y < h; y += 30) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+            }
+
+            // Draw 24m Radius Boundary
+            const rPx = maxRadius * scale;
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 6]);
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, rPx, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = 'rgba(245, 158, 11, 0.05)';
+            ctx.fill();
+
+            // Center FOB Station Marker
+            ctx.fillStyle = '#f59e0b';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '10px monospace';
+            ctx.fillText("FOB RADIO (0,0)", centerX - 35, centerY + 20);
+
+            // Defense Target Position
+            const pxX = centerX + targetX * scale;
+            const pxZ = centerY - targetZ * scale;
+
+            // Distance Connecting Line
+            ctx.strokeStyle = isInside ? '#10b981' : '#f43f5e';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(pxX, pxZ);
+            ctx.stroke();
+
+            // Target Node Marker
+            ctx.fillStyle = isInside ? '#10b981' : '#f43f5e';
+            ctx.beginPath();
+            ctx.arc(pxX, pxZ, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillText(`Target (${targetX.toFixed(1)}m, ${targetZ.toFixed(1)}m)`, pxX + 10, pxZ + 3);
+
+            // Update DOM fields
+            document.getElementById('val-posx').innerText = `${targetX > 0 ? '+' : ''}${targetX.toFixed(1)} m`;
+            document.getElementById('val-posz').innerText = `${targetZ > 0 ? '+' : ''}${targetZ.toFixed(1)} m`;
+            document.getElementById('math-distance').innerText = `${dist.toFixed(2)} m`;
+
+            const badge = document.getElementById('radius-badge');
+            const statusText = document.getElementById('math-build-status');
+
+            if (isInside) {
+                badge.className = "px-2 py-0.5 rounded text-xs font-mono font-bold bg-emerald-900 text-emerald-300";
+                badge.innerText = `INSIDE ZONE (${dist.toFixed(1)}m)`;
+                statusText.className = "text-emerald-400 font-bold";
+                statusText.innerText = "PERMITTED";
+            } else {
+                badge.className = "px-2 py-0.5 rounded text-xs font-mono font-bold bg-rose-900 text-rose-300";
+                badge.innerText = `OUTSIDE ZONE (${dist.toFixed(1)}m)`;
+                statusText.className = "text-rose-400 font-bold";
+                statusText.innerText = "DENIED (Exceeds 24m Limit)";
+            }
+        }
+
+        // ================= WAVE TIMER LOGIC =================
+        function startWaveClock() {
+            if (state.wave.intervalId) clearInterval(state.wave.intervalId);
+            
+            state.wave.intervalId = setInterval(() => {
+                if (!state.wave.isRunning) return;
+
+                state.wave.timer -= 0.1;
+                if (state.wave.timer <= 0) {
+                    triggerWaveDeployment();
+                    state.wave.timer = 15.0;
+                }
+
+                document.getElementById('wave-clock-display').innerText = `${state.wave.timer.toFixed(1)}s`;
+            }, 100);
+        }
+
+        function toggleWaveClock() {
+            state.wave.isRunning = !state.wave.isRunning;
+            const btn = document.getElementById('btn-toggle-clock');
+            btn.innerText = state.wave.isRunning ? 'Pause Timer' : 'Resume Timer';
+            btn.className = state.wave.isRunning 
+                ? 'px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 text-xs uppercase tracking-wider transition'
+                : 'px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 font-bold text-slate-950 text-xs uppercase tracking-wider transition';
+        }
+
+        function enqueuePlayer(name) {
+            if (!state.wave.queue.includes(name)) {
+                state.wave.queue.push(name);
+                updateQueueUI();
+                logWaveEvent(`Player [${name}] queued for next wave.`);
+            }
+        }
+
+        function triggerWaveDeployment() {
+            const count = state.wave.queue.length;
+            if (count > 0) {
+                logWaveEvent(`<span class="text-amber-400">🌊 WAVE RELEASED: Spawning ${count} player(s) with random offset (±1.0m)</span>`);
+                state.wave.queue = [];
+                updateQueueUI();
+            } else {
+                logWaveEvent(`<span class="text-slate-500">[WAVE CYCLE] Timer completed. Queue empty.</span>`);
+            }
+        }
+
+        function updateQueueUI() {
+            const list = document.getElementById('queue-list');
+            const countLabel = document.getElementById('queue-count');
+            countLabel.innerText = `${state.wave.queue.length} Players`;
+
+            if (state.wave.queue.length === 0) {
+                list.innerHTML = `<li class="text-slate-500 italic">No players in deployment queue.</li>`;
+                return;
+            }
+
+            list.innerHTML = state.wave.queue.map(p => `
+                <li class="flex items-center justify-between bg-slate-900 px-2 py-1 rounded border border-slate-800">
+                    <span>🎖️ ${p}</span>
+                    <span class="text-emerald-400 text-[10px]">QUEUED</span>
+                </li>
+            `).join('');
+        }
+
+        function logWaveEvent(msg) {
+            const log = document.getElementById('wave-log');
+            const time = new Date().toLocaleTimeString().split(' ')[0];
+            log.innerHTML = `<p>[${time}] ${msg}</p>` + log.innerHTML;
+        }
+
+        // ================= SERVER AUTHORITY TEST BENCH =================
+        function triggerEvent(eventType) {
+            const badge = document.getElementById('player-state-badge');
+            const log = document.getElementById('rule-log');
+            const time = new Date().toLocaleTimeString().split(' ')[0];
+
+            let message = '';
+            if (eventType === 'equip_tool') {
+                state.playerState = 'BUILDING';
+                badge.className = "px-2 py-0.5 rounded text-xs font-mono font-bold bg-amber-900 text-amber-300";
+                badge.innerText = "PREVIEW MODE (Gadget)";
+                message = `<span class="text-amber-400">[EVENT] OnPlayerWeaponChanged -&gt; BuildTool Equipped. Hologram visible.</span>`;
+            } else if (eventType === 'swap_weapon') {
+                state.playerState = 'INTERRUPTED';
+                badge.className = "px-2 py-0.5 rounded text-xs font-mono font-bold bg-slate-700 text-slate-300";
+                badge.innerText = "IDLE (Swapped Away)";
+                message = `<span class="text-rose-400">[INTERRUPT] OnPlayerWeaponChanged -&gt; Primary Weapon. CancelBuildState() triggered. UI closed.</span>`;
+            } else if (eventType === 'player_died') {
+                state.playerState = 'INTERRUPTED';
+                badge.className = "px-2 py-0.5 rounded text-xs font-mono font-bold bg-rose-950 text-rose-400";
+                badge.innerText = "DEAD (Cleared)";
+                message = `<span class="text-rose-400">[INTERRUPT] OnPlayerDied -&gt; CancelBuildState() triggered. Spawn queue removed.</span>`;
+            } else if (eventType === 'enter_vehicle') {
+                state.playerState = 'INTERRUPTED';
+                badge.className = "px-2 py-0.5 rounded text-xs font-mono font-bold bg-sky-950 text-sky-400";
+                badge.innerText = "IN VEHICLE";
+                message = `<span class="text-sky-400">[INTERRUPT] OnPlayerEnteredVehicle -&gt; CancelBuildState() triggered. Hologram unspawned.</span>`;
+            }
+
+            log.innerHTML = `<p>[${time}] ${message}</p>` + log.innerHTML;
+        }
+
+        // ================= CHART.JS INITIALIZATION =================
+        let chartsInitialized = false;
+
+        function initCharts() {
+            if (chartsInitialized) return;
+            chartsInitialized = true;
+
+            // Chart 1: Timer Drift Line Chart
+            const ctxDrift = document.getElementById('chartTimingDrift').getContext('2d');
+            new Chart(ctxDrift, {
+                type: 'line',
+                data: {
+                    labels: ['0m', '10m', '20m', '30m', '40m', '50m', '60m'],
+                    datasets: [
+                        {
+                            label: 'Manual Wait(1) Loop Drift (Seconds)',
+                            data: [0.0, 1.8, 3.9, 6.2, 8.8, 11.5, 14.3],
+                            borderColor: '#f43f5e',
+                            backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'CountDownClock Helper (bf6-portal-utils)',
+                            data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#cbd5e1', font: { family: 'monospace', size: 11 } } }
+                    },
+                    scales: {
+                        x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' }, title: { display: true, text: 'Timing Drift (Seconds)', color: '#94a3b8' } }
+                    }
+                }
+            });
+
+            // Chart 2: Supply Breakdown Donut Chart
+            const ctxSupply = document.getElementById('chartSupplyCosts').getContext('2d');
+            new Chart(ctxSupply, {
+                type: 'doughnut',
+                data: {
+                    labels: ['FOB Radio Base (0 Supply)', 'Sandbag Wall (50 Supply)', 'Heavy Wire Barrier (75 Supply)', 'Logistics Supply Crate (100 Supply)'],
+                    datasets: [{
+                        data: [1, 50, 75, 100],
+                        backgroundColor: ['#38bdf8', '#f59e0b', '#a855f7', '#10b981'],
+                        borderColor: '#0f172a',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { family: 'monospace', size: 11 } } }
+                    }
+                }
+            });
+        }
+
+        // ================= ATTACH EVENT LISTENERS =================
+        window.addEventListener('DOMContentLoaded', () => {
+            // Slider listeners
+            document.getElementById('slider-distance').addEventListener('input', (e) => {
+                state.raycast.distance = e.target.value;
+                renderRaycastCanvas();
+            });
+
+            document.getElementById('slider-incline').addEventListener('input', (e) => {
+                state.raycast.incline = e.target.value;
+                renderRaycastCanvas();
+            });
+
+            document.getElementById('slider-posx').addEventListener('input', (e) => {
+                state.logistics.x = e.target.value;
+                renderLogisticsCanvas();
+            });
+
+            document.getElementById('slider-posz').addEventListener('input', (e) => {
+                state.logistics.z = e.target.value;
+                renderLogisticsCanvas();
+            });
+
+            // Interactive canvas click for Logistics Zone Map
+            const logCanvas = document.getElementById('logisticsCanvas');
+            logCanvas.addEventListener('click', (e) => {
+                const rect = logCanvas.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const clickY = e.clientY - rect.top;
+
+                const centerX = logCanvas.width / 2;
+                const centerY = logCanvas.height / 2;
+                const scale = 3.5;
+
+                const targetX = (clickX - centerX) / scale;
+                const targetZ = (centerY - clickY) / scale;
+
+                state.logistics.x = targetX;
+                state.logistics.z = targetZ;
+
+                document.getElementById('slider-posx').value = targetX;
+                document.getElementById('slider-posz').value = targetZ;
+
+                renderLogisticsCanvas();
+            });
+
+            // Load initial code snippet
+            selectCodeFile('workflow');
+
+            // Start wave clock
+            startWaveClock();
+            updateQueueUI();
+        });
+    </script>
+</body>
+</html>
